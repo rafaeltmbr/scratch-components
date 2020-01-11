@@ -3,7 +3,7 @@ import SctrachSVGPath from '../../../util/ScratchSVGPath';
 import ManipulateDOM from '../../../util/ManipulateDOM';
 
 const width = 350;
-const strokeWidth = 2;
+const strokeWidth = 5;
 
 const { path: path2, dimensions: dimensions2 } = SctrachSVGPath.statementBlock({
     width,

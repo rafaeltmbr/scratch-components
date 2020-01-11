@@ -35,8 +35,7 @@ class ScratchSVGPath {
             + longLineToLeft + maleFitting + shortLineToLeft
             + bottomLeftCorner + closePath;
 
-        const width = componentWidth + (2 * componentStrokeWidth)
-            - Math.round(componentStrokeWidth / 2);
+        const width = componentWidth + componentStrokeWidth;
         const height = componentInnerHeight + componentTextFieldHeight + 48
             + componentStrokeWidth;
 
@@ -76,8 +75,7 @@ class ScratchSVGPath {
             + maleFitting + shortLineToLeft + bottomLeftCorner
             + closePath;
 
-        const width = componentWidth + (2 * componentStrokeWidth)
-            - Math.round(componentStrokeWidth / 2);
+        const width = componentWidth + componentStrokeWidth;
         const height = componentTextFieldHeight + 16 + componentStrokeWidth;
 
         return {
