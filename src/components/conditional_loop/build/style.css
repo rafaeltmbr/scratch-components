@@ -2,6 +2,7 @@ svg {
   width: 100%;
   height: 100%;
   display: block;
+  position: absolute;
 }
 
 .conditional-loop path {
@@ -9,6 +10,9 @@ svg {
   stroke: #CF8B17;
 }
 
+.statement-block {
+  z-index: 2;
+}
 .statement-block path {
   fill: #397af3;
   stroke: #0c22e9;

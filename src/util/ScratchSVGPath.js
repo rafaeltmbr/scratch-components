@@ -1,7 +1,7 @@
 class ScratchSVGPath {
     static conditionalLoop(options = {}) {
         const componentWidth = options.width || 200;
-        const componentInnerHeight = options.innerHeight || 20;
+        const componentInnerHeight = options.innerHeight || 28;
         const componentTextFieldHeight = options.textFieldHeight || 36;
         const componentStrokeWidth = options.strokeWidth || 1;
 
@@ -38,7 +38,7 @@ class ScratchSVGPath {
         const width = componentWidth + (2 * componentStrokeWidth)
             - Math.round(componentStrokeWidth / 2);
         const height = componentInnerHeight + componentTextFieldHeight + 48
-            + (2 * componentStrokeWidth) - Math.round(componentStrokeWidth / 2);
+            + componentStrokeWidth;
 
         return {
             path,
@@ -78,8 +78,7 @@ class ScratchSVGPath {
 
         const width = componentWidth + (2 * componentStrokeWidth)
             - Math.round(componentStrokeWidth / 2);
-        const height = componentTextFieldHeight + 16
-            + (2 * componentStrokeWidth) - Math.round(componentStrokeWidth / 2);
+        const height = componentTextFieldHeight + 16 + componentStrokeWidth;
 
         return {
             path,
