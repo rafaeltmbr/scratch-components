@@ -1,0 +1,28 @@
+{
+  "name": "Scratch_components",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@commitlint/cli": "^8.3.4",
+    "@commitlint/config-conventional": "^8.3.4",
+    "commitizen": "^4.0.3",
+    "concurrently": "^5.0.2",
+    "cz-conventional-changelog": "3.0.2",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.0",
+    "pug-cli": "^1.0.0-alpha6"
+  },
+  "scripts": {
+    "precommit": "git add .",
+    "commit": "git-cz",
+    "dev:conditional_loop:pug-w": "pug ./src/components/conditional_loop/dev/index.pug -o ./src/components/conditional_loop/build/index.html --watch --pretty",
+    "dev:conditional_loop": "concurrently \"yarn dev:conditional_loop:pug-w\""
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

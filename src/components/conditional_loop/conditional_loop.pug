@@ -1,0 +1,37 @@
+svg
+    - const component_width = 250
+    - const component_inner_height = 36
+    - const component_text_field_height = 36
+
+    - const start_point = 'M 1,5'
+    - const top_left_corner = 'a 4 4 0 0 1 4,-4'
+    - const inner_top_left_corner = 'a 4 4 0 0 0 -4,4'
+    - const inner_bottom_left_corner = 'a 4 4 0 0 0 4,4'
+    - const top_right_corner = 'a 4 4 0 0 1 4,4'
+    - const bottom_right_corner = 'a 4 4 0 0 1 -4,4'
+    - const bottom_left_corner = 'a 4 4 0 0 1 -4,-4'
+    - const inner_short_line_to_bottom = 'v' + (component_inner_height - 8)
+    - const short_line_to_right = 'h 8'
+    - const short_line_to_left = 'h -8'
+    - const short_line_to_bottom = 'v 24'
+    - const mid_line_to_bottom = 'v' + component_text_field_height
+    - const mid_line_to_left = 'h' + (64 - component_width)
+    - const mid_line_to_right = 'h' + (component_width - 64)
+    - const long_line_to_right = 'h' + (component_width - 52)
+    - const long_line_to_left = 'h' + (52 - component_width)
+    - const female_fitting = 'c 2,0 3,1 4,2 l 4,4 c 1,1 2,2 4,2 h12 c 2,0 3,-1 4,-2 l 4,-4 c 1,-1 2,-2 4,-2'
+    - const male_fitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2'
+    - const close_path = 'z'
+
+    -
+        const path = start_point + top_left_corner + short_line_to_right
+            + female_fitting + long_line_to_right + top_right_corner
+            + mid_line_to_bottom + bottom_right_corner + mid_line_to_left
+            + male_fitting + short_line_to_left + inner_top_left_corner
+            + inner_short_line_to_bottom + inner_bottom_left_corner
+            + short_line_to_right + female_fitting + mid_line_to_right
+            + top_right_corner + short_line_to_bottom + bottom_right_corner
+            + long_line_to_left + male_fitting + short_line_to_left
+            + bottom_left_corner + close_path
+
+    path(stroke="#CF8B17" fill="#FFAB19" fill-opacity="1" d=path)
