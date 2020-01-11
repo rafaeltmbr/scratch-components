@@ -3,36 +3,71 @@ import SctrachSVGPath from '../../../util/ScratchSVGPath';
 import ManipulateDOM from '../../../util/ManipulateDOM';
 
 const width = 350;
-const strokeWidth = 5;
+const strokeWidth = 2;
 
-const { path: path2, dimensions: dimensions2 } = SctrachSVGPath.statementBlock({
+const { path: statementPath, dimensions: statementDimensions } = SctrachSVGPath.statement({
     width,
     strokeWidth,
     textFieldHeight: 30,
 });
 
-const conditionalLoopSVG2 = `<svg class="statement-block" width="${dimensions2.width}" height="${dimensions2.height}"`
-    + `stroke-width="${strokeWidth}" style="width: ${dimensions2.width}px;`
-    + `height: ${dimensions2.height}px"><path d="${path2}" /></svg>`;
+const statementTag = `<svg class="statement-block" width="${statementDimensions.width}" height="${statementDimensions.height}"`
+    + `stroke-width="${strokeWidth}" style="width: ${statementDimensions.width}px;`
+    + `height: ${statementDimensions.height}px"><path d="${statementPath}" /></svg>`;
 
-window.block2 = ManipulateDOM.createNodeElement(conditionalLoopSVG2);
-document.body.appendChild(window.block2);
-console.log('dimensions2:', dimensions2);
+window.statement = ManipulateDOM.createNodeElement(statementTag);
+document.body.appendChild(window.statement);
 
-const { path, dimensions } = SctrachSVGPath.conditionalLoop({
+
+const { path: statementPath2, dimensions: statementDimensions2 } = SctrachSVGPath.statement({
     width,
     strokeWidth,
-    innerHeight: dimensions2.fittingHeight,
     textFieldHeight: 30,
+    maleFitting: false,
 });
 
-const conditionalLoopSVG = `<svg class="conditional-loop" width="${dimensions.width}" height="${dimensions.height}"`
-+ `stroke-width="${strokeWidth}" style="width: ${dimensions.width}px;`
-+ `height: ${dimensions.height}px"><path d="${path}" /></svg>`;
+const statementTag2 = `<svg class="statement-block" width="${statementDimensions2.width}" height="${statementDimensions2.height}"`
+    + `stroke-width="${strokeWidth}" style="width: ${statementDimensions2.width}px;`
+    + `height: ${statementDimensions2.height}px"><path d="${statementPath2}" /></svg>`;
 
-window.block1 = ManipulateDOM.createNodeElement(conditionalLoopSVG);
-document.body.appendChild(window.block1);
-console.log('dimensions:', dimensions);
+window.statement2 = ManipulateDOM.createNodeElement(statementTag2);
+document.body.appendChild(window.statement2);
+
+
+const { path: conditionalLoopPath, dimensions: conditionalLoopDimensions } = (
+    SctrachSVGPath.conditionalLoop({
+        width,
+        strokeWidth,
+        innerHeight: statementDimensions.fittingHeight,
+        textFieldHeight: 30,
+        femaleFitting: false,
+        maleFitting: false,
+    }));
+
+const conditionalLoopTag = `<svg class="conditional-loop" width="${conditionalLoopDimensions.width}" height="${conditionalLoopDimensions.height}"`
+    + `stroke-width="${strokeWidth}" style="width: ${conditionalLoopDimensions.width}px;`
+    + `height: ${conditionalLoopDimensions.height}px"><path d="${conditionalLoopPath}" /></svg>`;
+
+window.conditionalLoop = ManipulateDOM.createNodeElement(conditionalLoopTag);
+document.body.appendChild(window.conditionalLoop);
+
+
+const { path: conditionalBlockPath, dimensions: conditionalBlockDimensions } = (
+    SctrachSVGPath.conditionalBlock({
+        width,
+        strokeWidth,
+        innerHeightTrue: statementDimensions.fittingHeight,
+        innerHeightFalse: conditionalLoopDimensions.fittingHeight,
+        textFieldHeight: 30,
+        falsyFemaleFitting: false,
+    }));
+
+const conditionalBlockTag = `<svg class="conditional-block" width="${conditionalBlockDimensions.width}" height="${conditionalBlockDimensions.height}"`
+    + `stroke-width="${strokeWidth}" style="width: ${conditionalBlockDimensions.width}px;`
+    + `height: ${conditionalBlockDimensions.height}px"><path d="${conditionalBlockPath}" /></svg>`;
+
+window.conditionalBlock = ManipulateDOM.createNodeElement(conditionalBlockTag);
+document.body.appendChild(window.conditionalBlock);
 
 
 const svgList = document.querySelectorAll('svg');
