@@ -12,13 +12,15 @@
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.0",
-    "pug-cli": "^1.0.0-alpha6"
+    "pug-cli": "^1.0.0-alpha6",
+    "sass": "^1.24.4"
   },
   "scripts": {
     "precommit": "git add .",
     "commit": "git-cz",
-    "dev:conditional_loop:pug-w": "pug ./src/components/conditional_loop/dev/index.pug -o ./src/components/conditional_loop/build/index.html --watch --pretty",
-    "dev:conditional_loop": "concurrently \"yarn dev:conditional_loop:pug-w\""
+    "dev:conditional_loop:pug-w": "pug ./src/components/conditional_loop/dev/index.pug -o ./src/components/conditional_loop/build/ --watch --pretty",
+    "dev:conditional_loop:sass-w": "sass ./src/components/conditional_loop/conditional_loop.sass ./src/components/conditional_loop/build/style.css --watch --no-source-map",
+    "dev:conditional_loop": "concurrently \"yarn dev:conditional_loop:pug-w\" \"yarn dev:conditional_loop:sass-w\""
   },
   "config": {
     "commitizen": {
