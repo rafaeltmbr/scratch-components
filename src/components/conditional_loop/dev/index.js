@@ -9,6 +9,7 @@ const { path: eventPath, dimensions: eventDimensions } = SctrachSVGPath.event({
     width,
     strokeWidth,
     textFieldHeight: 30,
+    maleFitting: false,
 });
 
 const eventTag = `<svg class="event" width="${eventDimensions.width}" height="${eventDimensions.height}"`
@@ -81,6 +82,20 @@ const conditionalBlockTag = `<svg class="conditional-block" width="${conditional
 
 window.conditionalBlock = ManipulateDOM.createNodeElement(conditionalBlockTag);
 document.body.appendChild(window.conditionalBlock);
+
+const { path: functionPath, dimensions: functionDimension } = (
+    SctrachSVGPath.function({
+        width,
+        strokeWidth,
+        textFieldHeight: 30,
+    }));
+
+const functionTag = `<svg class="function" width="${functionDimension.width}" height="${functionDimension.height}"`
+    + `stroke-width="${strokeWidth}" style="width: ${functionDimension.width}px;`
+    + `height: ${functionDimension.height}px"><path d="${functionPath}" /></svg>`;
+
+window.function = ManipulateDOM.createNodeElement(functionTag);
+document.body.appendChild(window.function);
 
 
 const svgList = document.querySelectorAll('svg');

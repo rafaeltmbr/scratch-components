@@ -47,8 +47,8 @@ class ScratchSVGPath {
             + bottomLeftCorner + closePath;
 
         const width = componentWidth + componentStrokeWidth;
-        const height = componentInnerHeight + componentTextFieldHeight + 48
-            + componentStrokeWidth;
+        const height = componentInnerHeight + componentTextFieldHeight + componentStrokeWidth
+            + (componentMaleFitting ? 48 : 40);
 
         return {
             path,
@@ -120,7 +120,8 @@ class ScratchSVGPath {
 
         const width = componentWidth + componentStrokeWidth;
         const height = componentInnerHeightTrue + componentInnerHeightFalse
-            + componentTextFieldHeight + 80 + componentStrokeWidth;
+            + componentTextFieldHeight + componentStrokeWidth
+            + (componentMaleFitting ? 80 : 72);
 
         return {
             path,
@@ -163,7 +164,8 @@ class ScratchSVGPath {
             + closePath;
 
         const width = componentWidth + componentStrokeWidth;
-        const height = componentTextFieldHeight + 16 + componentStrokeWidth;
+        const height = componentTextFieldHeight + componentStrokeWidth
+            + (componentMaleFitting ? 16 : 8);
 
         return {
             path,
@@ -180,8 +182,6 @@ class ScratchSVGPath {
         const componentWidth = options.width || 200;
         const componentTextFieldHeight = options.textFieldHeight || 36;
         const componentStrokeWidth = options.strokeWidth || 1;
-        const componentMaleFitting = typeof options.maleFitting === 'undefined'
-            ? true : options.maleFitting;
 
         const startPoint = `M ${componentStrokeWidth / 2},${17 + componentStrokeWidth / 2}`;
         const bigArc = 'c 25,-22 71,-22 96,0';
@@ -193,18 +193,53 @@ class ScratchSVGPath {
         const longLineToRight = `h${componentWidth - 100}`;
         const longLineToLeft = `h${52 - componentWidth}`;
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
-        const maleFittingBypass = 'h -36';
         const closePath = 'z';
 
         const path = startPoint + bigArc
             + longLineToRight + topRightCorner
             + midLineToBottom + bottomRightCorner + longLineToLeft
-            + (componentMaleFitting ? maleFitting : maleFittingBypass)
-            + shortLineToLeft + bottomLeftCorner
+            + maleFitting + shortLineToLeft + bottomLeftCorner
             + closePath;
 
         const width = componentWidth + componentStrokeWidth;
         const height = componentTextFieldHeight + 33 + componentStrokeWidth;
+
+        return {
+            path,
+            dimensions: {
+                width,
+                height,
+                fittingHeight: height - 8 - componentStrokeWidth,
+                strokeWidth: componentStrokeWidth,
+            },
+        };
+    }
+
+    static function(options = {}) {
+        const componentWidth = options.width || 200;
+        const componentTextFieldHeight = options.textFieldHeight || 36;
+        const componentStrokeWidth = options.strokeWidth || 1;
+
+        const startPoint = `M ${componentStrokeWidth / 2},${20 + componentStrokeWidth / 2}`;
+        const topLeftCorner = 'a 20 20 0 0 1 20,-20';
+        const topRightCorner = 'a 20 20 0 0 1 20,20';
+        const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
+        const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
+        const shortLineToLeft = 'h -8';
+        const midLineToBottom = `v${componentTextFieldHeight}`;
+        const longLineToRight = `h${componentWidth - 40}`;
+        const longLineToLeft = `h${52 - componentWidth}`;
+        const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
+        const closePath = 'z';
+
+        const path = startPoint + topLeftCorner
+            + longLineToRight + topRightCorner
+            + midLineToBottom + bottomRightCorner + longLineToLeft
+            + maleFitting + shortLineToLeft + bottomLeftCorner
+            + closePath;
+
+        const width = componentWidth + componentStrokeWidth;
+        const height = componentTextFieldHeight + componentStrokeWidth + 32;
 
         return {
             path,
