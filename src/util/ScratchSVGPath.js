@@ -175,6 +175,47 @@ class ScratchSVGPath {
             },
         };
     }
+
+    static event(options = {}) {
+        const componentWidth = options.width || 200;
+        const componentTextFieldHeight = options.textFieldHeight || 36;
+        const componentStrokeWidth = options.strokeWidth || 1;
+        const componentMaleFitting = typeof options.maleFitting === 'undefined'
+            ? true : options.maleFitting;
+
+        const startPoint = `M ${componentStrokeWidth / 2},${17 + componentStrokeWidth / 2}`;
+        const bigArc = 'c 25,-22 71,-22 96,0';
+        const topRightCorner = 'a 4 4 0 0 1 4,4';
+        const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
+        const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
+        const shortLineToLeft = 'h -8';
+        const midLineToBottom = `v${componentTextFieldHeight}`;
+        const longLineToRight = `h${componentWidth - 100}`;
+        const longLineToLeft = `h${52 - componentWidth}`;
+        const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
+        const maleFittingBypass = 'h -36';
+        const closePath = 'z';
+
+        const path = startPoint + bigArc
+            + longLineToRight + topRightCorner
+            + midLineToBottom + bottomRightCorner + longLineToLeft
+            + (componentMaleFitting ? maleFitting : maleFittingBypass)
+            + shortLineToLeft + bottomLeftCorner
+            + closePath;
+
+        const width = componentWidth + componentStrokeWidth;
+        const height = componentTextFieldHeight + 33 + componentStrokeWidth;
+
+        return {
+            path,
+            dimensions: {
+                width,
+                height,
+                fittingHeight: height - 8 - componentStrokeWidth,
+                strokeWidth: componentStrokeWidth,
+            },
+        };
+    }
 }
 
 export default ScratchSVGPath;

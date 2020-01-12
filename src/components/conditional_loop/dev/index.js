@@ -5,6 +5,19 @@ import ManipulateDOM from '../../../util/ManipulateDOM';
 const width = 350;
 const strokeWidth = 2;
 
+const { path: eventPath, dimensions: eventDimensions } = SctrachSVGPath.event({
+    width,
+    strokeWidth,
+    textFieldHeight: 30,
+});
+
+const eventTag = `<svg class="event" width="${eventDimensions.width}" height="${eventDimensions.height}"`
+    + `stroke-width="${strokeWidth}" style="width: ${eventDimensions.width}px;`
+    + `height: ${eventDimensions.height}px"><path d="${eventPath}" /></svg>`;
+
+window.event = ManipulateDOM.createNodeElement(eventTag);
+document.body.appendChild(window.event);
+
 const { path: statementPath, dimensions: statementDimensions } = SctrachSVGPath.statement({
     width,
     strokeWidth,
@@ -74,10 +87,11 @@ const svgList = document.querySelectorAll('svg');
 const svgs = Object.keys(svgList).map((k) => svgList[k]);
 
 svgs.forEach((svg) => {
-    svg.addEventListener('mousedown', ({ clientX: startX, clientY: startY }) => {
+    svg.children[0].addEventListener('mousedown', ({ clientX: startX, clientY: startY }) => {
         const initialStyle = window.getComputedStyle(svg);
         const initialX = parseInt(initialStyle.left, 10);
         const initialY = parseInt(initialStyle.top, 10);
+        svg.setAttribute('data-grabbing', true);
 
         function handleMovement({ clientX, clientY }) {
             const offsetX = clientX - startX;
@@ -91,6 +105,7 @@ svgs.forEach((svg) => {
         window.addEventListener('mouseup', function removeEventHandlers() {
             window.removeEventListener('mousemove', handleMovement);
             window.removeEventListener('mouseup', removeEventHandlers);
+            svg.setAttribute('data-grabbing', false);
         });
     });
 });
