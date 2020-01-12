@@ -1,12 +1,14 @@
 import ScratchComponent from '../src/components/ScratchComponent';
 
 const statement = new ScratchComponent('statement', {
-    width: 200,
-    stroke: 2,
-    innerTextHeigt: 30,
-    class: 'statement',
-    id: 'statement1',
+    totalWidth: 400,
+    strokeWidth: 2,
+    descriptionHeight: 50,
     sibling: false,
+    HTMLAttributes: {
+        class: 'statement',
+        id: 'statement1',
+    },
 });
 
 document.body.appendChild(statement.getNodeElement());

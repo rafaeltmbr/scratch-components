@@ -1,8 +1,8 @@
 class ScratchSVGPath {
     static conditionalLoop(options = {}) {
-        const componentWidth = options.width || 200;
+        const componentTotalWidth = options.totalWidth || 200;
         const componentInnerHeight = options.innerHeight || 28;
-        const componentTextFieldHeight = options.textFieldHeight || 36;
+        const componentDecriptionHeight = options.descriptionHeight || 36;
         const componentStrokeWidth = options.strokeWidth || 1;
         const componentMaleFitting = typeof options.maleFitting === 'undefined'
             ? true : options.maleFitting;
@@ -20,11 +20,11 @@ class ScratchSVGPath {
         const shortLineToRight = 'h 8';
         const shortLineToLeft = 'h -8';
         const shortLineToBottom = 'v 24';
-        const midLineToBottom = `v${componentTextFieldHeight}`;
-        const midLineToLeft = `h${64 - componentWidth}`;
-        const midLineToRight = `h${componentWidth - 64}`;
-        const longLineToRight = `h${componentWidth - 52}`;
-        const longLineToLeft = `h${52 - componentWidth}`;
+        const midLineToBottom = `v${componentDecriptionHeight}`;
+        const midLineToLeft = `h${64 - componentTotalWidth}`;
+        const midLineToRight = `h${componentTotalWidth - 64}`;
+        const longLineToRight = `h${componentTotalWidth - 52}`;
+        const longLineToLeft = `h${52 - componentTotalWidth}`;
         const femaleFitting = 'c 2,0 3,1 4,2 l 4,4 c 1,1 2,2 4,2 h12 c 2,0 3,-1 4,-2 l 4,-4 c 1,-1 2,-2 4,-2';
         const femaleFittingBypass = 'h 36';
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
@@ -46,8 +46,8 @@ class ScratchSVGPath {
             + shortLineToLeft
             + bottomLeftCorner + closePath;
 
-        const width = componentWidth + componentStrokeWidth;
-        const height = componentInnerHeight + componentTextFieldHeight + componentStrokeWidth
+        const width = componentTotalWidth + componentStrokeWidth;
+        const height = componentInnerHeight + componentDecriptionHeight + componentStrokeWidth
             + (componentMaleFitting ? 48 : 40);
 
         return {
@@ -62,10 +62,10 @@ class ScratchSVGPath {
     }
 
     static conditionalBlock(options = {}) {
-        const componentWidth = options.width || 200;
+        const componentTotalWidth = options.totalWidth || 200;
         const componentInnerHeightTrue = options.innerHeightTrue || 28;
         const componentInnerHeightFalse = options.innerHeightFalse || 28;
-        const componentTextFieldHeight = options.textFieldHeight || 36;
+        const componentDecriptionHeight = options.descriptionHeight || 36;
         const componentStrokeWidth = options.strokeWidth || 1;
         const componentMaleFitting = typeof options.maleFitting === 'undefined'
             ? true : options.maleFitting;
@@ -86,11 +86,11 @@ class ScratchSVGPath {
         const shortLineToRight = 'h 8';
         const shortLineToLeft = 'h -8';
         const shortLineToBottom = 'v 24';
-        const midLineToBottom = `v${componentTextFieldHeight}`;
-        const midLineToLeft = `h${64 - componentWidth}`;
-        const midLineToRight = `h${componentWidth - 64}`;
-        const longLineToRight = `h${componentWidth - 52}`;
-        const longLineToLeft = `h${52 - componentWidth}`;
+        const midLineToBottom = `v${componentDecriptionHeight}`;
+        const midLineToLeft = `h${64 - componentTotalWidth}`;
+        const midLineToRight = `h${componentTotalWidth - 64}`;
+        const longLineToRight = `h${componentTotalWidth - 52}`;
+        const longLineToLeft = `h${52 - componentTotalWidth}`;
         const femaleFitting = 'c 2,0 3,1 4,2 l 4,4 c 1,1 2,2 4,2 h12 c 2,0 3,-1 4,-2 l 4,-4 c 1,-1 2,-2 4,-2';
         const femaleFittingBypass = 'h 36';
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
@@ -118,9 +118,9 @@ class ScratchSVGPath {
             + shortLineToLeft
             + bottomLeftCorner + closePath;
 
-        const width = componentWidth + componentStrokeWidth;
+        const width = componentTotalWidth + componentStrokeWidth;
         const height = componentInnerHeightTrue + componentInnerHeightFalse
-            + componentTextFieldHeight + componentStrokeWidth
+            + componentDecriptionHeight + componentStrokeWidth
             + (componentMaleFitting ? 80 : 72);
 
         return {
@@ -135,8 +135,8 @@ class ScratchSVGPath {
     }
 
     static statement(options = {}) {
-        const componentWidth = options.width || 200;
-        const componentTextFieldHeight = options.textFieldHeight || 36;
+        const componentTotalWidth = options.totalWidth || 200;
+        const componentDecriptionHeight = options.descriptionHeight || 36;
         const componentStrokeWidth = options.strokeWidth || 1;
         const componentMaleFitting = typeof options.maleFitting === 'undefined'
             ? true : options.maleFitting;
@@ -148,9 +148,9 @@ class ScratchSVGPath {
         const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
         const shortLineToRight = 'h 8';
         const shortLineToLeft = 'h -8';
-        const midLineToBottom = `v${componentTextFieldHeight}`;
-        const longLineToRight = `h${componentWidth - 52}`;
-        const longLineToLeft = `h${52 - componentWidth}`;
+        const midLineToBottom = `v${componentDecriptionHeight}`;
+        const longLineToRight = `h${componentTotalWidth - 52}`;
+        const longLineToLeft = `h${52 - componentTotalWidth}`;
         const femaleFitting = 'c 2,0 3,1 4,2 l 4,4 c 1,1 2,2 4,2 h12 c 2,0 3,-1 4,-2 l 4,-4 c 1,-1 2,-2 4,-2';
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
         const maleFittingBypass = 'h -36';
@@ -163,8 +163,8 @@ class ScratchSVGPath {
             + shortLineToLeft + bottomLeftCorner
             + closePath;
 
-        const width = componentWidth + componentStrokeWidth;
-        const height = componentTextFieldHeight + componentStrokeWidth
+        const width = componentTotalWidth + componentStrokeWidth;
+        const height = componentDecriptionHeight + componentStrokeWidth
             + (componentMaleFitting ? 16 : 8);
 
         return {
@@ -179,8 +179,8 @@ class ScratchSVGPath {
     }
 
     static event(options = {}) {
-        const componentWidth = options.width || 200;
-        const componentTextFieldHeight = options.textFieldHeight || 36;
+        const componentTotalWidth = options.totalWidth || 200;
+        const componentDecriptionHeight = options.descriptionHeight || 36;
         const componentStrokeWidth = options.strokeWidth || 1;
 
         const startPoint = `M ${componentStrokeWidth / 2},${17 + componentStrokeWidth / 2}`;
@@ -189,9 +189,9 @@ class ScratchSVGPath {
         const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
         const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
         const shortLineToLeft = 'h -8';
-        const midLineToBottom = `v${componentTextFieldHeight}`;
-        const longLineToRight = `h${componentWidth - 100}`;
-        const longLineToLeft = `h${52 - componentWidth}`;
+        const midLineToBottom = `v${componentDecriptionHeight}`;
+        const longLineToRight = `h${componentTotalWidth - 100}`;
+        const longLineToLeft = `h${52 - componentTotalWidth}`;
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
         const closePath = 'z';
 
@@ -201,8 +201,8 @@ class ScratchSVGPath {
             + maleFitting + shortLineToLeft + bottomLeftCorner
             + closePath;
 
-        const width = componentWidth + componentStrokeWidth;
-        const height = componentTextFieldHeight + 33 + componentStrokeWidth;
+        const width = componentTotalWidth + componentStrokeWidth;
+        const height = componentDecriptionHeight + 33 + componentStrokeWidth;
 
         return {
             path,
@@ -216,8 +216,8 @@ class ScratchSVGPath {
     }
 
     static function(options = {}) {
-        const componentWidth = options.width || 200;
-        const componentTextFieldHeight = options.textFieldHeight || 36;
+        const componentTotalWidth = options.totalWidth || 200;
+        const componentDecriptionHeight = options.descriptionHeight || 36;
         const componentStrokeWidth = options.strokeWidth || 1;
 
         const startPoint = `M ${componentStrokeWidth / 2},${20 + componentStrokeWidth / 2}`;
@@ -226,9 +226,9 @@ class ScratchSVGPath {
         const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
         const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
         const shortLineToLeft = 'h -8';
-        const midLineToBottom = `v${componentTextFieldHeight}`;
-        const longLineToRight = `h${componentWidth - 40}`;
-        const longLineToLeft = `h${52 - componentWidth}`;
+        const midLineToBottom = `v${componentDecriptionHeight}`;
+        const longLineToRight = `h${componentTotalWidth - 40}`;
+        const longLineToLeft = `h${52 - componentTotalWidth}`;
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
         const closePath = 'z';
 
@@ -238,8 +238,8 @@ class ScratchSVGPath {
             + maleFitting + shortLineToLeft + bottomLeftCorner
             + closePath;
 
-        const width = componentWidth + componentStrokeWidth;
-        const height = componentTextFieldHeight + componentStrokeWidth + 32;
+        const width = componentTotalWidth + componentStrokeWidth;
+        const height = componentDecriptionHeight + componentStrokeWidth + 32;
 
         return {
             path,
