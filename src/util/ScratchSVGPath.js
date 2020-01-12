@@ -55,7 +55,7 @@ class ScratchSVGPath {
             dimensions: {
                 width,
                 height,
-                fittingHeight: height - 8 - componentStrokeWidth,
+                fittingHeight: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
                 strokeWidth: componentStrokeWidth,
             },
         };
@@ -128,7 +128,7 @@ class ScratchSVGPath {
             dimensions: {
                 width,
                 height,
-                fittingHeight: height - 8 - componentStrokeWidth,
+                fittingHeight: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
                 strokeWidth: componentStrokeWidth,
             },
         };
@@ -172,7 +172,7 @@ class ScratchSVGPath {
             dimensions: {
                 width,
                 height,
-                fittingHeight: height - 8 - componentStrokeWidth,
+                fittingHeight: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
                 strokeWidth: componentStrokeWidth,
             },
         };

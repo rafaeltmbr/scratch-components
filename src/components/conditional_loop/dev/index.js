@@ -41,18 +41,17 @@ const { path: statementPath2, dimensions: statementDimensions2 } = SctrachSVGPat
 });
 
 const statementTag2 = `<svg class="statement-block" width="${statementDimensions2.width}" height="${statementDimensions2.height}"`
-    + `stroke-width="${strokeWidth}" style="width: ${statementDimensions2.width}px;`
-    + `height: ${statementDimensions2.height}px"><path d="${statementPath2}" /></svg>`;
++ `stroke-width="${strokeWidth}" style="width: ${statementDimensions2.width}px;`
++ `height: ${statementDimensions2.height}px"><path d="${statementPath2}" /></svg>`;
 
 window.statement2 = ManipulateDOM.createNodeElement(statementTag2);
 document.body.appendChild(window.statement2);
-
 
 const { path: conditionalLoopPath, dimensions: conditionalLoopDimensions } = (
     SctrachSVGPath.conditionalLoop({
         width,
         strokeWidth,
-        innerHeight: statementDimensions.fittingHeight,
+        innerHeight: statementDimensions2.fittingHeight,
         textFieldHeight: 30,
         femaleFitting: false,
         maleFitting: false,
