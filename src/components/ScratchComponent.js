@@ -32,7 +32,8 @@ export default class ScratchComponent {
         const innerHTML = (
             `<div ${attributes} style="width: ${dimensions.width}px; height: ${dimensions.height}px">`
             + `<svg stroke-width="${dimensions.strokeWidth}" style="width: 100%; height: 100%">`
-            + `<path d="${path}" /></svg></div>`
+            + `<path d="${path}" /></svg>`
+            + `${ScratchComponent.createChildrenContainers(dimensions)}</div></div>`
         );
 
         return innerHTML;
@@ -41,6 +42,39 @@ export default class ScratchComponent {
     static convertAttributesToHTML(attributes) {
         const html = Object.keys(attributes).map((k) => `${k}="${attributes[k]}"`).join(' ');
         return html;
+    }
+
+    static createChildrenContainers(dimensions) {
+        const {
+            childrenContainer: cc,
+            truthyChildrenContainer: tcc,
+            falsyChildrenContainer: fcc,
+        } = dimensions;
+
+        const ccHTML = (
+            ScratchComponent.createContainerHTML('scratch-children-container', cc));
+
+        const tccHTML = (
+            ScratchComponent.createContainerHTML('scratch-truthy-children-container', tcc));
+
+        const fccHTML = (
+            ScratchComponent.createContainerHTML('scratch-falsy-children-container', fcc));
+
+        const containersHTML = ccHTML + tccHTML + fccHTML;
+
+        return containersHTML;
+    }
+
+    static createContainerHTML(className, dimensions) {
+        const containerHTML = (dimensions ? (
+            `<div class="${className || ''}" style="position: absolute; `
+            + `width: ${dimensions.width}px; `
+            + `height: ${dimensions.height}px; `
+            + `top: ${dimensions.top}px; `
+            + `left: ${dimensions.left}px"></div>`
+        ) : '');
+
+        return containerHTML;
     }
 
     getNodeElement() {
