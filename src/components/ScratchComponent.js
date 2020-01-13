@@ -25,15 +25,19 @@ export default class ScratchComponent {
         const { path, dimensions } = ScratchSVGPath[type](this._opt);
         const html = ScratchComponent.createSVGElementInnerHTML(path, dimensions, this._opt);
         this._node = ManipulateDOM.createNodeElement(html);
+        this._opt.dimensions.height = dimensions.height;
     }
 
     static createSVGElementInnerHTML(path, dimensions, options) {
         const attributes = ScratchComponent.convertAttributesToHTML(options.attributes);
+        const childrenContainer = ScratchComponent.createChildrenContainers(dimensions);
+
         const innerHTML = (
-            `<div ${attributes} style="width: ${dimensions.width}px; height: ${dimensions.height}px">`
+            `<div ${attributes} style="width: ${dimensions.width}px; height: ${dimensions.height}px; `
+            + `top: ${options.position.top}px; left: ${options.position.left}px; position: absolute;">`
             + `<svg stroke-width="${dimensions.strokeWidth}" style="width: 100%; height: 100%">`
             + `<path d="${path}" /></svg>`
-            + `${ScratchComponent.createChildrenContainers(dimensions)}</div></div>`
+            + `${childrenContainer}</div>`
         );
 
         return innerHTML;
@@ -79,5 +83,14 @@ export default class ScratchComponent {
 
     getNodeElement() {
         return this._node;
+    }
+
+    getDimensions() {
+        return {
+            top: this._opt.position.top,
+            left: this._opt.position.left,
+            width: this._opt.dimensions.width,
+            height: this._opt.dimensions.height,
+        };
     }
 }

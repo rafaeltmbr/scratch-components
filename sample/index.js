@@ -1,6 +1,10 @@
 import ScratchComponent from '../src/components/ScratchComponent';
 
 const statement = new ScratchComponent('statement', {
+    position: {
+        top: 10,
+        left: 10,
+    },
     dimensions: {
         width: 400,
         strokeWidth: 2,
@@ -15,13 +19,17 @@ const statement = new ScratchComponent('statement', {
 document.body.appendChild(statement.getNodeElement());
 
 
-const conditionalBlock = new ScratchComponent('conditionalBlock', {
+const ifElseBlock = new ScratchComponent('ifElseBlock', {
+    position: {
+        top: 100,
+        left: 100,
+    },
     dimensions: {
         width: 200,
-        strokeWidth: 2,
+        strokeWidth: 4,
         descriptionHeight: 40,
-        truthyChildrenContainerHeight: 50,
-        falsyChildrenContainerHeight: 15,
+        truthyChildrenContainerHeight: 40,
+        falsyChildrenContainerHeight: 80,
     },
     appearence: {
         maleFitting: false,
@@ -33,12 +41,17 @@ const conditionalBlock = new ScratchComponent('conditionalBlock', {
     },
 });
 
-document.body.appendChild(conditionalBlock.getNodeElement());
+document.body.appendChild(ifElseBlock.getNodeElement());
 
-const conditionalLoop = new ScratchComponent('conditionalLoop', {
+
+const conditionalBlock = new ScratchComponent('conditionalBlock', {
+    position: {
+        top: 350,
+        left: 250,
+    },
     dimensions: {
         strokeWidth: 2,
-        childrenContainerHeight: 50,
+        truthyChildrenContainerHeight: 50,
     },
     appearence: {
         femaleFitting: false,
@@ -46,8 +59,8 @@ const conditionalLoop = new ScratchComponent('conditionalLoop', {
     attributes: {
         'data-selected': true,
         class: 'conditional',
-        id: 'conditional-loop',
+        id: 'if',
     },
 });
 
-document.body.appendChild(conditionalLoop.getNodeElement());
+document.body.appendChild(conditionalBlock.getNodeElement());
