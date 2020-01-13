@@ -6,7 +6,7 @@ class ScratchSVGPath {
 
         const componentTotalWidth = options.dimensions.width || 200;
         const componentTruthyChildrenContainerHeight = (
-            options.dimensions.truthyChildrenContainerHeight || 28);
+            options.dimensions.truthyChildContainerHeight || 28);
         const componentDescriptionHeight = options.dimensions.descriptionHeight || 36;
         const componentStrokeWidth = options.dimensions.strokeWidth || 1;
         const componentMaleFitting = typeof options.appearence.maleFitting === 'undefined'
@@ -62,7 +62,7 @@ class ScratchSVGPath {
                 height,
                 fittingHeight: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
                 strokeWidth: componentStrokeWidth,
-                childrenContainer: {
+                truthyChildContainer: {
                     width: componentTotalWidth - 12,
                     height: componentTruthyChildrenContainerHeight + componentStrokeWidth,
                     top: componentDescriptionHeight + 8,
@@ -77,9 +77,9 @@ class ScratchSVGPath {
 
         const componentTotalWidth = options.dimensions.width || 200;
         const componentTruthyChildrenContainerHeight = (
-            options.dimensions.truthyChildrenContainerHeight || 28);
+            options.dimensions.truthyChildContainerHeight || 28);
         const componentFalsyChildrenContainerHeight = (
-            options.dimensions.falsyChildrenContainerHeight || 28);
+            options.dimensions.falsyChildContainerHeight || 28);
 
         const componentDescriptionHeight = options.dimensions.descriptionHeight || 36;
         const componentStrokeWidth = options.dimensions.strokeWidth || 1;
@@ -148,13 +148,13 @@ class ScratchSVGPath {
                 height,
                 fittingHeight: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
                 strokeWidth: componentStrokeWidth,
-                truthyChildrenContainer: {
+                truthyChildContainer: {
                     width: componentTotalWidth - 12,
                     height: componentTruthyChildrenContainerHeight + componentStrokeWidth,
                     top: componentDescriptionHeight + 8,
                     left: 12,
                 },
-                falsyChildrenContainer: {
+                falsyChildContainer: {
                     width: componentTotalWidth - 12,
                     height: componentFalsyChildrenContainerHeight + componentStrokeWidth,
                     top: componentDescriptionHeight + 8 + componentTruthyChildrenContainerHeight

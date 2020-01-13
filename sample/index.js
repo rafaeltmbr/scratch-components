@@ -16,17 +16,15 @@ const statement = new ScratchComponent('statement', {
     },
 });
 
-document.body.appendChild(statement.getNodeElement());
-
 
 const ifElseBlock = new ScratchComponent('ifElseBlock', {
     position: {
-        top: 100,
+        top: 30,
         left: 100,
     },
     dimensions: {
         width: 200,
-        strokeWidth: 4,
+        strokeWidth: 2,
         descriptionHeight: 40,
         truthyChildrenContainerHeight: 40,
         falsyChildrenContainerHeight: 80,
@@ -47,7 +45,7 @@ document.body.appendChild(ifElseBlock.getNodeElement());
 const conditionalBlock = new ScratchComponent('conditionalBlock', {
     position: {
         top: 350,
-        left: 250,
+        left: 20,
     },
     dimensions: {
         strokeWidth: 2,
@@ -63,4 +61,11 @@ const conditionalBlock = new ScratchComponent('conditionalBlock', {
     },
 });
 
-document.body.appendChild(conditionalBlock.getNodeElement());
+ifElseBlock.addTruthyChild(conditionalBlock);
+
+window.setTimeout(() => {
+    conditionalBlock.addTruthyChild(statement);
+    window.setTimeout(() => {
+        conditionalBlock.removeTruthyChild();
+    }, 1500);
+}, 500);

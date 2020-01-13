@@ -7,8 +7,8 @@ export default {
         width: 100,
         descriptionHeight: 24,
         strokeWidth: 1,
-        truthyChildrenContainerHeight: 20,
-        falsyChildrenContainerHeight: 20,
+        truthyChildContainerHeight: 20,
+        falsyChildContainerHeight: 20,
     },
     appearence: {
         maleFitting: true,
