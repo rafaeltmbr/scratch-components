@@ -30,9 +30,9 @@ export default class ScratchComponent {
     static createSVGElementInnerHTML(path, dimensions, options) {
         const attributes = ScratchComponent.convertAttributesToHTML(options.attributes);
         const innerHTML = (
-            `<svg ${attributes} width="${dimensions.width}" height="${dimensions.height}"`
-            + `stroke-width="${dimensions.strokeWidth}" style="width: ${dimensions.width}px;`
-            + `height: ${dimensions.height}px"><path d="${path}" /></svg>`
+            `<div ${attributes} style="width: ${dimensions.width}px; height: ${dimensions.height}px">`
+            + `<svg stroke-width="${dimensions.strokeWidth}" style="width: 100%; height: 100%">`
+            + `<path d="${path}" /></svg></div>`
         );
 
         return innerHTML;
