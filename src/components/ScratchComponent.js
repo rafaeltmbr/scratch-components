@@ -101,7 +101,12 @@ export default class ScratchComponent {
         return {
             width: this._opt.dimensions.width,
             height: this._opt.dimensions.height,
-            fittingHeight: this._opt.dimensions.fittingHeight,
+            fittingHeight: (
+                this._opt.dimensions.fittingHeight
+                + (this._nextComponent
+                    ? this._nextComponent.getDimensions().fittingHeight
+                    : 0)
+            ),
         };
     }
 

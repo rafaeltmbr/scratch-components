@@ -139,5 +139,9 @@ window.setTimeout(() => {
     ifElseBlock2.addFalsyChild(statement3);
     window.setTimeout(() => {
         ifElseBlock2.removeFalsyChild();
+
+        window.setTimeout(() => {
+            statement2.removeNextComponent();
+        }, 1000);
     }, 2000);
 }, 2000);
