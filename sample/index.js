@@ -6,7 +6,7 @@ const statement = new ScratchComponent('statement', {
         left: 10,
     },
     dimensions: {
-        width: 400,
+        width: 250,
         strokeWidth: 2,
         descriptionHeight: 60,
     },
@@ -68,4 +68,4 @@ window.setTimeout(() => {
     window.setTimeout(() => {
         conditionalBlock.removeTruthyChild();
     }, 1500);
-}, 500);
+}, 2000);

@@ -10,6 +10,8 @@ export default class ScratchComponent {
         this._type = componentType;
         this._truthyChild = null;
         this._falsyChild = null;
+        this._resizeListeners = [];
+        this._truthyChildResizeHandlerBinded = this._truthyChildResizeHandler.bind(this);
 
         this._assingOptions(options);
         this._createComponent(componentType);
@@ -32,8 +34,7 @@ export default class ScratchComponent {
         const { path, dimensions } = ScratchSVGPath[type](this._opt);
         const html = ScratchComponent.createSVGElementInnerHTML(path, dimensions, this._opt);
         this._node = ManipulateDOM.createNodeElement(html);
-        this._opt.dimensions.height = dimensions.height;
-        this._opt.dimensions.fittingHeight = dimensions.fittingHeight;
+        this._updateDimensions(dimensions);
     }
 
     static createSVGElementInnerHTML(path, dimensions, options) {
@@ -124,6 +125,7 @@ export default class ScratchComponent {
         this._truthyChildContainer.appendChild(child._node);
         this._truthyChildContainerHeightBackup = this._opt.dimensions.truthyChildContainerHeight;
         this.resize({ truthyChildContainerHeight: child.getDimensions().fittingHeight });
+        child.addResizeListener(this._truthyChildResizeHandlerBinded);
         child.setPosition({ top: 0, left: 0 });
     }
 
@@ -148,6 +150,8 @@ export default class ScratchComponent {
         this._svg.children[0].setAttribute('d', path);
 
         this._resizeChildContainers(dim);
+        this._updateDimensions(dim);
+        this._callResizeListeners();
     }
 
     _resizeChildContainers(dim) {
@@ -165,5 +169,34 @@ export default class ScratchComponent {
             this._falsyChildContainer.style.setProperty('height', `${fcc.height}px`);
             this._falsyChildContainer.style.setProperty('width', `${fcc.width}px`);
         }
+    }
+
+    _updateDimensions(dimensions) {
+        this._opt.dimensions.height = dimensions.height;
+        this._opt.dimensions.width = dimensions.width;
+        this._opt.dimensions.fittingHeight = dimensions.fittingHeight;
+    }
+
+    _truthyChildResizeHandler(target) {
+        this.resize({ truthyChildContainerHeight: target.getDimensions().fittingHeight });
+    }
+
+    addResizeListener(listener) {
+        if (this._resizeListeners.find(listener)) return;
+
+        this._resizeListeners.push(listener);
+    }
+
+    removeResizeListener(listener) {
+        for (let i = this._resizeListeners.length - 1; i >= 0; i -= 1) {
+            if (this._resizeListeners[i] === listener) {
+                this._resizeListeners.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+    _callResizeListeners() {
+        this._resizeListeners.forEach((listener) => listener(this));
     }
 }
