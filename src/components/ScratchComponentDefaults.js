@@ -9,6 +9,7 @@ export default {
         strokeWidth: 1,
         truthyChildContainerHeight: 20,
         falsyChildContainerHeight: 20,
+        nextComponentHeight: 0,
     },
     appearence: {
         maleFitting: true,

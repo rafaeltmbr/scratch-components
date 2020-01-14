@@ -4,6 +4,7 @@ class ScratchSVGPath {
     static conditionalBlock(options = {}) {
         ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
 
+        const componentNextHeight = options.dimensions.nextComponentHeight || 0;
         const componentTotalWidth = options.dimensions.width || 200;
         const componentTruthyChildContainerHeight = (
             options.dimensions.truthyChildContainerHeight || 28);
@@ -53,7 +54,7 @@ class ScratchSVGPath {
 
         const width = componentTotalWidth;
         const height = componentTruthyChildContainerHeight + componentDescriptionHeight
-            + componentStrokeWidth + (componentMaleFitting ? 48 : 40);
+            + componentStrokeWidth + (componentMaleFitting ? 48 : 40) + componentNextHeight;
 
         return {
             path,
@@ -68,6 +69,12 @@ class ScratchSVGPath {
                     top: componentDescriptionHeight + 8,
                     left: 12,
                 },
+                nextComponentContainer: {
+                    width: componentTotalWidth,
+                    height: componentNextHeight,
+                    top: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
+                    left: 0,
+                },
             },
         };
     }
@@ -75,6 +82,7 @@ class ScratchSVGPath {
     static ifElseBlock(options = {}) {
         ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
 
+        const componentNextHeight = options.dimensions.nextComponentHeight || 0;
         const componentTotalWidth = options.dimensions.width || 200;
         const componentTruthyChildContainerHeight = (
             options.dimensions.truthyChildContainerHeight || 28);
@@ -137,7 +145,7 @@ class ScratchSVGPath {
 
         const width = componentTotalWidth;
         const height = componentTruthyChildContainerHeight
-            + componentFalsyChildrenContainerHeight
+            + componentFalsyChildrenContainerHeight + componentNextHeight
             + componentDescriptionHeight + componentStrokeWidth
             + (componentMaleFitting ? 80 : 72);
 
@@ -161,6 +169,12 @@ class ScratchSVGPath {
                         + 32,
                     left: 12,
                 },
+                nextComponentContainer: {
+                    width: componentTotalWidth,
+                    height: componentNextHeight,
+                    top: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
+                    left: 0,
+                },
             },
         };
     }
@@ -168,6 +182,7 @@ class ScratchSVGPath {
     static statement(options = {}) {
         ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
 
+        const componentNextHeight = options.dimensions.nextComponentHeight || 0;
         const componentTotalWidth = options.dimensions.width || 200;
         const componentDescriptionHeight = options.dimensions.descriptionHeight || 36;
         const componentStrokeWidth = options.dimensions.strokeWidth || 1;
@@ -198,7 +213,7 @@ class ScratchSVGPath {
 
         const width = componentTotalWidth;
         const height = componentDescriptionHeight + componentStrokeWidth
-            + (componentMaleFitting ? 16 : 8);
+            + (componentMaleFitting ? 16 : 8) + componentNextHeight;
 
         return {
             path,
@@ -208,12 +223,19 @@ class ScratchSVGPath {
                 fittingHeight: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
                 strokeWidth: componentStrokeWidth,
             },
+            nextComponentContainer: {
+                width: componentTotalWidth,
+                height: componentNextHeight,
+                top: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
+                left: 0,
+            },
         };
     }
 
     static event(options = {}) {
         ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
 
+        const componentNextHeight = options.dimensions.nextComponentHeight || 0;
         const componentTotalWidth = options.dimensions.width || 200;
         const componentDescriptionHeight = options.dimensions.descriptionHeight || 36;
         const componentStrokeWidth = options.dimensions.strokeWidth || 1;
@@ -237,7 +259,8 @@ class ScratchSVGPath {
             + closePath;
 
         const width = componentTotalWidth + componentStrokeWidth;
-        const height = componentDescriptionHeight + 33 + componentStrokeWidth;
+        const height = componentDescriptionHeight + 33 + componentStrokeWidth
+            + componentNextHeight;
 
         return {
             path,
@@ -247,12 +270,19 @@ class ScratchSVGPath {
                 fittingHeight: height - 8 - componentStrokeWidth,
                 strokeWidth: componentStrokeWidth,
             },
+            nextComponentContainer: {
+                width: componentTotalWidth,
+                height: componentNextHeight,
+                top: height - 8 - componentStrokeWidth,
+                left: 0,
+            },
         };
     }
 
     static function(options = {}) {
         ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
 
+        const componentNextHeight = options.dimensions.nextComponentHeight || 0;
         const componentTotalWidth = options.dimensions.width || 200;
         const componentDescriptionHeight = options.dimensions.descriptionHeight || 36;
         const componentStrokeWidth = options.dimensions.strokeWidth || 1;
@@ -276,7 +306,8 @@ class ScratchSVGPath {
             + closePath;
 
         const width = componentTotalWidth + componentStrokeWidth;
-        const height = componentDescriptionHeight + componentStrokeWidth + 32;
+        const height = componentDescriptionHeight + componentStrokeWidth + 32
+            + componentNextHeight;
 
         return {
             path,
@@ -285,6 +316,12 @@ class ScratchSVGPath {
                 height,
                 fittingHeight: height - 8 - componentStrokeWidth,
                 strokeWidth: componentStrokeWidth,
+            },
+            nextComponentContainer: {
+                width: componentTotalWidth,
+                height: componentNextHeight,
+                top: height - 8 - componentStrokeWidth,
+                left: 0,
             },
         };
     }

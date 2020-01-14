@@ -10,16 +10,20 @@ export default class ScratchComponent {
         this._type = componentType;
         this._truthyChild = null;
         this._falsyChild = null;
+        this._nextComponent = null;
         this._resizeListeners = [];
         this._truthyChildResizeHandlerBinded = this._truthyChildResizeHandler.bind(this);
         this._falsyChildResizeHandlerBinded = this._falsyChildResizeHandler.bind(this);
+        this._nextComponentResizeHandlerBinded = this._nextComponentResizeHandler.bind(this);
 
         this._assingOptions(options);
         this._createComponent(componentType);
 
+        const childrenLength = this._node.children.length;
         this._svg = this._node.children[0];
-        this._truthyChildContainer = this._node.children[1];
-        this._falsyChildContainer = this._node.children[2];
+        this._truthyChildContainer = childrenLength > 2 ? this._node.children[1] : null;
+        this._falsyChildContainer = childrenLength > 3 ? this._node.children[2] : null;
+        this._nextComponentContainer = this._node.children[childrenLength - 1];
     }
 
     _assingOptions(options) {
@@ -47,7 +51,9 @@ export default class ScratchComponent {
             + `top: ${options.position.top}px; left: ${options.position.left}px; position: absolute;">`
             + `<svg stroke-width="${dimensions.strokeWidth}" style="width: 100%; height: 100%">`
             + `<path d="${path}" /></svg>`
-            + `${childrenContainer}</div>`
+            + `${childrenContainer}<div class="scratch-next-component-container" `
+            + `style="width: 100%; height: ${dimensions.strokeWidth}px; top: ${dimensions.fittingHeight}px; `
+            + 'left: 0px; position: absolute;"></div></div>'
         );
 
         return innerHTML;
@@ -158,6 +164,28 @@ export default class ScratchComponent {
         }
     }
 
+    addNextComponent(next) {
+        if (!(next instanceof ScratchComponent)) return;
+
+        this.removeNextComponent();
+        this._nextComponent = next;
+        this._nextComponentContainer.appendChild(next._node);
+        this._nextComponentContainerHeightBackup = (
+            this._opt.dimensions.nextComponentContainerHeight);
+
+        this.resize({ nextComponentContainerHeight: next.getDimensions().fittingHeight });
+        next.addResizeListener(this._nextComponentResizeHandlerBinded);
+        next.setPosition({ top: 0, left: 0 });
+    }
+
+    removeNextComponent() {
+        if (this._nextComponent) {
+            this._nextComponentContainer.removeChild(this._nextComponentContainer.children[0]);
+            this._nextComponent = null;
+            this.resize({ nextComponentContainerHeight: 0 });
+        }
+    }
+
     resize(dimensions) {
         if (!ManipulateObject.isObject(dimensions)) return;
 
@@ -179,21 +207,25 @@ export default class ScratchComponent {
         const {
             truthyChildContainer: tcc,
             falsyChildContainer: fcc,
+            nextComponentContainer: ncc,
         } = dim;
 
         if (this._truthyChildContainer) {
-            this._truthyChildContainer.style.setProperty('height', `${tcc.height}px`);
+            this._truthyChildContainer.style.setProperty('height', `${tcc.height + ncc.height}px`);
             this._truthyChildContainer.style.setProperty('width', `${tcc.width}px`);
             this._truthyChildContainer.style.setProperty('top', `${tcc.top}px`);
             this._truthyChildContainer.style.setProperty('left', `${tcc.left}px`);
         }
 
         if (this._falsyChildContainer) {
-            this._falsyChildContainer.style.setProperty('height', `${fcc.height}px`);
+            this._falsyChildContainer.style.setProperty('height', `${fcc.height + ncc.height}px`);
             this._falsyChildContainer.style.setProperty('width', `${fcc.width}px`);
             this._falsyChildContainer.style.setProperty('top', `${fcc.top}px`);
             this._falsyChildContainer.style.setProperty('left', `${fcc.left}px`);
         }
+
+        this._nextComponentContainer.style.setProperty('width', `${dim.width}px`);
+        this._nextComponentContainer.style.setProperty('top', `${dim.fittingHeight}px`);
     }
 
     _updateDimensions(dimensions) {
@@ -208,6 +240,10 @@ export default class ScratchComponent {
 
     _falsyChildResizeHandler(target) {
         this.resize({ falsyChildContainerHeight: target.getDimensions().fittingHeight });
+    }
+
+    _nextComponentResizeHandler(target) {
+        this.resize({ nextComponentHeight: target.getDimensions().fittingHeight });
     }
 
     addResizeListener(listener) {

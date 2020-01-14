@@ -44,6 +44,18 @@ const statement3 = new ScratchComponent('statement', {
     },
 });
 
+const statement4 = new ScratchComponent('statement', {
+    dimensions: {
+        width: 180,
+        strokeWidth: 2,
+        descriptionHeight: 30,
+    },
+    attributes: {
+        class: 'statement',
+        id: 'statement4',
+    },
+});
+
 
 const ifElseBlock = new ScratchComponent('ifElseBlock', {
     position: {
@@ -112,6 +124,7 @@ const conditionalBlock = new ScratchComponent('conditionalBlock', {
     },
 });
 
+statement2.addNextComponent(statement4);
 ifElseBlock.addTruthyChild(conditionalBlock);
 ifElseBlock2.addTruthyChild(statement2);
 
@@ -119,12 +132,12 @@ window.setTimeout(() => {
     conditionalBlock.addTruthyChild(statement);
     window.setTimeout(() => {
         conditionalBlock.removeTruthyChild();
-    }, 1500);
+    }, 2000);
 }, 1000);
 
 window.setTimeout(() => {
     ifElseBlock2.addFalsyChild(statement3);
     window.setTimeout(() => {
         ifElseBlock2.removeFalsyChild();
-    }, 1500);
-}, 4000);
+    }, 2000);
+}, 2000);
