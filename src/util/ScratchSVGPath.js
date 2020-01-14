@@ -5,7 +5,7 @@ class ScratchSVGPath {
         ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
 
         const componentTotalWidth = options.dimensions.width || 200;
-        const componentTruthyChildrenContainerHeight = (
+        const componentTruthyChildContainerHeight = (
             options.dimensions.truthyChildContainerHeight || 28);
         const componentDescriptionHeight = options.dimensions.descriptionHeight || 36;
         const componentStrokeWidth = options.dimensions.strokeWidth || 1;
@@ -21,7 +21,7 @@ class ScratchSVGPath {
         const topRightCorner = 'a 4 4 0 0 1 4,4';
         const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
         const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
-        const innerShortLineToBottom = `v${componentTruthyChildrenContainerHeight - 8}`;
+        const innerShortLineToBottom = `v${componentTruthyChildContainerHeight - 8}`;
         const shortLineToRight = 'h 8';
         const shortLineToLeft = 'h -8';
         const shortLineToBottom = 'v 24';
@@ -52,7 +52,7 @@ class ScratchSVGPath {
             + bottomLeftCorner + closePath;
 
         const width = componentTotalWidth;
-        const height = componentTruthyChildrenContainerHeight + componentDescriptionHeight
+        const height = componentTruthyChildContainerHeight + componentDescriptionHeight
             + componentStrokeWidth + (componentMaleFitting ? 48 : 40);
 
         return {
@@ -64,7 +64,7 @@ class ScratchSVGPath {
                 strokeWidth: componentStrokeWidth,
                 truthyChildContainer: {
                     width: componentTotalWidth - 12,
-                    height: componentTruthyChildrenContainerHeight + componentStrokeWidth,
+                    height: componentTruthyChildContainerHeight + componentStrokeWidth,
                     top: componentDescriptionHeight + 8,
                     left: 12,
                 },
@@ -76,7 +76,7 @@ class ScratchSVGPath {
         ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
 
         const componentTotalWidth = options.dimensions.width || 200;
-        const componentTruthyChildrenContainerHeight = (
+        const componentTruthyChildContainerHeight = (
             options.dimensions.truthyChildContainerHeight || 28);
         const componentFalsyChildrenContainerHeight = (
             options.dimensions.falsyChildContainerHeight || 28);
@@ -98,7 +98,7 @@ class ScratchSVGPath {
         const topRightCorner = 'a 4 4 0 0 1 4,4';
         const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
         const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
-        const innerShortLineToBottomTrue = `v${componentTruthyChildrenContainerHeight - 8}`;
+        const innerShortLineToBottomTrue = `v${componentTruthyChildContainerHeight - 8}`;
         const innerShortLineToBottomFalse = `v${componentFalsyChildrenContainerHeight - 8}`;
         const shortLineToRight = 'h 8';
         const shortLineToLeft = 'h -8';
@@ -136,7 +136,7 @@ class ScratchSVGPath {
             + bottomLeftCorner + closePath;
 
         const width = componentTotalWidth;
-        const height = componentTruthyChildrenContainerHeight
+        const height = componentTruthyChildContainerHeight
             + componentFalsyChildrenContainerHeight
             + componentDescriptionHeight + componentStrokeWidth
             + (componentMaleFitting ? 80 : 72);
@@ -150,14 +150,14 @@ class ScratchSVGPath {
                 strokeWidth: componentStrokeWidth,
                 truthyChildContainer: {
                     width: componentTotalWidth - 12,
-                    height: componentTruthyChildrenContainerHeight + componentStrokeWidth,
+                    height: componentTruthyChildContainerHeight + componentStrokeWidth,
                     top: componentDescriptionHeight + 8,
                     left: 12,
                 },
                 falsyChildContainer: {
                     width: componentTotalWidth - 12,
                     height: componentFalsyChildrenContainerHeight + componentStrokeWidth,
-                    top: componentDescriptionHeight + 8 + componentTruthyChildrenContainerHeight
+                    top: componentDescriptionHeight + 8 + componentTruthyChildContainerHeight
                         + 32,
                     left: 12,
                 },

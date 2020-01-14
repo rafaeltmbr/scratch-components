@@ -12,6 +12,7 @@ export default class ScratchComponent {
         this._falsyChild = null;
         this._resizeListeners = [];
         this._truthyChildResizeHandlerBinded = this._truthyChildResizeHandler.bind(this);
+        this._falsyChildResizeHandlerBinded = this._falsyChildResizeHandler.bind(this);
 
         this._assingOptions(options);
         this._createComponent(componentType);
@@ -137,6 +138,26 @@ export default class ScratchComponent {
         }
     }
 
+    addFalsyChild(child) {
+        if (!(child instanceof ScratchComponent)) return;
+
+        this.removeFalsyChild();
+        this._falsyChild = child;
+        this._falsyChildContainer.appendChild(child._node);
+        this._falsyChildContainerHeightBackup = this._opt.dimensions.falsyChildContainerHeight;
+        this.resize({ falsyChildContainerHeight: child.getDimensions().fittingHeight });
+        child.addResizeListener(this._falsyChildResizeHandlerBinded);
+        child.setPosition({ top: 0, left: 0 });
+    }
+
+    removeFalsyChild() {
+        if (this._falsyChild) {
+            this._falsyChildContainer.removeChild(this._falsyChildContainer.children[0]);
+            this._falsyChild = null;
+            this.resize({ falsyChildContainerHeight: this._falsyChildContainerHeightBackup });
+        }
+    }
+
     resize(dimensions) {
         if (!ManipulateObject.isObject(dimensions)) return;
 
@@ -149,12 +170,12 @@ export default class ScratchComponent {
         this._svg.setAttribute('stroke-width', dim.strokeWidth);
         this._svg.children[0].setAttribute('d', path);
 
-        this._resizeChildContainers(dim);
+        this._resizeAndRepositionChildContainers(dim);
         this._updateDimensions(dim);
         this._callResizeListeners();
     }
 
-    _resizeChildContainers(dim) {
+    _resizeAndRepositionChildContainers(dim) {
         const {
             truthyChildContainer: tcc,
             falsyChildContainer: fcc,
@@ -163,11 +184,15 @@ export default class ScratchComponent {
         if (this._truthyChildContainer) {
             this._truthyChildContainer.style.setProperty('height', `${tcc.height}px`);
             this._truthyChildContainer.style.setProperty('width', `${tcc.width}px`);
+            this._truthyChildContainer.style.setProperty('top', `${tcc.top}px`);
+            this._truthyChildContainer.style.setProperty('left', `${tcc.left}px`);
         }
 
         if (this._falsyChildContainer) {
             this._falsyChildContainer.style.setProperty('height', `${fcc.height}px`);
             this._falsyChildContainer.style.setProperty('width', `${fcc.width}px`);
+            this._falsyChildContainer.style.setProperty('top', `${fcc.top}px`);
+            this._falsyChildContainer.style.setProperty('left', `${fcc.left}px`);
         }
     }
 
@@ -179,6 +204,10 @@ export default class ScratchComponent {
 
     _truthyChildResizeHandler(target) {
         this.resize({ truthyChildContainerHeight: target.getDimensions().fittingHeight });
+    }
+
+    _falsyChildResizeHandler(target) {
+        this.resize({ falsyChildContainerHeight: target.getDimensions().fittingHeight });
     }
 
     addResizeListener(listener) {
