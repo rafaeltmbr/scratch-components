@@ -12,8 +12,8 @@ class ScratchSVGPath {
         const componentStrokeWidth = options.dimensions.strokeWidth || 1;
         const componentMaleFitting = typeof options.appearence.maleFitting === 'undefined'
             ? true : options.appearence.maleFitting;
-        const componentFemaleFitting = typeof options.appearence.femaleFitting === 'undefined'
-            ? true : options.appearence.femaleFitting;
+        const componentFemaleFitting = typeof options.appearence.truthyFemaleFitting === 'undefined'
+            ? true : options.appearence.truthyFemaleFitting;
 
         const startPoint = `M ${componentStrokeWidth / 2},${4 + componentStrokeWidth / 2}`;
         const topLeftCorner = 'a 4 4 0 0 1 4,-4';

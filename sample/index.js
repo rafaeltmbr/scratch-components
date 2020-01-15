@@ -1,14 +1,13 @@
 import ScratchComponent from '../src/components/ScratchComponent';
 
 const statement = new ScratchComponent('statement', {
-    position: {
-        top: 10,
-        left: 10,
-    },
     dimensions: {
         width: 250,
         strokeWidth: 2,
         descriptionHeight: 60,
+    },
+    appearence: {
+        maleFitting: true,
     },
     attributes: {
         class: 'statement',
@@ -17,14 +16,13 @@ const statement = new ScratchComponent('statement', {
 });
 
 const statement2 = new ScratchComponent('statement', {
-    position: {
-        top: 10,
-        left: 10,
-    },
     dimensions: {
         width: 150,
         strokeWidth: 2,
         descriptionHeight: 30,
+    },
+    appearence: {
+        maleFitting: false,
     },
     attributes: {
         class: 'statement',
@@ -58,10 +56,6 @@ const statement4 = new ScratchComponent('statement', {
 
 
 const ifElseBlock = new ScratchComponent('ifElseBlock', {
-    position: {
-        top: 30,
-        left: 100,
-    },
     dimensions: {
         width: 200,
         strokeWidth: 2,
@@ -76,16 +70,13 @@ const ifElseBlock = new ScratchComponent('ifElseBlock', {
     attributes: {
         'data-selected': true,
         class: 'conditional',
+        id: 'main-block',
     },
 });
 
 document.body.appendChild(ifElseBlock.getNodeElement());
 
 const ifElseBlock2 = new ScratchComponent('ifElseBlock', {
-    position: {
-        top: 30,
-        left: 100,
-    },
     dimensions: {
         width: 150,
         strokeWidth: 2,
@@ -106,16 +97,12 @@ ifElseBlock.addFalsyChild(ifElseBlock2);
 
 
 const conditionalBlock = new ScratchComponent('conditionalBlock', {
-    position: {
-        top: 350,
-        left: 20,
-    },
     dimensions: {
         strokeWidth: 2,
         truthyChildrenContainerHeight: 50,
     },
     appearence: {
-        femaleFitting: false,
+        truthyFemaleFitting: false,
     },
     attributes: {
         'data-selected': true,

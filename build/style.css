@@ -7,11 +7,16 @@
 .statement {
   fill: #4C97FF;
   stroke: #3373CC;
+  opacity: 0.8;
 }
 
 .conditional {
   fill: #FFAB19;
   stroke: #CF8B17;
+}
+
+#main-block {
+  margin: 10px auto;
 }
 
 #if {

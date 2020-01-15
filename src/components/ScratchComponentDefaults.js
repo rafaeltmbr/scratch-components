@@ -1,8 +1,5 @@
 export default {
-    position: {
-        top: 0,
-        left: 0,
-    },
+    position: 'relative',
     dimensions: {
         width: 100,
         descriptionHeight: 24,
