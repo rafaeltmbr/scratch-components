@@ -3,7 +3,7 @@
 import ScratchSVGPath from '../util/ScratchSVGPath';
 import ManipulateDOM from '../util/ManipulateDOM';
 import ManipulateObject from '../util/ManipulateObject';
-import defaults from './ScratchComponentDefaults';
+import defaults from '../util/ScratchComponentDefaults';
 
 export default class ScratchComponent {
     constructor(componentType, options = {}) {
@@ -98,13 +98,17 @@ export default class ScratchComponent {
     }
 
     static createSVGElementInnerHTML(path, dimensions, options) {
-        const attributes = ScratchComponent.convertAttributesToHTML(options.attributes);
+        const attributes = {};
+        ManipulateObject.objectHardCopy(attributes, options.attributes);
+        ManipulateObject.objectMerge(attributes.style, dimensions);
+
+        const styleFormmated = ScratchComponent.createStringOfAttributes(attributes.style, ': ', '; ');
+        const attributesFormmated = ScratchComponent.createStringOfAttributes(attributes, '="', '" ');
         const childrenContainer = ScratchComponent.createChildContainers(dimensions);
 
         const innerHTML = (
-            `<div ${attributes} style="width: ${dimensions.width}px; height: ${dimensions.height}px; `
-            + `position: ${options.position};">`
-            + `<svg stroke-width="${dimensions.strokeWidth}" style="width: 100%; height: 100%">`
+            `<div ${attributesFormmated} style="${styleFormmated}">`
+            + '<svg style="width: 100%; height: 100%">'
             + `<path d="${path}" /></svg>`
             + `${childrenContainer}<div class="scratch-next-component-container" `
             + `style="width: 100%; height: ${dimensions.strokeWidth}px; top: ${dimensions.fittingHeight}px; `
@@ -112,11 +116,6 @@ export default class ScratchComponent {
         );
 
         return innerHTML;
-    }
-
-    static convertAttributesToHTML(attributes) {
-        const html = Object.keys(attributes).map((k) => `${k}="${attributes[k]}"`).join(' ');
-        return html;
     }
 
     static createChildContainers(dimensions) {
@@ -148,6 +147,16 @@ export default class ScratchComponent {
         return containerHTML;
     }
 
+    static createStringOfAttributes(attributes = [], nameValueSeparator = '=', attributeSeparator = ' ') {
+        const attr = Object.keys(attributes)
+            .map((k) => (
+                typeof attributes[k] === 'string'
+                    ? `${k + nameValueSeparator + attributes[k]}`
+                    : ''))
+            .join(attributeSeparator);
+        return attr;
+    }
+
     getNodeElement() {
         return this._node;
     }
@@ -167,7 +176,6 @@ export default class ScratchComponent {
 
     addTruthyChild(child) {
         if (!(child instanceof ScratchComponent)) return;
-
         this.removeTruthyChild();
         this._truthyChild = child;
         this._truthyChildContainer.appendChild(child._node);
@@ -185,7 +193,6 @@ export default class ScratchComponent {
 
     addFalsyChild(child) {
         if (!(child instanceof ScratchComponent)) return;
-
         this.removeFalsyChild();
         this._falsyChild = child;
         this._falsyChildContainer.appendChild(child._node);
@@ -229,8 +236,8 @@ export default class ScratchComponent {
         this._adjustFitting();
         const { path, dimensions: dim } = ScratchSVGPath[this._type](this._opt);
 
-        this._node.style.setProperty('width', `${dim.width}px`);
-        this._node.style.setProperty('height', `${dim.height}px`);
+        this._node.style.setProperty('width', dim.width);
+        this._node.style.setProperty('height', dim.height);
 
         this._svg.setAttribute('stroke-width', dim.strokeWidth);
         this._svg.children[0].setAttribute('d', path);

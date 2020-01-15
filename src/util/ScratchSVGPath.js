@@ -1,36 +1,25 @@
 import ManipulateObject from './ManipulateObject';
+import defaults from './ScratchComponentDefaults';
 
 class ScratchSVGPath {
-    static conditionalBlock(options = {}) {
-        ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
-
-        const componentNextHeight = options.dimensions.nextComponentHeight || 0;
-        const componentTotalWidth = options.dimensions.width || 200;
-        const componentTruthyChildContainerHeight = (
-            options.dimensions.truthyChildContainerHeight || 28);
-        const componentDescriptionHeight = options.dimensions.descriptionHeight || 36;
-        const componentStrokeWidth = options.dimensions.strokeWidth || 1;
-        const componentMaleFitting = typeof options.appearence.maleFitting === 'undefined'
-            ? true : options.appearence.maleFitting;
-        const componentFemaleFitting = typeof options.appearence.truthyFemaleFitting === 'undefined'
-            ? true : options.appearence.truthyFemaleFitting;
-
-        const startPoint = `M ${componentStrokeWidth / 2},${4 + componentStrokeWidth / 2}`;
+    static truthyBlock(options = {}) {
+        const opt = ScratchSVGPath.getFormmatedOptions(options);
+        const startPoint = `M ${opt.strokeWidth / 2},${4 + opt.strokeWidth / 2}`;
         const topLeftCorner = 'a 4 4 0 0 1 4,-4';
         const innerTopLeftCorner = 'a 4 4 0 0 0 -4,4';
         const innerBottomLeftCorner = 'a 4 4 0 0 0 4,4';
         const topRightCorner = 'a 4 4 0 0 1 4,4';
         const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
         const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
-        const innerShortLineToBottom = `v${componentTruthyChildContainerHeight - 8}`;
+        const innerShortLineToBottom = `v${opt.truthyChildContainerHeight - 8}`;
         const shortLineToRight = 'h 8';
         const shortLineToLeft = 'h -8';
         const shortLineToBottom = 'v 24';
-        const midLineToBottom = `v${componentDescriptionHeight}`;
-        const midLineToLeft = `h${64 - componentTotalWidth + componentStrokeWidth}`;
-        const midLineToRight = `h${componentTotalWidth - 64 - componentStrokeWidth}`;
-        const longLineToRight = `h${componentTotalWidth - 52 - componentStrokeWidth}`;
-        const longLineToLeft = `h${52 - componentTotalWidth + componentStrokeWidth}`;
+        const midLineToBottom = `v${opt.lineHeight}`;
+        const midLineToLeft = `h${64 - opt.totalWidth + opt.strokeWidth}`;
+        const midLineToRight = `h${opt.totalWidth - 64 - opt.strokeWidth}`;
+        const longLineToRight = `h${opt.totalWidth - 52 - opt.strokeWidth}`;
+        const longLineToLeft = `h${52 - opt.totalWidth + opt.strokeWidth}`;
         const femaleFitting = 'c 2,0 3,1 4,2 l 4,4 c 1,1 2,2 4,2 h12 c 2,0 3,-1 4,-2 l 4,-4 c 1,-1 2,-2 4,-2';
         const femaleFittingBypass = 'h 36';
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
@@ -44,78 +33,64 @@ class ScratchSVGPath {
             + shortLineToLeft + innerTopLeftCorner
             + innerShortLineToBottom + innerBottomLeftCorner
             + shortLineToRight
-            + (componentFemaleFitting ? femaleFitting : femaleFittingBypass)
+            + (opt.truthyFemaleFitting ? femaleFitting : femaleFittingBypass)
             + midLineToRight
             + topRightCorner + shortLineToBottom + bottomRightCorner
             + longLineToLeft
-            + (componentMaleFitting ? maleFitting : maleFittingBypass)
+            + (opt.maleFitting ? maleFitting : maleFittingBypass)
             + shortLineToLeft
             + bottomLeftCorner + closePath;
 
-        const width = componentTotalWidth;
-        const height = componentTruthyChildContainerHeight + componentDescriptionHeight
-            + componentStrokeWidth + (componentMaleFitting ? 48 : 40) + componentNextHeight;
+        const width = opt.totalWidth;
+        const height = opt.truthyChildContainerHeight + opt.lineHeight
+            + opt.strokeWidth + (opt.maleFitting ? 48 : 40)
+            + opt.nextHeight;
 
         return {
             path,
             dimensions: {
-                width,
-                height,
-                fittingHeight: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
-                strokeWidth: componentStrokeWidth,
+                width: `${width}px`,
+                height: `${height}px`,
+                'stroke-width': `${opt.strokeWidth}px`,
+                fittingHeight: height - (opt.maleFitting ? 8 : 0)
+                    - opt.strokeWidth,
                 truthyChildContainer: {
-                    width: componentTotalWidth - 12,
-                    height: componentTruthyChildContainerHeight + componentStrokeWidth,
-                    top: componentDescriptionHeight + 8,
+                    width: opt.totalWidth - 12,
+                    height: opt.truthyChildContainerHeight + opt.strokeWidth,
+                    top: opt.lineHeight + 8,
                     left: 12,
                 },
                 nextComponentContainer: {
-                    width: componentTotalWidth,
-                    height: componentNextHeight,
-                    top: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
+                    width: opt.totalWidth,
+                    height: opt.nextHeight,
+                    top: height - (opt.maleFitting ? 8 : 0) - opt.strokeWidth,
                     left: 0,
                 },
             },
         };
     }
 
-    static ifElseBlock(options = {}) {
+    static truthyFalsyBlock(options = {}) {
         ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
+        const opt = ScratchSVGPath.getFormmatedOptions(options);
 
-        const componentNextHeight = options.dimensions.nextComponentHeight || 0;
-        const componentTotalWidth = options.dimensions.width || 200;
-        const componentTruthyChildContainerHeight = (
-            options.dimensions.truthyChildContainerHeight || 28);
-        const componentFalsyChildrenContainerHeight = (
-            options.dimensions.falsyChildContainerHeight || 28);
-
-        const componentDescriptionHeight = options.dimensions.descriptionHeight || 36;
-        const componentStrokeWidth = options.dimensions.strokeWidth || 1;
-
-        const componentMaleFitting = typeof options.appearence.maleFitting === 'undefined'
-            ? true : options.appearence.maleFitting;
-        const componentTruthyFemaleFitting = typeof options.appearence.truthyFemaleFitting === 'undefined'
-            ? true : options.appearence.truthyFemaleFitting;
-        const componentFalsyFemaleFitting = typeof options.appearence.falsyFemaleFitting === 'undefined'
-            ? true : options.appearence.falsyFemaleFitting;
-
-        const startPoint = `M ${componentStrokeWidth / 2},${4 + componentStrokeWidth / 2}`;
+        const startPoint = `M ${opt.strokeWidth / 2},${4 + opt.strokeWidth / 2}`;
         const topLeftCorner = 'a 4 4 0 0 1 4,-4';
         const innerTopLeftCorner = 'a 4 4 0 0 0 -4,4';
         const innerBottomLeftCorner = 'a 4 4 0 0 0 4,4';
         const topRightCorner = 'a 4 4 0 0 1 4,4';
         const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
         const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
-        const innerShortLineToBottomTrue = `v${componentTruthyChildContainerHeight - 8}`;
-        const innerShortLineToBottomFalse = `v${componentFalsyChildrenContainerHeight - 8}`;
+        const innerShortLineToBottomTrue = `v${opt.truthyChildContainerHeight - 8}`;
+        const innerShortLineToBottomFalse = `v${opt.falsyChildContainerHeight - 8}`;
         const shortLineToRight = 'h 8';
         const shortLineToLeft = 'h -8';
         const shortLineToBottom = 'v 24';
-        const midLineToBottom = `v${componentDescriptionHeight}`;
-        const midLineToLeft = `h${64 - componentTotalWidth + componentStrokeWidth}`;
-        const midLineToRight = `h${componentTotalWidth - 64 - componentStrokeWidth}`;
-        const longLineToRight = `h${componentTotalWidth - 52 - componentStrokeWidth}`;
-        const longLineToLeft = `h${52 - componentTotalWidth + componentStrokeWidth}`;
+        const midLineToBottom = `v${opt.lineHeight}`;
+        const midLineToLeft = `h${64 - opt.totalWidth + opt.strokeWidth}`;
+        const midLineToRight = `h${opt.totalWidth - 64 - opt.strokeWidth}`;
+        const longLineToRight = `h${opt.totalWidth - 52 - opt.strokeWidth}`;
+        const longLineToLeft = `h${52 - opt.totalWidth + opt.strokeWidth}`;
         const femaleFitting = 'c 2,0 3,1 4,2 l 4,4 c 1,1 2,2 4,2 h12 c 2,0 3,-1 4,-2 l 4,-4 c 1,-1 2,-2 4,-2';
         const femaleFittingBypass = 'h 36';
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
@@ -128,51 +103,51 @@ class ScratchSVGPath {
             + maleFitting + shortLineToLeft + innerTopLeftCorner
             + innerShortLineToBottomTrue + innerBottomLeftCorner
             + shortLineToRight
-            + (componentTruthyFemaleFitting ? femaleFitting : femaleFittingBypass)
+            + (opt.truthyFemaleFitting ? femaleFitting : femaleFittingBypass)
             + midLineToRight
             + topRightCorner
             + shortLineToBottom + bottomRightCorner + midLineToLeft
             + maleFitting + shortLineToLeft + innerTopLeftCorner
             + innerShortLineToBottomFalse + innerBottomLeftCorner
             + shortLineToRight
-            + (componentFalsyFemaleFitting ? femaleFitting : femaleFittingBypass)
+            + (opt.falsyFemaleFitting ? femaleFitting : femaleFittingBypass)
             + midLineToRight
             + topRightCorner + shortLineToBottom + bottomRightCorner
             + longLineToLeft
-            + (componentMaleFitting ? maleFitting : maleFittingBypass)
+            + (opt.maleFitting ? maleFitting : maleFittingBypass)
             + shortLineToLeft
             + bottomLeftCorner + closePath;
 
-        const width = componentTotalWidth;
-        const height = componentTruthyChildContainerHeight
-            + componentFalsyChildrenContainerHeight + componentNextHeight
-            + componentDescriptionHeight + componentStrokeWidth
-            + (componentMaleFitting ? 80 : 72);
+        const width = opt.totalWidth;
+        const height = opt.truthyChildContainerHeight
+            + opt.falsyChildContainerHeight + opt.nextHeight
+            + opt.lineHeight + opt.strokeWidth
+            + (opt.maleFitting ? 80 : 72);
 
         return {
             path,
             dimensions: {
-                width,
-                height,
-                fittingHeight: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
-                strokeWidth: componentStrokeWidth,
+                width: `${width}px`,
+                height: `${height}px`,
+                fittingHeight: height - (opt.maleFitting ? 8 : 0) - opt.strokeWidth,
+                'stroke-width': `${opt.strokeWidth}px`,
                 truthyChildContainer: {
-                    width: componentTotalWidth - 12,
-                    height: componentTruthyChildContainerHeight + componentStrokeWidth,
-                    top: componentDescriptionHeight + 8,
+                    width: opt.totalWidth - 12,
+                    height: opt.truthyChildContainerHeight + opt.strokeWidth,
+                    top: opt.lineHeight + 8,
                     left: 12,
                 },
                 falsyChildContainer: {
-                    width: componentTotalWidth - 12,
-                    height: componentFalsyChildrenContainerHeight + componentStrokeWidth,
-                    top: componentDescriptionHeight + 8 + componentTruthyChildContainerHeight
+                    width: opt.totalWidth - 12,
+                    height: opt.falsyChildContainerHeight + opt.strokeWidth,
+                    top: opt.lineHeight + 8 + opt.truthyChildContainerHeight
                         + 32,
                     left: 12,
                 },
                 nextComponentContainer: {
-                    width: componentTotalWidth,
-                    height: componentNextHeight,
-                    top: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
+                    width: opt.totalWidth,
+                    height: opt.nextHeight,
+                    top: height - (opt.maleFitting ? 8 : 0) - opt.strokeWidth,
                     left: 0,
                 },
             },
@@ -181,24 +156,18 @@ class ScratchSVGPath {
 
     static statement(options = {}) {
         ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
+        const opt = ScratchSVGPath.getFormmatedOptions(options);
 
-        const componentNextHeight = options.dimensions.nextComponentHeight || 0;
-        const componentTotalWidth = options.dimensions.width || 200;
-        const componentDescriptionHeight = options.dimensions.descriptionHeight || 36;
-        const componentStrokeWidth = options.dimensions.strokeWidth || 1;
-        const componentMaleFitting = typeof options.appearence.maleFitting === 'undefined'
-            ? true : options.appearence.maleFitting;
-
-        const startPoint = `M ${componentStrokeWidth / 2},${4 + componentStrokeWidth / 2}`;
+        const startPoint = `M ${opt.strokeWidth / 2},${4 + opt.strokeWidth / 2}`;
         const topLeftCorner = 'a 4 4 0 0 1 4,-4';
         const topRightCorner = 'a 4 4 0 0 1 4,4';
         const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
         const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
         const shortLineToRight = 'h 8';
         const shortLineToLeft = 'h -8';
-        const midLineToBottom = `v${componentDescriptionHeight}`;
-        const longLineToRight = `h${componentTotalWidth - 52 - componentStrokeWidth}`;
-        const longLineToLeft = `h${52 - componentTotalWidth + componentStrokeWidth}`;
+        const midLineToBottom = `v${opt.lineHeight}`;
+        const longLineToRight = `h${opt.totalWidth - 52 - opt.strokeWidth}`;
+        const longLineToLeft = `h${52 - opt.totalWidth + opt.strokeWidth}`;
         const femaleFitting = 'c 2,0 3,1 4,2 l 4,4 c 1,1 2,2 4,2 h12 c 2,0 3,-1 4,-2 l 4,-4 c 1,-1 2,-2 4,-2';
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
         const maleFittingBypass = 'h -36';
@@ -207,26 +176,26 @@ class ScratchSVGPath {
         const path = startPoint + topLeftCorner + shortLineToRight
             + femaleFitting + longLineToRight + topRightCorner
             + midLineToBottom + bottomRightCorner + longLineToLeft
-            + (componentMaleFitting ? maleFitting : maleFittingBypass)
+            + (opt.maleFitting ? maleFitting : maleFittingBypass)
             + shortLineToLeft + bottomLeftCorner
             + closePath;
 
-        const width = componentTotalWidth;
-        const height = componentDescriptionHeight + componentStrokeWidth
-            + (componentMaleFitting ? 16 : 8) + componentNextHeight;
+        const width = opt.totalWidth;
+        const height = opt.lineHeight + opt.strokeWidth
+            + (opt.maleFitting ? 16 : 8) + opt.nextHeight;
 
         return {
             path,
             dimensions: {
-                width,
-                height,
-                fittingHeight: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
-                strokeWidth: componentStrokeWidth,
+                width: `${width}px`,
+                height: `${height}px`,
+                fittingHeight: height - (opt.maleFitting ? 8 : 0) - opt.strokeWidth,
+                'stroke-width': `${opt.strokeWidth}px`,
             },
             nextComponentContainer: {
-                width: componentTotalWidth,
-                height: componentNextHeight,
-                top: height - (componentMaleFitting ? 8 : 0) - componentStrokeWidth,
+                width: opt.totalWidth,
+                height: opt.nextHeight,
+                top: height - (opt.maleFitting ? 8 : 0) - opt.strokeWidth,
                 left: 0,
             },
         };
@@ -234,21 +203,17 @@ class ScratchSVGPath {
 
     static event(options = {}) {
         ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
+        const opt = ScratchSVGPath.getFormmatedOptions(options);
 
-        const componentNextHeight = options.dimensions.nextComponentHeight || 0;
-        const componentTotalWidth = options.dimensions.width || 200;
-        const componentDescriptionHeight = options.dimensions.descriptionHeight || 36;
-        const componentStrokeWidth = options.dimensions.strokeWidth || 1;
-
-        const startPoint = `M ${componentStrokeWidth / 2},${17 + componentStrokeWidth / 2}`;
+        const startPoint = `M ${opt.strokeWidth / 2},${17 + opt.strokeWidth / 2}`;
         const bigArc = 'c 25,-22 71,-22 96,0';
         const topRightCorner = 'a 4 4 0 0 1 4,4';
         const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
         const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
         const shortLineToLeft = 'h -8';
-        const midLineToBottom = `v${componentDescriptionHeight}`;
-        const longLineToRight = `h${componentTotalWidth - 100}`;
-        const longLineToLeft = `h${52 - componentTotalWidth}`;
+        const midLineToBottom = `v${opt.lineHeight}`;
+        const longLineToRight = `h${opt.totalWidth - 100}`;
+        const longLineToLeft = `h${52 - opt.totalWidth}`;
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
         const closePath = 'z';
 
@@ -258,22 +223,22 @@ class ScratchSVGPath {
             + maleFitting + shortLineToLeft + bottomLeftCorner
             + closePath;
 
-        const width = componentTotalWidth + componentStrokeWidth;
-        const height = componentDescriptionHeight + 33 + componentStrokeWidth
-            + componentNextHeight;
+        const width = opt.totalWidth + opt.strokeWidth;
+        const height = opt.lineHeight + 33 + opt.strokeWidth
+            + opt.nextHeight;
 
         return {
             path,
             dimensions: {
-                width,
-                height,
-                fittingHeight: height - 8 - componentStrokeWidth,
-                strokeWidth: componentStrokeWidth,
+                width: `${width}px`,
+                height: `${height}px`,
+                fittingHeight: height - 8 - opt.strokeWidth,
+                'stroke-width': `${opt.strokeWidth}px`,
             },
             nextComponentContainer: {
-                width: componentTotalWidth,
-                height: componentNextHeight,
-                top: height - 8 - componentStrokeWidth,
+                width: opt.totalWidth,
+                height: opt.nextHeight,
+                top: height - 8 - opt.strokeWidth,
                 left: 0,
             },
         };
@@ -281,21 +246,17 @@ class ScratchSVGPath {
 
     static function(options = {}) {
         ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
+        const opt = ScratchSVGPath.getFormmatedOptions(options);
 
-        const componentNextHeight = options.dimensions.nextComponentHeight || 0;
-        const componentTotalWidth = options.dimensions.width || 200;
-        const componentDescriptionHeight = options.dimensions.descriptionHeight || 36;
-        const componentStrokeWidth = options.dimensions.strokeWidth || 1;
-
-        const startPoint = `M ${componentStrokeWidth / 2},${20 + componentStrokeWidth / 2}`;
+        const startPoint = `M ${opt.strokeWidth / 2},${20 + opt.strokeWidth / 2}`;
         const topLeftCorner = 'a 20 20 0 0 1 20,-20';
         const topRightCorner = 'a 20 20 0 0 1 20,20';
         const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
         const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
         const shortLineToLeft = 'h -8';
-        const midLineToBottom = `v${componentDescriptionHeight}`;
-        const longLineToRight = `h${componentTotalWidth - 40}`;
-        const longLineToLeft = `h${52 - componentTotalWidth}`;
+        const midLineToBottom = `v${opt.lineHeight}`;
+        const longLineToRight = `h${opt.totalWidth - 40}`;
+        const longLineToLeft = `h${52 - opt.totalWidth}`;
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
         const closePath = 'z';
 
@@ -305,24 +266,50 @@ class ScratchSVGPath {
             + maleFitting + shortLineToLeft + bottomLeftCorner
             + closePath;
 
-        const width = componentTotalWidth + componentStrokeWidth;
-        const height = componentDescriptionHeight + componentStrokeWidth + 32
-            + componentNextHeight;
+        const width = opt.totalWidth + opt.strokeWidth;
+        const height = opt.lineHeight + opt.strokeWidth + 32
+            + opt.nextHeight;
 
         return {
             path,
             dimensions: {
-                width,
-                height,
-                fittingHeight: height - 8 - componentStrokeWidth,
-                strokeWidth: componentStrokeWidth,
+                width: `${width}px`,
+                height: `${height}px`,
+                fittingHeight: height - 8 - opt.strokeWidth,
+                'stroke-width': `${opt.strokeWidth}px`,
             },
             nextComponentContainer: {
-                width: componentTotalWidth,
-                height: componentNextHeight,
-                top: height - 8 - componentStrokeWidth,
+                width: opt.totalWidth,
+                height: opt.nextHeight,
+                top: height - 8 - opt.strokeWidth,
                 left: 0,
             },
+        };
+    }
+
+    static getFormmatedOptions(options) {
+        ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
+
+        return {
+            nextHeight: (
+                options.dimensions.nextComponentHeight || defaults.dimensions.nextComponentHeight),
+            totalWidth: parseInt(
+                options.attributes.style.width || defaults.attributes.style.width, 10,
+            ),
+            truthyChildContainerHeight: (options.dimensions.truthyChildContainerHeight
+                || defaults.dimensions.truthyChildContainerHeight),
+            falsyChildContainerHeight: (options.dimensions.falsyChildContainerHeight
+                || defaults.dimensions.falsyChildContainerHeight),
+            lineHeight: parseInt(options.attributes.style['line-height']
+                || defaults.attributes.style['line-height'], 10),
+            strokeWidth: parseInt(options.attributes.style['stroke-width']
+                || defaults.attributes.style['stroke-width'], 10),
+            maleFitting: typeof options.appearence.maleFitting === 'undefined'
+                ? true : options.appearence.maleFitting,
+            truthyFemaleFitting: typeof options.appearence.truthyFemaleFitting === 'undefined'
+                ? true : options.appearence.truthyFemaleFitting,
+            falsyFemaleFitting: typeof options.appearence.falsyFemaleFitting === 'undefined'
+                ? true : options.appearence.falsyFemaleFitting,
         };
     }
 }

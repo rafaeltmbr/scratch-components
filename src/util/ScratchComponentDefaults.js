@@ -1,9 +1,5 @@
 export default {
-    position: 'relative',
     dimensions: {
-        width: 100,
-        descriptionHeight: 24,
-        strokeWidth: 1,
         truthyChildContainerHeight: 20,
         falsyChildContainerHeight: 20,
         nextComponentHeight: 0,
@@ -16,5 +12,11 @@ export default {
     attributes: {
         class: '',
         id: '',
+        style: {
+            position: 'relative',
+            width: '100px',
+            'stroke-width': '1px',
+            'line-height': '24px',
+        },
     },
 };

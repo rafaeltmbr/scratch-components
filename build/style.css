@@ -6,34 +6,16 @@
 
 .statement {
   fill: #4C97FF;
-  stroke: #3373CC;
+  stroke: #7120ce;
   opacity: 0.8;
 }
 
-.conditional {
+.truthyBlock {
   fill: #FFAB19;
-  stroke: #CF8B17;
+  stroke: #b44505;
 }
 
-#main-block {
-  left: 10px;
-  top: 10px;
-}
-
-#copy-block {
-  stroke: #d60000;
-  right: 60px;
-  top: 10px;
-}
-
-#if {
-  stroke: #d15115;
-}
-
-#statement2 {
-  stroke: #7722ff;
-}
-
-#statement4 {
-  stroke: #ba27e7;
+.truthyFalsyBlock {
+  fill: #81d37a;
+  stroke: #0aa812;
 }
