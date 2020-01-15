@@ -3,7 +3,7 @@
 import ScratchSVGPath from '../util/ScratchSVGPath';
 import ManipulateDOM from '../util/ManipulateDOM';
 import ManipulateObject from '../util/ManipulateObject';
-import defaults from '../util/ScratchComponentDefaults';
+import defaults from './ScratchComponentDefaults';
 
 export default class ScratchComponent {
     constructor(componentType, options = {}) {
@@ -17,7 +17,6 @@ export default class ScratchComponent {
     _newComponentConstructor(type, options) {
         this._createInitialProperties(type);
         this._assingOptions(options);
-        this._createAppearenceAndDimensionBackup();
         this._createComponent(type);
         this._createNodeShortcuts();
     }
@@ -25,7 +24,6 @@ export default class ScratchComponent {
     _copyConstructor(component, options) {
         this._createInitialProperties(component._type);
         this._assignOptionsFromComponent(component, options);
-        this._copyAppearenceAndDimensionBackupFromComponent(component);
         this._createComponent(this._type);
         this._createNodeShortcuts();
         this._addChildrenAndNextComponents(component);
@@ -35,37 +33,21 @@ export default class ScratchComponent {
         this._type = type;
         this._opt = {};
         this._node = null;
-        this._truthyChild = null;
-        this._falsyChild = null;
-        this._nextComponent = null;
+        this._truthy = null;
+        this._falsy = null;
+        this._next = null;
         this._resizeListeners = [];
-        this._truthyChildResizeHandlerBinded = this._truthyChildResizeHandler.bind(this);
-        this._falsyChildResizeHandlerBinded = this._falsyChildResizeHandler.bind(this);
-        this._nextComponentResizeHandlerBinded = this._nextComponentResizeHandler.bind(this);
-    }
-
-    _createAppearenceAndDimensionBackup() {
-        this._truthyChildContainerHeightOriginal = this._opt.dimensions.truthyChildContainerHeight;
-        this._falsyChildContainerHeightOriginal = this._opt.dimensions.falsyChildContainerHeight;
-        this._fittingBackup = {
-            male: this._opt.appearence.maleFitting,
-            truthy: this._opt.appearence.truthyFemaleFitting,
-            falsy: this._opt.appearence.falsyFemaleFitting,
-        };
-    }
-
-    _copyAppearenceAndDimensionBackupFromComponent(component) {
-        this._truthyChildContainerHeightOriginal = component._truthyChildContainerHeightOriginal;
-        this._falsyChildContainerHeightOriginal = component._falsyChildContainerHeightOriginal;
-        ManipulateObject.objectMerge(this._fittingBackup = {}, component._fittingBackup);
+        this._truthyResizeHandlerBinded = this._truthyResizeHandler.bind(this);
+        this._falsyResizeHandlerBinded = this._falsyResizeHandler.bind(this);
+        this._nextResizeHandlerBinded = this._nextResizeHandler.bind(this);
     }
 
     _createNodeShortcuts() {
         const childrenLength = this._node.children.length;
         this._svg = this._node.children[0];
-        this._truthyChildContainer = childrenLength > 2 ? this._node.children[1] : null;
-        this._falsyChildContainer = childrenLength > 3 ? this._node.children[2] : null;
-        this._nextComponentContainer = this._node.children[childrenLength - 1];
+        this._truthyContainer = childrenLength > 2 ? this._node.children[1] : null;
+        this._falsyContainer = childrenLength > 3 ? this._node.children[2] : null;
+        this._nextContainer = this._node.children[childrenLength - 1];
     }
 
     _assingOptions(options) {
@@ -86,14 +68,14 @@ export default class ScratchComponent {
     }
 
     _addChildrenAndNextComponents(component) {
-        if (component._truthyChild) {
-            this.addTruthyChild(new ScratchComponent(component._truthyChild));
+        if (component._truthy) {
+            this.addTruthyChild(new ScratchComponent(component._truthy));
         }
-        if (component._falsyChild) {
-            this.addFalsyChild(new ScratchComponent(component._falsyChild));
+        if (component._falsy) {
+            this.addFalsyChild(new ScratchComponent(component._falsy));
         }
-        if (component._nextComponent) {
-            this.addNextComponent(new ScratchComponent(component._nextComponent));
+        if (component._next) {
+            this.addNextComponent(new ScratchComponent(component._next));
         }
     }
 
@@ -104,13 +86,13 @@ export default class ScratchComponent {
 
         const styleFormmated = ScratchComponent.createStringOfAttributes(attributes.style, ': ', '; ');
         const attributesFormmated = ScratchComponent.createStringOfAttributes(attributes, '="', '" ');
-        const childrenContainer = ScratchComponent.createChildContainers(dimensions);
+        const children = ScratchComponent.createChildContainers(dimensions);
 
         const innerHTML = (
             `<div ${attributesFormmated} style="${styleFormmated}">`
             + '<svg style="width: 100%; height: 100%">'
             + `<path d="${path}" /></svg>`
-            + `${childrenContainer}<div class="scratch-next-component-container" `
+            + `${children}<div class="scratch-next-component-container" `
             + `style="width: 100%; height: ${dimensions.strokeWidth}px; top: ${dimensions.fittingHeight}px; `
             + 'left: 0px; position: absolute;"></div></div>'
         );
@@ -118,19 +100,14 @@ export default class ScratchComponent {
         return innerHTML;
     }
 
-    static createChildContainers(dimensions) {
-        const {
-            truthyChildContainer: tcc,
-            falsyChildContainer: fcc,
-        } = dimensions;
+    static createChildContainers({ truthy, falsy }) {
+        const truthyHTML = (
+            ScratchComponent.createContainerHTML('scratch-truthy-children-container', truthy));
 
-        const tccHTML = (
-            ScratchComponent.createContainerHTML('scratch-truthy-children-container', tcc));
+        const falsyHTML = (
+            ScratchComponent.createContainerHTML('scratch-falsy-children-container', falsy));
 
-        const fccHTML = (
-            ScratchComponent.createContainerHTML('scratch-falsy-children-container', fcc));
-
-        const containersHTML = tccHTML + fccHTML;
+        const containersHTML = truthyHTML + falsyHTML;
 
         return containersHTML;
     }
@@ -167,8 +144,8 @@ export default class ScratchComponent {
             height: this._opt.dimensions.height,
             fittingHeight: (
                 this._opt.dimensions.fittingHeight
-                + (this._nextComponent
-                    ? this._nextComponent.getDimensions().fittingHeight
+                + (this._next
+                    ? this._next.getDimensions().fittingHeight
                     : 0)
             ),
         };
@@ -177,34 +154,36 @@ export default class ScratchComponent {
     addTruthyChild(child) {
         if (!(child instanceof ScratchComponent)) return;
         this.removeTruthyChild();
-        this._truthyChild = child;
-        this._truthyChildContainer.appendChild(child._node);
-        this.resize({ truthyChildContainerHeight: child.getDimensions().fittingHeight });
-        child.addResizeListener(this._truthyChildResizeHandlerBinded);
+        this._truthy = child;
+        this._truthyContainer.appendChild(child._node);
+        this.resize({ truthyHeight: child.getDimensions().fittingHeight });
+        child.addResizeListener(this._truthyResizeHandlerBinded);
     }
 
     removeTruthyChild() {
-        if (this._truthyChild) {
-            this._truthyChildContainer.removeChild(this._truthyChildContainer.children[0]);
-            this._truthyChild = null;
-            this.resize({ truthyChildContainerHeight: this._truthyChildContainerHeightOriginal });
+        if (this._truthy) {
+            this._truthyContainer.removeChild(this._truthyContainer.children[0]);
+            this._truthy = null;
+            delete this._opt.dimensions.truthyHeight;
+            this.resize();
         }
     }
 
     addFalsyChild(child) {
         if (!(child instanceof ScratchComponent)) return;
         this.removeFalsyChild();
-        this._falsyChild = child;
-        this._falsyChildContainer.appendChild(child._node);
-        this.resize({ falsyChildContainerHeight: child.getDimensions().fittingHeight });
-        child.addResizeListener(this._falsyChildResizeHandlerBinded);
+        this._falsy = child;
+        this._falsyContainer.appendChild(child._node);
+        this.resize({ falsyHeight: child.getDimensions().fittingHeight });
+        child.addResizeListener(this._falsyResizeHandlerBinded);
     }
 
     removeFalsyChild() {
-        if (this._falsyChild) {
-            this._falsyChildContainer.removeChild(this._falsyChildContainer.children[0]);
-            this._falsyChild = null;
-            this.resize({ falsyChildContainerHeight: this._falsyChildContainerHeightOriginal });
+        if (this._falsy) {
+            this._falsyContainer.removeChild(this._falsyContainer.children[0]);
+            this._falsy = null;
+            delete this._opt.dimensions.falsyHeight;
+            this.resize();
         }
     }
 
@@ -212,26 +191,22 @@ export default class ScratchComponent {
         if (!(next instanceof ScratchComponent)) return;
 
         this.removeNextComponent();
-        this._nextComponent = next;
-        this._nextComponentContainer.appendChild(next._node);
-        this._nextComponentContainerHeightBackup = (
-            this._opt.dimensions.nextComponentContainerHeight);
+        this._next = next;
+        this._nextContainer.appendChild(next._node);
 
-        this.resize({ nextComponentContainerHeight: next.getDimensions().fittingHeight });
-        next.addResizeListener(this._nextComponentResizeHandlerBinded);
+        this.resize();
+        next.addResizeListener(this._nextResizeHandlerBinded);
     }
 
     removeNextComponent() {
-        if (this._nextComponent) {
-            this._nextComponentContainer.removeChild(this._nextComponentContainer.children[0]);
-            this._nextComponent = null;
-            this.resize({ nextComponentContainerHeight: 0 });
+        if (this._next) {
+            this._nextContainer.removeChild(this._nextContainer.children[0]);
+            this._next = null;
+            this.resize({ nextHeight: 0 });
         }
     }
 
-    resize(dimensions) {
-        if (!ManipulateObject.isObject(dimensions)) return;
-
+    resize(dimensions = {}) {
         ManipulateObject.objectMerge(this._opt.dimensions, dimensions);
         this._adjustFitting();
         const { path, dimensions: dim } = ScratchSVGPath[this._type](this._opt);
@@ -248,45 +223,36 @@ export default class ScratchComponent {
     }
 
     _resizeAndRepositionChildContainers(dim) {
-        const {
-            truthyChildContainer: tcc,
-            falsyChildContainer: fcc,
-            nextComponentContainer: ncc,
-        } = dim;
+        const { truthy, falsy, next } = dim;
 
-        if (this._truthyChildContainer) {
-            this._truthyChildContainer.style.setProperty('height', `${tcc.height + ncc.height}px`);
-            this._truthyChildContainer.style.setProperty('width', `${tcc.width}px`);
-            this._truthyChildContainer.style.setProperty('top', `${tcc.top}px`);
-            this._truthyChildContainer.style.setProperty('left', `${tcc.left}px`);
+        if (this._truthyContainer) {
+            this._truthyContainer.style.setProperty('height', `${truthy.height + next.height}px`);
+            this._truthyContainer.style.setProperty('width', `${truthy.width}px`);
+            this._truthyContainer.style.setProperty('top', `${truthy.top}px`);
+            this._truthyContainer.style.setProperty('left', `${truthy.left}px`);
         }
 
-        if (this._falsyChildContainer) {
-            this._falsyChildContainer.style.setProperty('height', `${fcc.height + ncc.height}px`);
-            this._falsyChildContainer.style.setProperty('width', `${fcc.width}px`);
-            this._falsyChildContainer.style.setProperty('top', `${fcc.top}px`);
-            this._falsyChildContainer.style.setProperty('left', `${fcc.left}px`);
+        if (this._falsyContainer) {
+            this._falsyContainer.style.setProperty('height', `${falsy.height + next.height}px`);
+            this._falsyContainer.style.setProperty('width', `${falsy.width}px`);
+            this._falsyContainer.style.setProperty('top', `${falsy.top}px`);
+            this._falsyContainer.style.setProperty('left', `${falsy.left}px`);
         }
 
-        this._nextComponentContainer.style.setProperty('width', `${dim.width}px`);
-        this._nextComponentContainer.style.setProperty('top', `${dim.fittingHeight}px`);
+        this._nextContainer.style.setProperty('width', dim.width);
+        this._nextContainer.style.setProperty('top', `${dim.fittingHeight}px`);
     }
 
     _adjustFitting() {
-        this._opt.appearence.maleFitting = (
-            this._nextComponent
-                ? true
-                : this._fittingBackup.male);
+        this._opt.appearence.truthyFitting = (
+            this._truthy
+                ? this._truthy._opt.appearence.maleFitting
+                : true);
 
-        this._opt.appearence.truthyFemaleFitting = (
-            this._truthyChild
-                ? this._truthyChild._opt.appearence.maleFitting
-                : this._fittingBackup.truthy);
-
-        this._opt.appearence.falsyFemaleFitting = (
-            this._falsyChild
-                ? this._falsyChild._opt.appearence.maleFitting
-                : this._fittingBackup.falsy);
+        this._opt.appearence.falsyFitting = (
+            this._falsy
+                ? this._falsy._opt.appearence.maleFitting
+                : true);
     }
 
     _updateDimensions(dimensions) {
@@ -295,16 +261,16 @@ export default class ScratchComponent {
         this._opt.dimensions.fittingHeight = dimensions.fittingHeight;
     }
 
-    _truthyChildResizeHandler(target) {
-        this.resize({ truthyChildContainerHeight: target.getDimensions().fittingHeight });
+    _truthyResizeHandler(target) {
+        this.resize({ truthyHeight: target.getDimensions().fittingHeight });
     }
 
-    _falsyChildResizeHandler(target) {
-        this.resize({ falsyChildContainerHeight: target.getDimensions().fittingHeight });
+    _falsyResizeHandler(target) {
+        this.resize({ falsyHeight: target.getDimensions().fittingHeight });
     }
 
-    _nextComponentResizeHandler(target) {
-        this.resize({ nextComponentHeight: target.getDimensions().fittingHeight });
+    _nextResizeHandler(target) {
+        this.resize({ nextHeight: target.getDimensions().fittingHeight });
     }
 
     addResizeListener(listener) {
