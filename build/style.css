@@ -16,7 +16,8 @@
 }
 
 #main-block {
-  margin: 10px auto;
+  left: 10px;
+  top: 10px;
 }
 
 #if {
