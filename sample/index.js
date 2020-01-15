@@ -97,7 +97,7 @@ window.setTimeout(() => {
 
                         window.setTimeout(() => {
                             truthyFalsyBlock.removeFalsyChild();
-                        }, 1000);
+                        }, 2000);
                     }, 1000);
                 }, 1000);
             }, 1000);

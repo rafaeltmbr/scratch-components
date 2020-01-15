@@ -4,6 +4,11 @@
   box-sizing: border-box;
 }
 
+body > * {
+  top: 10px;
+  left: 10px;
+}
+
 .statement {
   fill: #4C97FF;
   stroke: #7120ce;

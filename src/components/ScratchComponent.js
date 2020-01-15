@@ -214,7 +214,6 @@ export default class ScratchComponent {
         this._node.style.setProperty('width', dim.width);
         this._node.style.setProperty('height', dim.height);
 
-        this._svg.setAttribute('stroke-width', dim.strokeWidth);
         this._svg.children[0].setAttribute('d', path);
 
         this._resizeAndRepositionChildContainers(dim);
