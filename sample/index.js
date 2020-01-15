@@ -120,21 +120,29 @@ window.setTimeout(() => {
     window.setTimeout(() => {
         conditionalBlock.removeTruthyChild();
     }, 2000);
-}, 1000);
 
-window.setTimeout(() => {
-    ifElseBlock2.addFalsyChild(statement3);
     window.setTimeout(() => {
-        ifElseBlock2.removeFalsyChild();
+        statement2.resize({ width: 220 });
+    }, 500);
 
+    window.setTimeout(() => {
+        ifElseBlock2.addFalsyChild(statement3);
         window.setTimeout(() => {
-            statement2.removeNextComponent();
-        }, 1000);
-    }, 2000);
-}, 2000);
+            ifElseBlock2.removeFalsyChild();
+
+            window.setTimeout(() => {
+                statement2.removeNextComponent();
+            }, 1000);
+        }, 2000);
+    }, 1000);
+}, 500);
+
 
 const ifElseBlock3 = new ScratchComponent(ifElseBlock2, {
     position: 'absolute',
+    dimensions: {
+        width: 200,
+    },
     attributes: {
         id: 'copy-block',
     },
@@ -143,5 +151,17 @@ const ifElseBlock3 = new ScratchComponent(ifElseBlock2, {
 document.body.appendChild(ifElseBlock3.getNodeElement());
 
 window.setTimeout(() => {
-    ifElseBlock3.removeTruthyChild();
-}, 1500);
+    ifElseBlock3.addFalsyChild(new ScratchComponent(statement3, {
+        attributes: {
+            id: 'statement5',
+        },
+    }));
+
+    window.setTimeout(() => {
+        ifElseBlock3.removeTruthyChild();
+
+        window.setTimeout(() => {
+            ifElseBlock3.removeFalsyChild();
+        }, 1000);
+    }, 1000);
+}, 750);

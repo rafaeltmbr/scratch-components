@@ -23,9 +23,9 @@ export default class ScratchComponent {
     }
 
     _copyConstructor(component, options) {
-        this._copyInitialProperties(component);
-        ManipulateObject.objectMerge(this._opt, options);
-        this._createAppearenceAndDimensionBackup();
+        this._createInitialProperties(component._type);
+        this._assignOptionsFromComponent(component, options);
+        this._copyAppearenceAndDimensionBackupFromComponent(component);
         this._createComponent(this._type);
         this._createNodeShortcuts();
         this._addChildrenAndNextComponents(component);
@@ -54,6 +54,12 @@ export default class ScratchComponent {
         };
     }
 
+    _copyAppearenceAndDimensionBackupFromComponent(component) {
+        this._truthyChildContainerHeightOriginal = component._truthyChildContainerHeightOriginal;
+        this._falsyChildContainerHeightOriginal = component._falsyChildContainerHeightOriginal;
+        ManipulateObject.objectMerge(this._fittingBackup = {}, component._fittingBackup);
+    }
+
     _createNodeShortcuts() {
         const childrenLength = this._node.children.length;
         this._svg = this._node.children[0];
@@ -67,26 +73,16 @@ export default class ScratchComponent {
         ManipulateObject.objectMerge(this._opt, options);
     }
 
+    _assignOptionsFromComponent(component, options) {
+        ManipulateObject.objectHardCopy(this._opt, component._opt);
+        ManipulateObject.objectMerge(this._opt, options);
+    }
+
     _createComponent(type) {
         const { path, dimensions } = ScratchSVGPath[type](this._opt);
         const html = ScratchComponent.createSVGElementInnerHTML(path, dimensions, this._opt);
         this._node = ManipulateDOM.createNodeElement(html);
         this._updateDimensions(dimensions);
-    }
-
-    _copyInitialProperties(component) {
-        this._type = component._type;
-        this._opt = {};
-        ManipulateObject.objectHardCopy(this._opt, component._opt);
-        this._node = null;
-        this._truthyChild = null;
-        this._falsyChild = null;
-        this._nextComponent = null;
-        this._resizeListeners = [];
-
-        this._truthyChildResizeHandlerBinded = this._truthyChildResizeHandler.bind(this);
-        this._falsyChildResizeHandlerBinded = this._falsyChildResizeHandler.bind(this);
-        this._nextComponentResizeHandlerBinded = this._nextComponentResizeHandler.bind(this);
     }
 
     _addChildrenAndNextComponents(component) {
