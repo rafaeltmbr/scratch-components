@@ -15,17 +15,23 @@ export default class ScratchComponent {
     }
 
     _newComponentConstructor(type, options) {
-        this._createInitilProperties(type);
-        this._createOptionsProperties(options);
+        this._createInitialProperties(type);
+        this._assingOptions(options);
+        this._createAppearenceAndDimensionBackup();
         this._createComponent(type);
         this._createNodeShortcuts();
     }
 
     _copyConstructor(component, options) {
-
+        this._copyInitialProperties(component);
+        ManipulateObject.objectMerge(this._opt, options);
+        this._createAppearenceAndDimensionBackup();
+        this._createComponent(this._type);
+        this._createNodeShortcuts();
+        this._addChildrenAndNextComponents(component);
     }
 
-    _createInitilProperties(type) {
+    _createInitialProperties(type) {
         this._type = type;
         this._opt = {};
         this._node = null;
@@ -38,8 +44,7 @@ export default class ScratchComponent {
         this._nextComponentResizeHandlerBinded = this._nextComponentResizeHandler.bind(this);
     }
 
-    _createOptionsProperties(options) {
-        this._assingOptions(options);
+    _createAppearenceAndDimensionBackup() {
         this._truthyChildContainerHeightOriginal = this._opt.dimensions.truthyChildContainerHeight;
         this._falsyChildContainerHeightOriginal = this._opt.dimensions.falsyChildContainerHeight;
         this._fittingBackup = {
@@ -58,11 +63,8 @@ export default class ScratchComponent {
     }
 
     _assingOptions(options) {
-        ManipulateObject.objectHardCopy(this._opt, defaults);
-
-        const optionsCopy = {};
-        ManipulateObject.objectHardCopy(optionsCopy, options);
-        ManipulateObject.objectMerge(this._opt, optionsCopy);
+        ManipulateObject.objectMerge(this._opt, defaults);
+        ManipulateObject.objectMerge(this._opt, options);
     }
 
     _createComponent(type) {
@@ -70,6 +72,33 @@ export default class ScratchComponent {
         const html = ScratchComponent.createSVGElementInnerHTML(path, dimensions, this._opt);
         this._node = ManipulateDOM.createNodeElement(html);
         this._updateDimensions(dimensions);
+    }
+
+    _copyInitialProperties(component) {
+        this._type = component._type;
+        this._opt = {};
+        ManipulateObject.objectHardCopy(this._opt, component._opt);
+        this._node = null;
+        this._truthyChild = null;
+        this._falsyChild = null;
+        this._nextComponent = null;
+        this._resizeListeners = [];
+
+        this._truthyChildResizeHandlerBinded = this._truthyChildResizeHandler.bind(this);
+        this._falsyChildResizeHandlerBinded = this._falsyChildResizeHandler.bind(this);
+        this._nextComponentResizeHandlerBinded = this._nextComponentResizeHandler.bind(this);
+    }
+
+    _addChildrenAndNextComponents(component) {
+        if (component._truthyChild) {
+            this.addTruthyChild(new ScratchComponent(component._truthyChild));
+        }
+        if (component._falsyChild) {
+            this.addFalsyChild(new ScratchComponent(component._falsyChild));
+        }
+        if (component._nextComponent) {
+            this.addNextComponent(new ScratchComponent(component._nextComponent));
+        }
     }
 
     static createSVGElementInnerHTML(path, dimensions, options) {

@@ -20,6 +20,12 @@
   top: 10px;
 }
 
+#copy-block {
+  stroke: #d60000;
+  right: 60px;
+  top: 10px;
+}
+
 #if {
   stroke: #d15115;
 }

@@ -132,3 +132,16 @@ window.setTimeout(() => {
         }, 1000);
     }, 2000);
 }, 2000);
+
+const ifElseBlock3 = new ScratchComponent(ifElseBlock2, {
+    position: 'absolute',
+    attributes: {
+        id: 'copy-block',
+    },
+});
+
+document.body.appendChild(ifElseBlock3.getNodeElement());
+
+window.setTimeout(() => {
+    ifElseBlock3.removeTruthyChild();
+}, 1500);
