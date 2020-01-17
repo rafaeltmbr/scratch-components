@@ -1,15 +1,15 @@
 import ManipulateObject from './ManipulateObject';
 
 const defaults = {
-    truthyFitting: true,
-    falsyFitting: true,
+    truthy: true,
+    falsy: true,
+    next: true,
     truthyHeight: 20,
     falsyHeight: 20,
     nextHeight: 0,
     width: 100,
     lineHeight: 20,
     strokeWidth: 1,
-    maleFitting: true,
 };
 
 class ScratchSVGPath {
@@ -44,17 +44,17 @@ class ScratchSVGPath {
             + shortLineToLeft + innerTopLeftCorner
             + innerShortLineToBottom + innerBottomLeftCorner
             + shortLineToRight
-            + (opt.truthyFitting ? femaleFitting : femaleFittingBypass)
+            + (opt.truthy ? femaleFitting : femaleFittingBypass)
             + midLineToRight
             + topRightCorner + shortLineToBottom + bottomRightCorner
             + longLineToLeft
-            + (opt.maleFitting ? maleFitting : maleFittingBypass)
+            + (opt.next ? maleFitting : maleFittingBypass)
             + shortLineToLeft
             + bottomLeftCorner + closePath;
 
         const width = opt.totalWidth;
         const height = opt.truthyHeight + opt.lineHeight
-            + opt.strokeWidth + (opt.maleFitting ? 48 : 40)
+            + opt.strokeWidth + (opt.next ? 48 : 40)
             + opt.nextHeight;
 
         return {
@@ -63,7 +63,7 @@ class ScratchSVGPath {
                 width: `${width}px`,
                 height: `${height}px`,
                 'stroke-width': `${opt.strokeWidth}px`,
-                fittingHeight: height - (opt.maleFitting ? 8 : 0)
+                fittingHeight: height - (opt.next ? 8 : 0)
                     - opt.strokeWidth,
                 truthy: {
                     width: opt.totalWidth - 12,
@@ -74,7 +74,7 @@ class ScratchSVGPath {
                 next: {
                     width: opt.totalWidth,
                     height: opt.nextHeight,
-                    top: height - (opt.maleFitting ? 8 : 0) - opt.strokeWidth,
+                    top: height - (opt.next ? 8 : 0) - opt.strokeWidth,
                     left: 0,
                 },
             },
@@ -82,7 +82,7 @@ class ScratchSVGPath {
     }
 
     static truthyFalsyBlock(options = {}) {
-        ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
+        ManipulateObject.objectMerge(options, { dimensions: {}, fitting: {} });
         const opt = ScratchSVGPath.getFormmatedOptions(options);
 
         const startPoint = `M ${opt.strokeWidth / 2},${4 + opt.strokeWidth / 2}`;
@@ -114,18 +114,18 @@ class ScratchSVGPath {
             + maleFitting + shortLineToLeft + innerTopLeftCorner
             + innerShortLineToBottomTrue + innerBottomLeftCorner
             + shortLineToRight
-            + (opt.truthyFitting ? femaleFitting : femaleFittingBypass)
+            + (opt.truthy ? femaleFitting : femaleFittingBypass)
             + midLineToRight
             + topRightCorner
             + shortLineToBottom + bottomRightCorner + midLineToLeft
             + maleFitting + shortLineToLeft + innerTopLeftCorner
             + innerShortLineToBottomFalse + innerBottomLeftCorner
             + shortLineToRight
-            + (opt.falsyFitting ? femaleFitting : femaleFittingBypass)
+            + (opt.falsy ? femaleFitting : femaleFittingBypass)
             + midLineToRight
             + topRightCorner + shortLineToBottom + bottomRightCorner
             + longLineToLeft
-            + (opt.maleFitting ? maleFitting : maleFittingBypass)
+            + (opt.next ? maleFitting : maleFittingBypass)
             + shortLineToLeft
             + bottomLeftCorner + closePath;
 
@@ -133,14 +133,14 @@ class ScratchSVGPath {
         const height = opt.truthyHeight
             + opt.falsyHeight + opt.nextHeight
             + opt.lineHeight + opt.strokeWidth
-            + (opt.maleFitting ? 80 : 72);
+            + (opt.next ? 80 : 72);
 
         return {
             path,
             dimensions: {
                 width: `${width}px`,
                 height: `${height}px`,
-                fittingHeight: height - (opt.maleFitting ? 8 : 0) - opt.strokeWidth,
+                fittingHeight: height - (opt.next ? 8 : 0) - opt.strokeWidth,
                 'stroke-width': `${opt.strokeWidth}px`,
                 truthy: {
                     width: opt.totalWidth - 12,
@@ -158,7 +158,7 @@ class ScratchSVGPath {
                 next: {
                     width: opt.totalWidth,
                     height: opt.nextHeight,
-                    top: height - (opt.maleFitting ? 8 : 0) - opt.strokeWidth,
+                    top: height - (opt.next ? 8 : 0) - opt.strokeWidth,
                     left: 0,
                 },
             },
@@ -166,7 +166,7 @@ class ScratchSVGPath {
     }
 
     static statement(options = {}) {
-        ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
+        ManipulateObject.objectMerge(options, { dimensions: {}, fitting: {} });
         const opt = ScratchSVGPath.getFormmatedOptions(options);
 
         const startPoint = `M ${opt.strokeWidth / 2},${4 + opt.strokeWidth / 2}`;
@@ -187,33 +187,33 @@ class ScratchSVGPath {
         const path = startPoint + topLeftCorner + shortLineToRight
             + femaleFitting + longLineToRight + topRightCorner
             + midLineToBottom + bottomRightCorner + longLineToLeft
-            + (opt.maleFitting ? maleFitting : maleFittingBypass)
+            + (opt.next ? maleFitting : maleFittingBypass)
             + shortLineToLeft + bottomLeftCorner
             + closePath;
 
         const width = opt.totalWidth;
         const height = opt.lineHeight + opt.strokeWidth
-            + (opt.maleFitting ? 16 : 8) + opt.nextHeight;
+            + (opt.next ? 16 : 8) + opt.nextHeight;
 
         return {
             path,
             dimensions: {
                 width: `${width}px`,
                 height: `${height}px`,
-                fittingHeight: height - (opt.maleFitting ? 8 : 0) - opt.strokeWidth,
+                fittingHeight: height - (opt.next ? 8 : 0) - opt.strokeWidth,
                 'stroke-width': `${opt.strokeWidth}px`,
             },
             next: {
                 width: opt.totalWidth,
                 height: opt.nextHeight,
-                top: height - (opt.maleFitting ? 8 : 0) - opt.strokeWidth,
+                top: height - (opt.next ? 8 : 0) - opt.strokeWidth,
                 left: 0,
             },
         };
     }
 
     static event(options = {}) {
-        ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
+        ManipulateObject.objectMerge(options, { dimensions: {}, fitting: {} });
         const opt = ScratchSVGPath.getFormmatedOptions(options);
 
         const startPoint = `M ${opt.strokeWidth / 2},${17 + opt.strokeWidth / 2}`;
@@ -256,7 +256,7 @@ class ScratchSVGPath {
     }
 
     static function(options = {}) {
-        ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
+        ManipulateObject.objectMerge(options, { dimensions: {}, fitting: {} });
         const opt = ScratchSVGPath.getFormmatedOptions(options);
 
         const startPoint = `M ${opt.strokeWidth / 2},${20 + opt.strokeWidth / 2}`;
@@ -299,9 +299,9 @@ class ScratchSVGPath {
     }
 
     static getFormmatedOptions(options) {
-        ManipulateObject.objectMerge(options, { dimensions: {}, appearence: {} });
+        ManipulateObject.objectMerge(options, { dimensions: {}, fitting: {} });
 
-        const { dimensions: dim, appearence: app, attributes: attr } = options;
+        const { dimensions: dim, fitting: app, attributes: attr } = options;
         return {
             nextHeight: (dim.nextHeight || defaults.nextHeight),
             totalWidth: (parseInt(attr.style.width, 10) || defaults.width),
@@ -310,9 +310,9 @@ class ScratchSVGPath {
             truthyHeight: dim.truthyHeight || defaults.truthyHeight,
             falsyHeight: dim.falsyHeight || defaults.falsyHeight,
 
-            maleFitting: typeof app.maleFitting === 'undefined' ? defaults.maleFitting : app.maleFitting,
-            truthyFitting: typeof app.truthyFitting === 'undefined' ? defaults.truthyFitting : app.truthyFitting,
-            falsyFitting: typeof app.falsyFitting === 'undefined' ? defaults.falsyFitting : app.falsyFitting,
+            next: typeof app.next === 'undefined' ? defaults.next : app.next,
+            truthy: typeof app.truthy === 'undefined' ? defaults.truthy : app.truthy,
+            falsy: typeof app.falsy === 'undefined' ? defaults.falsy : app.falsy,
         };
     }
 }

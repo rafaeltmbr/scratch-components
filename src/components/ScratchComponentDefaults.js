@@ -3,15 +3,15 @@ export default {
         class: '',
         id: '',
         style: {
-            position: 'relative',
+            position: 'relative', // relative or absolute
             width: '100px',
-            'stroke-width': '1px',
-            'line-height': '24px',
+            'stroke-width': '1px', // components border width
+            'line-height': '24px', // height of the components text header
         },
     },
-    appearence: {
-        maleFitting: true,
-        truthyFitting: true,
-        falsyFitting: true,
+    fitting: {
+        truthy: true, // female fitting used to connect to the truthy child next fitting
+        falsy: true, // female fitting used to connect to the falsy child next fitting
+        next: true, // male fitting used to connect to the next component
     },
 };

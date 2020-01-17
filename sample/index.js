@@ -2,9 +2,6 @@
 import ScratchComponent from '../src/components/ScratchComponent';
 
 const statement = new ScratchComponent('statement', {
-    appearence: {
-        maleFitting: true,
-    },
     attributes: {
         class: 'statement',
         id: 'statement',
@@ -17,9 +14,6 @@ const statement = new ScratchComponent('statement', {
 });
 
 const statement2 = new ScratchComponent('statement', {
-    appearence: {
-        maleFitting: true,
-    },
     attributes: {
         class: 'statement',
         id: 'statement2',
@@ -30,9 +24,6 @@ const statement2 = new ScratchComponent('statement', {
 });
 
 const statement3 = new ScratchComponent('statement', {
-    appearence: {
-        maleFitting: true,
-    },
     attributes: {
         class: 'statement',
         id: 'statement3',
@@ -90,14 +81,14 @@ window.setTimeout(() => {
 
                     window.setTimeout(() => {
                         truthyFalsyBlock.addFalsyChild(new ScratchComponent(truthyBlock, {
-                            appearence: {
-                                maleFitting: false,
+                            fitting: {
+                                next: false,
                             },
                         }));
 
                         window.setTimeout(() => {
                             truthyFalsyBlock.removeFalsyChild();
-                        }, 2000);
+                        }, 1000);
                     }, 1000);
                 }, 1000);
             }, 1000);
