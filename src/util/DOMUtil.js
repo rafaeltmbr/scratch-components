@@ -1,4 +1,4 @@
-class ManipulateDOM {
+class DOMUtil {
     static createNodeElement(html) {
         const node = document.createElement('div');
         node.innerHTML = html;
@@ -6,4 +6,4 @@ class ManipulateDOM {
     }
 }
 
-export default ManipulateDOM;
+export default DOMUtil;

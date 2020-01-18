@@ -1,4 +1,4 @@
-import ManipulateObject from './ManipulateObject';
+import objectUtil from './objectUtil';
 
 const defaults = {
     truthy: true,
@@ -82,7 +82,7 @@ class ScratchSVGPath {
     }
 
     static truthyFalsyBlock(options = {}) {
-        ManipulateObject.objectMerge(options, { dimensions: {}, fitting: {} });
+        objectUtil.merge(options, { dimensions: {}, fitting: {} });
         const opt = ScratchSVGPath.getFormmatedOptions(options);
 
         const startPoint = `M ${opt.strokeWidth / 2},${4 + opt.strokeWidth / 2}`;
@@ -166,7 +166,7 @@ class ScratchSVGPath {
     }
 
     static statement(options = {}) {
-        ManipulateObject.objectMerge(options, { dimensions: {}, fitting: {} });
+        objectUtil.merge(options, { dimensions: {}, fitting: {} });
         const opt = ScratchSVGPath.getFormmatedOptions(options);
 
         const startPoint = `M ${opt.strokeWidth / 2},${4 + opt.strokeWidth / 2}`;
@@ -213,7 +213,7 @@ class ScratchSVGPath {
     }
 
     static event(options = {}) {
-        ManipulateObject.objectMerge(options, { dimensions: {}, fitting: {} });
+        objectUtil.merge(options, { dimensions: {}, fitting: {} });
         const opt = ScratchSVGPath.getFormmatedOptions(options);
 
         const startPoint = `M ${opt.strokeWidth / 2},${17 + opt.strokeWidth / 2}`;
@@ -256,7 +256,7 @@ class ScratchSVGPath {
     }
 
     static function(options = {}) {
-        ManipulateObject.objectMerge(options, { dimensions: {}, fitting: {} });
+        objectUtil.merge(options, { dimensions: {}, fitting: {} });
         const opt = ScratchSVGPath.getFormmatedOptions(options);
 
         const startPoint = `M ${opt.strokeWidth / 2},${20 + opt.strokeWidth / 2}`;
@@ -299,7 +299,7 @@ class ScratchSVGPath {
     }
 
     static getFormmatedOptions(options) {
-        ManipulateObject.objectMerge(options, { dimensions: {}, fitting: {} });
+        objectUtil.merge(options, { dimensions: {}, fitting: {} });
 
         const { dimensions: dim, fitting: app, attributes: attr } = options;
         return {

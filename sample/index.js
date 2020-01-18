@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import ScratchComponent from '../src/components/ScratchComponent';
 
 const statement = new ScratchComponent('statement', {
@@ -52,7 +51,7 @@ const truthyFalsyBlock = new ScratchComponent('truthyFalsyBlock', {
     },
 });
 
-document.body.appendChild(truthyFalsyBlock.getNodeElement());
+document.body.appendChild(truthyFalsyBlock.getDOMNode());
 truthyFalsyBlock.addTruthyChild(truthyBlock);
 truthyBlock.addTruthyChild(statement);
 truthyFalsyBlock.addFalsyChild(statement2);
@@ -69,15 +68,15 @@ window.setTimeout(() => {
     truthyFalsyBlockAddItself();
 
     window.setTimeout(() => {
-        truthyFalsyBlock._falsy.removeTruthyChild();
+        truthyFalsyBlock.getTruthyFalsyAndNext().falsy.removeTruthyChild();
         window.setTimeout(() => {
             truthyFalsyBlock.removeFalsyChild();
 
             window.setTimeout(() => {
-                truthyFalsyBlock._truthy.addNextComponent(statement3);
+                truthyFalsyBlock.getTruthyFalsyAndNext().truthy.addNextComponent(statement3);
 
                 window.setTimeout(() => {
-                    truthyFalsyBlock._truthy.removeNextComponent(statement3);
+                    truthyFalsyBlock.getTruthyFalsyAndNext().truthy.removeNextComponent(statement3);
 
                     window.setTimeout(() => {
                         truthyFalsyBlock.addFalsyChild(new ScratchComponent(truthyBlock, {

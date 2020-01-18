@@ -1,21 +1,24 @@
 # ScratchComponent
-THis is the base (super) class to all Scratch Components. It defined in the ScratchComponent.js file. Also, can be instantiated like so:
+This is the base (super) class to all Scratch Components. It defined in the ScratchComponent.js file. Also, can be instantiated like so:
 ```javascript
-const component = new ScratchComponent([componentShape | componentToBeDuplicated], options);
+const component = new ScratchComponent(shapeNameOrComponentInstance, options);
 ```
 
-## Component Shape
-There are five types of shapes, they are:
+## Constructor arguments
+The constructor has two parameters, they are **shapeNameOrComponentInstance** and **options** (optional).
+
+### shapeNameOrComponentInstance
+The shape name can be one of:
+* **event** - Renders an event component
+* **function** - Renders a function definition component
 * **statement** - Renders a simple statement block
 * **truthyBlock** - Renders a conditional component like *for*, *while* or *if* blocks
 * **truthyFalsyBlock** - Renders a conditional block that has truthy and falsy fields like *ifElse* blocks
-* **event** - Renders an event component
-* **function** - Renders a function definition component
 
-All shapes name are **case-sensitive**. It will throw an error if the shape name is not found.
+Every shape name is write in Camel Case. It will throw an error if the shape name is not found, but an alternative is to give another ScratchComponenet, which will duplicate even the nested components (the ones in truthy, falsy and next fields).
 
-## Options
-The options object defaults to:
+### Options
+The options object (optional) defaults to:
 ```javascript
 const options = {
     attributesHTML: {
@@ -39,17 +42,19 @@ const options = {
 
 ## Methods
 The following methods are public:
-* **getNodeElement( )** - Returns the DOM node in wich the component is based on
-* **addTruthyChild(** *childComponent* **)** - Add the *childComponent* to be called when the expression function returns true
-* **addFalsyChild(** *childComponent* **)** - Add the *childComponent* to be called when the expression function returns false
-* **addNextComponent(** *nextComponent* **)** - Add the *nextComponent* to be called once the block execution is finished
-* **addResizeListener(** *callbackListener* **)** - Register the *callbackListner* to be called every time a resize event happen
-* **removeTruthyChild( )** - Remove the child added through the method **addTruthyChild**
-* **removeFalsyChild( )** - Remove the child added through the method **addFalsyChild**
-* **removeNextComponent( )** - Remove the component added through the method **addNextComponent**
-* **removeResizeListener(** *callbackListener* **)** - Remove the *callbackListener* registered for resize events
+* **getDOMNode( )**
+* **getTruthyFalsyAndNext( )**
+* **getShapeName( )**
+* **addTruthyChild(** *childComponent* **)**
+* **addFalsyChild(** *childComponent* **)**
+* **addNextComponent(** *nextComponent* **)**
+* **removeTruthyChild( )**
+* **removeFalsyChild( )**
+* **removeNextComponent( )**
+* **addResizeListener(** *callbackListener* **)**
+* **removeResizeListener(** *callbackListener* **)**
 
-Any other method starting with an undersore is private and should not be called outside its class.
+Any other method starting with an underscore is private and should not be called by code outside its class.
 
 ## Events
-The only suppored event is the resize, which is issued when the components DOM element resizes by any reason. Then, the **this** reference is given back the registered function.
+The only supported event is the resize, which is issued when the components DOM element resizes by any reason. Then, **this** reference is passed back to the registered callback listener.
