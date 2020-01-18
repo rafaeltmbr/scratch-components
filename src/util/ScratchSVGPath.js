@@ -299,9 +299,11 @@ class ScratchSVGPath {
     }
 
     static getFormmatedOptions(options) {
-        objectUtil.merge(options, { dimensions: {}, fitting: {} });
+        objectUtil.merge(options, { dimensions: {}, fitting: {}, attributes: {} });
 
         const { dimensions: dim, fitting: app, attributes: attr } = options;
+        attr.style = attr.style || {};
+
         return {
             nextHeight: (dim.nextHeight || defaults.nextHeight),
             totalWidth: (parseInt(attr.style.width, 10) || defaults.width),

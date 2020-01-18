@@ -1,5 +1,5 @@
 # ScratchComponent
-This is the base (super) class to all Scratch Components. It defined in the ScratchComponent.js file. Also, can be instantiated like so:
+ScratchComponent is the base (super) class to all scratch elements. Defined in ScratchComponent.js, it can be instantiated like this:
 ```javascript
 const component = new ScratchComponent(shapeNameOrComponentInstance, options);
 ```
@@ -21,7 +21,7 @@ Every shape name is write in Camel Case. It will throw an error if the shape nam
 The options object (optional) defaults to:
 ```javascript
 const options = {
-    attributesHTML: {
+    attributes: {
         class: '',
         id: '',
         style: {
@@ -39,6 +39,10 @@ const options = {
 };
 
 ```
+
+## Shapes
+All available shapes are shown below:
+![Shapes](../assets/screenshots/ScratchComponents-sample.jpg)
 
 ## Methods
 The following methods are public:

@@ -9,9 +9,8 @@ body > *
 
 .statement
     fill: #4C97FF
-    stroke: #7120ce
+    stroke: #710ec2
     opacity: 0.8
-
 
 .truthyBlock
     fill: #FFAB19
@@ -20,3 +19,40 @@ body > *
 .truthyFalsyBlock
     fill: #81d37a
     stroke: #0aa812
+
+body[data-presentation="true"]
+    display: inline-grid
+    grid-template-columns: auto auto auto
+
+
+    .component-container
+        display: flex
+        flex-direction: column
+        align-items: center
+        padding: 10px
+        width: 200px
+
+        header
+            padding: 10px
+            font-family: sans-serif
+            color: #333
+            font-size: 1.2em
+
+        .statement
+            fill: #4C97FF
+            stroke: #3373CC
+            opacity: 1.0
+
+        .event
+            fill: #FFBF00
+            stroke: #CC9900
+            opacity: 1.0
+
+        .function
+            fill: #FF6680
+            stroke: #FF3355
+            opacity: 1.0
+
+        .truthyBlock, .truthyFalsyBlock
+            fill: #FFAB19
+            stroke: #CF8B17

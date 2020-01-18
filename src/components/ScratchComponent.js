@@ -166,6 +166,10 @@ export default class ScratchComponent {
         };
     }
 
+    getShapeName() {
+        return this._shapeName;
+    }
+
     addTruthyChild(child) {
         if (!(child instanceof ScratchComponent)) return;
 

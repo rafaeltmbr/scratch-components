@@ -1,5 +1,5 @@
 export default {
-    attributesHTML: {
+    attributes: {
         class: '',
         id: '',
         style: {
