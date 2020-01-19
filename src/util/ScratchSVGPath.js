@@ -6,7 +6,7 @@ const defaults = {
     next: true,
     truthyHeight: 20,
     falsyHeight: 20,
-    nextHeight: 0,
+    nextHeight: 8,
     width: 100,
     lineHeight: 20,
     strokeWidth: 1,
@@ -54,8 +54,7 @@ class ScratchSVGPath {
 
         const width = opt.totalWidth;
         const height = opt.truthyHeight + opt.lineHeight
-            + 2 * opt.strokeWidth + (opt.next ? 48 : 40)
-            + opt.nextHeight;
+            + 2 * opt.strokeWidth + (opt.next ? 48 : 40);
 
         return {
             path,
@@ -78,7 +77,7 @@ class ScratchSVGPath {
                 },
                 next: {
                     width: opt.totalWidth,
-                    height: opt.nextHeight,
+                    height: opt.nextHeight + opt.strokeWidth,
                     top: height - (opt.next ? 8 : 0) - opt.strokeWidth,
                     left: 0,
                 },
@@ -136,9 +135,8 @@ class ScratchSVGPath {
 
         const width = opt.totalWidth;
         const height = opt.truthyHeight
-            + opt.falsyHeight + opt.nextHeight
-            + opt.lineHeight + 2 * opt.strokeWidth
-            + (opt.next ? 80 : 72);
+            + opt.falsyHeight + opt.lineHeight
+            + 2 * opt.strokeWidth + (opt.next ? 80 : 72);
 
         return {
             path,
@@ -168,7 +166,7 @@ class ScratchSVGPath {
                 },
                 next: {
                     width: opt.totalWidth,
-                    height: opt.nextHeight,
+                    height: opt.nextHeight + opt.strokeWidth,
                     top: height - (opt.next ? 8 : 0) - opt.strokeWidth,
                     left: 0,
                 },
@@ -204,7 +202,7 @@ class ScratchSVGPath {
 
         const width = opt.totalWidth;
         const height = opt.lineHeight + 2 * opt.strokeWidth
-            + (opt.next ? 16 : 8) + opt.nextHeight;
+            + (opt.next ? 16 : 8);
 
         return {
             path,
@@ -221,7 +219,7 @@ class ScratchSVGPath {
                 },
                 next: {
                     width: opt.totalWidth,
-                    height: opt.nextHeight,
+                    height: opt.nextHeight + opt.strokeWidth,
                     top: height - (opt.next ? 8 : 0) - opt.strokeWidth,
                     left: 0,
                 },
@@ -252,8 +250,7 @@ class ScratchSVGPath {
             + closePath;
 
         const width = opt.totalWidth;
-        const height = opt.lineHeight + 29 + opt.strokeWidth
-            + opt.nextHeight;
+        const height = opt.lineHeight + 29 + opt.strokeWidth;
 
         return {
             path,
@@ -270,7 +267,7 @@ class ScratchSVGPath {
                 },
                 next: {
                     width: opt.totalWidth,
-                    height: opt.nextHeight,
+                    height: opt.nextHeight + opt.strokeWidth,
                     top: height - 8 - opt.strokeWidth,
                     left: 0,
                 },
@@ -301,8 +298,7 @@ class ScratchSVGPath {
             + closePath;
 
         const width = opt.totalWidth;
-        const height = opt.lineHeight + opt.strokeWidth + 26
-            + opt.nextHeight;
+        const height = opt.lineHeight + opt.strokeWidth + 26;
 
         return {
             path,
@@ -319,7 +315,7 @@ class ScratchSVGPath {
                 },
                 next: {
                     width: opt.totalWidth,
-                    height: opt.nextHeight,
+                    height: opt.nextHeight + opt.strokeWidth,
                     top: height - 8 - opt.strokeWidth,
                     left: 0,
                 },

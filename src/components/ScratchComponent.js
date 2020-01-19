@@ -65,8 +65,9 @@ export default class ScratchComponent {
     _createNodeShortcuts() {
         const childrenLength = this._DOMNode.children.length;
         this._svg = this._DOMNode.children[0];
-        this._truthyContainer = childrenLength > 2 ? this._DOMNode.children[1] : null;
-        this._falsyContainer = childrenLength > 3 ? this._DOMNode.children[2] : null;
+        this._descriptionContainer = this._DOMNode.children[1];
+        this._truthyContainer = childrenLength > 3 ? this._DOMNode.children[2] : null;
+        this._falsyContainer = childrenLength > 4 ? this._DOMNode.children[3] : null;
         this._nextContainer = this._DOMNode.children[childrenLength - 1];
     }
 
@@ -99,24 +100,27 @@ export default class ScratchComponent {
             `<div ${attributesFormmated} style="${styleFormmated}">`
             + '<svg style="width: 100%; height: 100%">'
             + `<path d="${path}" /></svg>`
-            + `${containers}<div class="scratch-next-container" `
-            + `style="width: 100%; height: ${dimensions.strokeWidth}px; `
-            + `top: ${dimensions.fittingHeight}px; `
-            + 'left: 0px; position: absolute;"></div></div>'
+            + `${containers}</div></div>`
         );
     }
 
-    static createContainers({ description, truthy, falsy }) {
+    // eslint-disable-next-line object-curly-newline
+    static createContainers(dim) {
         const descriptionHTML = (ScratchComponent
-            .createContainerHTML('scratch-description-container', description));
+            .createContainerHTML('scratch-description-container', dim.description));
 
         const truthyHTML = (ScratchComponent
-            .createContainerHTML('scratch-truthy-container', truthy));
+            .createContainerHTML('scratch-truthy-container', dim.truthy));
 
         const falsyHTML = (ScratchComponent
-            .createContainerHTML('scratch-falsy-container', falsy));
+            .createContainerHTML('scratch-falsy-container', dim.falsy));
 
-        return descriptionHTML + truthyHTML + falsyHTML;
+        const nextHTML = '<div class="scratch-next-container" '
+            + `style="width: 100%; height: ${dim.next.height}px; `
+            + `top: ${dim.fittingHeight}px; `
+            + 'left: 0px; position: absolute;">';
+
+        return descriptionHTML + truthyHTML + falsyHTML + nextHTML;
     }
 
     static createContainerHTML(className, dimensions) {
@@ -222,7 +226,7 @@ export default class ScratchComponent {
         this._next = next;
         this._nextContainer.appendChild(next._DOMNode);
 
-        this._resize();
+        this._resize({ nextHeight: next.getDimensions().fittingHeight });
         next.addResizeListener(this._nextResizeHandlerBinded);
     }
 
@@ -262,6 +266,7 @@ export default class ScratchComponent {
         }
 
         this._nextContainer.style.setProperty('width', dim.width);
+        this._nextContainer.style.setProperty('height', `${next.height}px`);
         this._nextContainer.style.setProperty('top', `${dim.fittingHeight}px`);
     }
 
