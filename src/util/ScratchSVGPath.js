@@ -239,7 +239,7 @@ class ScratchSVGPath {
         const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
         const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
         const shortLineToLeft = 'h -8';
-        const midLineToBottom = `v${opt.lineHeight}`;
+        const midLineToBottom = `v${opt.lineHeight - 4}`;
         const longLineToRight = `h${opt.totalWidth - 100 - opt.strokeWidth}`;
         const longLineToLeft = `h${52 - opt.totalWidth + opt.strokeWidth}`;
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
@@ -252,7 +252,7 @@ class ScratchSVGPath {
             + closePath;
 
         const width = opt.totalWidth;
-        const height = opt.lineHeight + 33 + opt.strokeWidth
+        const height = opt.lineHeight + 29 + opt.strokeWidth
             + opt.nextHeight;
 
         return {
@@ -265,7 +265,7 @@ class ScratchSVGPath {
                 description: {
                     width: opt.totalWidth - 2 * opt.strokeWidth,
                     height: opt.lineHeight,
-                    top: opt.strokeWidth + 22,
+                    top: opt.strokeWidth + 20,
                     left: opt.strokeWidth,
                 },
                 next: {
@@ -288,7 +288,7 @@ class ScratchSVGPath {
         const bottomRightCorner = 'a 4 4 0 0 1 -4,4';
         const bottomLeftCorner = 'a 4 4 0 0 1 -4,-4';
         const shortLineToLeft = 'h -8';
-        const midLineToBottom = `v${opt.lineHeight}`;
+        const midLineToBottom = `v${opt.lineHeight - 6}`;
         const longLineToRight = `h${opt.totalWidth - 40 - opt.strokeWidth}`;
         const longLineToLeft = `h${52 - opt.totalWidth + opt.strokeWidth}`;
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
@@ -301,7 +301,7 @@ class ScratchSVGPath {
             + closePath;
 
         const width = opt.totalWidth;
-        const height = opt.lineHeight + opt.strokeWidth + 32
+        const height = opt.lineHeight + opt.strokeWidth + 26
             + opt.nextHeight;
 
         return {
@@ -314,7 +314,7 @@ class ScratchSVGPath {
                 description: {
                     width: opt.totalWidth - 2 * opt.strokeWidth,
                     height: opt.lineHeight,
-                    top: opt.strokeWidth + 20,
+                    top: opt.strokeWidth + 17,
                     left: opt.strokeWidth,
                 },
                 next: {

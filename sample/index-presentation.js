@@ -11,45 +11,30 @@ function createComponentContainer(component) {
 const statement = new ScratchComponent('statement', {
     attributes: {
         class: 'statement',
-        style: {
-            width: '120px',
-        },
     },
 });
 
 const event = new ScratchComponent('event', {
     attributes: {
         class: 'event',
-        style: {
-            width: '120px',
-        },
     },
 });
 
 const functionBlock = new ScratchComponent('function', {
     attributes: {
         class: 'function',
-        style: {
-            width: '120px',
-        },
     },
 });
 
 const truthyBlock = new ScratchComponent('truthyBlock', {
     attributes: {
         class: 'truthyBlock',
-        style: {
-            width: '120px',
-        },
     },
 });
 
 const truthyFalsyBlock = new ScratchComponent('truthyFalsyBlock', {
     attributes: {
         class: 'truthyFalsyBlock',
-        style: {
-            width: '120px',
-        },
     },
 });
 

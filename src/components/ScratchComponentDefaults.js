@@ -4,7 +4,7 @@ export default {
         id: '',
         style: {
             position: 'relative', // relative or absolute
-            width: '100px',
+            width: '120px',
             'stroke-width': '1px', // components border width
             'line-height': '24px', // height of the components text header
         },

@@ -26,28 +26,16 @@ const options = {
         id: '',
         style: {
             position: 'relative', // relative or absolute
-            width: '100px',
+            width: '120px',
             'stroke-width': '1px', // components border width
             'line-height': '24px', // height of the components text header
         },
     },
-    containers: {
-        description: {
-            height: '26px',
-        },
-        truthy: {
-            height: '20px',
-            femaleFitting: true,
-        },
-        falsy: {
-            height: '20px',
-            femaleFitting: true,
-        },
-        next: {
-            height: '20px',
-            maleFitting: true,
-        },
-    }
+    fitting: {
+        truthy: true, // female fitting used to connect to the truthy child next fitting
+        falsy: true, // female fitting used to connect to the falsy child next fitting
+        next: true, // male fitting used to connect to the next component
+    },
 };
 
 ```
