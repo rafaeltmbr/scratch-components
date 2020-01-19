@@ -93,27 +93,30 @@ export default class ScratchComponent {
 
         const styleFormmated = ScratchComponent.createStringOfAttributes(attributes.style, ': ', '; ');
         const attributesFormmated = ScratchComponent.createStringOfAttributes(attributes, '="', '" ', '"');
-        const children = ScratchComponent.createChildContainers(dimensions);
+        const containers = ScratchComponent.createContainers(dimensions);
 
         return (
             `<div ${attributesFormmated} style="${styleFormmated}">`
             + '<svg style="width: 100%; height: 100%">'
             + `<path d="${path}" /></svg>`
-            + `${children}<div class="scratch-next-component-container" `
+            + `${containers}<div class="scratch-next-container" `
             + `style="width: 100%; height: ${dimensions.strokeWidth}px; `
             + `top: ${dimensions.fittingHeight}px; `
             + 'left: 0px; position: absolute;"></div></div>'
         );
     }
 
-    static createChildContainers({ truthy, falsy }) {
+    static createContainers({ description, truthy, falsy }) {
+        const descriptionHTML = (ScratchComponent
+            .createContainerHTML('scratch-description-container', description));
+
         const truthyHTML = (ScratchComponent
-            .createContainerHTML('scratch-truthy-children-container', truthy));
+            .createContainerHTML('scratch-truthy-container', truthy));
 
         const falsyHTML = (ScratchComponent
-            .createContainerHTML('scratch-falsy-children-container', falsy));
+            .createContainerHTML('scratch-falsy-container', falsy));
 
-        return truthyHTML + falsyHTML;
+        return descriptionHTML + truthyHTML + falsyHTML;
     }
 
     static createContainerHTML(className, dimensions) {
