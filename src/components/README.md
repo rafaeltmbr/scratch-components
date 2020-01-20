@@ -27,14 +27,14 @@ const options = {
         style: {
             position: 'relative', // relative or absolute
             width: '120px',
-            'stroke-width': '1px', // components border width
-            'line-height': '24px', // height of the components text header
+            'stroke-width': '1px', // border thickness
+            'line-height': '24px', // height of description container
         },
     },
     fitting: {
-        truthy: true, // female fitting used to connect to the truthy child next fitting
-        falsy: true, // female fitting used to connect to the falsy child next fitting
-        next: true, // male fitting used to connect to the next component
+        truthy: true, // female fitting in the truthy container
+        falsy: true, // female fitting in the falsy container
+        next: true, // male fitting in the next container
     },
 };
 
@@ -43,6 +43,16 @@ const options = {
 ## Shapes
 All available shapes are shown below:
 ![Shapes](../assets/screenshots/ScratchComponents-sample.jpg)
+
+## Containers
+The image below shows the name and location of each container:
+![Shapes](../assets/screenshots/ScratchComponents-containers.jpg)
+
+### Containers purpose
+* **description** - Holds the components name and parameters if any
+* **truthy** - Holds the component to be executed when **true** is evaluated
+* **falsy** - Holds the component to be executed when **false** is evaluated
+* **next** - Holds the next component to be executed if any
 
 ## Methods
 The following methods are public:

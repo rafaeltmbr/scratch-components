@@ -2,6 +2,8 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  user-select: none;
+  -ms-user-select: none;
 }
 
 body > * {
@@ -60,4 +62,18 @@ body[data-presentation=true] .component-container .function {
 body[data-presentation=true] .component-container .truthyBlock, body[data-presentation=true] .component-container .truthyFalsyBlock {
   fill: #FFAB19;
   stroke: #CF8B17;
+}
+body[data-presentation=true] .component-container .shadow {
+  fill: #bbbbbb;
+  stroke: #888888;
+  opacity: 0.8;
+}
+
+body[data-show-containers=true] .scratch-description-container, body[data-show-containers=true] .scratch-truthy-container, body[data-show-containers=true] .scratch-falsy-container, body[data-show-containers=true] .scratch-next-container {
+  text-align: center;
+  font-family: sans-serif;
+  font-size: 0.8em;
+}
+body[data-show-containers=true] .scratch-next-container {
+  line-height: 1em;
 }

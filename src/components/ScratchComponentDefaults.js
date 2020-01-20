@@ -3,10 +3,10 @@ export default {
         class: '',
         id: '',
         style: {
-            position: 'relative', // relative or absolute
+            position: 'absolute', // relative or absolute
             width: '120px',
-            'stroke-width': '1px', // components border width
-            'line-height': '24px', // height of the components text header
+            'stroke-width': '1px', // border thickness
+            'line-height': '24px', // height of description container
         },
     },
     fitting: {

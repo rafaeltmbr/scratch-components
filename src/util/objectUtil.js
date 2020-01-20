@@ -26,6 +26,10 @@ class objectUtil {
         });
     }
 
+    static toArray(object) {
+        return Object.keys(object).map((k) => object[k]);
+    }
+
     /* eslint-enable no-param-reassign */
     static deepClone(object) {
         const clone = {};

@@ -5,6 +5,8 @@ import DOMUtil from '../util/DOMUtil';
 import objectUtil from '../util/objectUtil';
 import defaults from './ScratchComponentDefaults';
 
+const instanceList = [];
+
 export default class ScratchComponent {
     constructor(shapeNameOrComponentInstance, options = {}) {
         window.strAttr = ScratchComponent.createStringOfAttributes;
@@ -16,6 +18,8 @@ export default class ScratchComponent {
         } else {
             throw new Error('Invalid shapeNameOrComponentInstance');
         }
+
+        instanceList.push(this);
     }
 
     static isValidShapeName(shapeName) {
@@ -27,6 +31,7 @@ export default class ScratchComponent {
         this._assingOptions(options);
         this._createDOMNode(shapeName);
         this._createNodeShortcuts();
+        this._addMoveHandler();
     }
 
     _componentInstanceConstructor(componentInstance, options) {
@@ -35,6 +40,7 @@ export default class ScratchComponent {
         this._createDOMNode(this._shapeName);
         this._createNodeShortcuts();
         this._addChildrenAndNextComponents(componentInstance);
+        this._addMoveHandler();
     }
 
     _createInitialProperties(shapeName) {
@@ -44,6 +50,7 @@ export default class ScratchComponent {
         this._truthy = null;
         this._falsy = null;
         this._next = null;
+        this._positions = null;
         this._resizeListeners = [];
         this._truthyResizeHandlerBinded = this._truthyResizeHandler.bind(this);
         this._falsyResizeHandlerBinded = this._falsyResizeHandler.bind(this);
@@ -175,6 +182,119 @@ export default class ScratchComponent {
 
     getShapeName() {
         return this._shapeName;
+    }
+
+    getHitContainer() {
+        const container = ScratchComponent.getContainerPosition(this._DOMNode);
+        container.bottom = container.top + 20;
+        return container;
+    }
+
+    _getContainerPositions() {
+        const truthy = this._truthyContainer
+            ? ScratchComponent.getContainerPosition(this._truthyContainer)
+            : null;
+
+        const falsy = this._falsyContainer
+            ? ScratchComponent.getContainerPosition(this._falsyContainer)
+            : null;
+
+        return {
+            truthy,
+            falsy,
+            next: ScratchComponent.getContainerPosition(this._nextContainer),
+        };
+    }
+
+    _coincidenceHandler() {
+        const container = this.getHitContainer();
+        const options = {
+            attributes: {
+                class: 'shadow',
+                style: {
+                    top: '0px',
+                    left: '0px',
+                },
+            },
+        };
+
+        for (let i = 0; i < instanceList.length; i += 1) {
+            const coincidence = instanceList[i].getContainerCoincidences(container);
+            if (coincidence.truthy) {
+                instanceList[i].addTruthyChild(new ScratchComponent(this, options));
+                break;
+            }
+            if (coincidence.falsy) {
+                instanceList[i].addFalsyChild(new ScratchComponent(this, options));
+                break;
+            }
+            if (coincidence.next) {
+                instanceList[i].addNextComponent(new ScratchComponent(this, options));
+                break;
+            }
+        }
+    }
+
+    getContainerCoincidences(containerPosition) {
+        const { truthy, falsy, next } = this._getContainerPositions();
+
+        const coincidences = {};
+
+        coincidences.truthy = ScratchComponent.isContainerCoincident(containerPosition, truthy);
+        coincidences.falsy = ScratchComponent.isContainerCoincident(containerPosition, falsy);
+        coincidences.next = ScratchComponent.isContainerCoincident(containerPosition, next);
+
+        return coincidences;
+    }
+
+    static getContainerPosition(container) {
+        const { width, height } = window.getComputedStyle(container);
+        const { top, left } = container.getBoundingClientRect();
+
+        return {
+            top: Math.round(top),
+            right: Math.round(parseInt(width, 10) + left),
+            bottom: Math.round(parseInt(height, 10) + top),
+            left: Math.round(left),
+        };
+    }
+
+    static isContainerCoincident(container1, container2) {
+        if (!container1 || !container2) return false;
+
+        return (ScratchComponent.isHorizontalCoincident(container1, container2)
+            && ScratchComponent.isVerticalCoincident(container1, container2));
+    }
+
+    static isHorizontalCoincident(container1, container2) {
+        const bounds = {
+            start1: container1.left,
+            end1: container1.right,
+            start2: container2.left,
+            end2: container2.right,
+        };
+
+        return ScratchComponent.isLineCoincident(bounds);
+    }
+
+    static isVerticalCoincident(container1, container2) {
+        const bounds = {
+            start1: container1.top,
+            end1: container1.bottom,
+            start2: container2.top,
+            end2: container2.bottom,
+        };
+
+        return ScratchComponent.isLineCoincident(bounds);
+    }
+
+    static isLineCoincident(bounds) {
+        // eslint-disable-next-line object-curly-newline
+        const { start1, start2, end1, end2 } = bounds;
+
+        return (start1 <= start2 && end1 >= start2)
+            || (start1 <= end2 && end1 >= end2)
+            || (start2 <= start1 && end1 <= end2);
     }
 
     addTruthyChild(child) {
@@ -324,5 +444,33 @@ export default class ScratchComponent {
 
     _callResizeListeners() {
         this._resizeListeners.forEach((listener) => listener(this));
+    }
+
+    _addMoveHandler() {
+        this._DOMNode.addEventListener('mousedown', ({ clientX: startX, clientY: startY }) => {
+            const initialStyle = window.getComputedStyle(this._DOMNode);
+            const initialX = parseInt(initialStyle.left, 10);
+            const initialY = parseInt(initialStyle.top, 10);
+            this._DOMNode.setAttribute('data-grabbing', true);
+
+            const handleMovement = ({ clientX, clientY }) => {
+                const offsetX = clientX - startX;
+                const offsetY = clientY - startY;
+
+                this._DOMNode.style.setProperty('left', `${offsetX + initialX}px`);
+                this._DOMNode.style.setProperty('top', `${offsetY + initialY}px`);
+
+                this._coincidenceHandler();
+            };
+
+            const removeEventHandlers = () => {
+                window.removeEventListener('mousemove', handleMovement);
+                window.removeEventListener('mouseup', removeEventHandlers);
+                this._DOMNode.setAttribute('data-grabbing', false);
+            };
+
+            window.addEventListener('mousemove', handleMovement);
+            window.addEventListener('mouseup', removeEventHandlers);
+        });
     }
 }
