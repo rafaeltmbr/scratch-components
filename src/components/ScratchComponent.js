@@ -9,7 +9,7 @@ const instanceList = [];
 
 export default class ScratchComponent {
     constructor(shapeNameOrComponentInstance, options = {}) {
-        window.strAttr = ScratchComponent.createStringOfAttributes;
+        window.instanceList = instanceList;
 
         if (ScratchComponent.isValidShapeName(shapeNameOrComponentInstance)) {
             this._shapeNameConstructor(shapeNameOrComponentInstance, options);
@@ -20,6 +20,7 @@ export default class ScratchComponent {
         }
 
         instanceList.push(this);
+        this._id = instanceList.length;
     }
 
     static isValidShapeName(shapeName) {
@@ -31,6 +32,8 @@ export default class ScratchComponent {
         this._assingOptions(options);
         this._createDOMNode(shapeName);
         this._createNodeShortcuts();
+        this._createContainerCoincidenceHandler();
+        this._allowElementsToBeAdded();
         this._addMoveHandler();
     }
 
@@ -40,6 +43,8 @@ export default class ScratchComponent {
         this._createDOMNode(this._shapeName);
         this._createNodeShortcuts();
         this._addChildrenAndNextComponents(componentInstance);
+        this._createContainerCoincidenceHandler();
+        this._allowElementsToBeAdded();
         this._addMoveHandler();
     }
 
@@ -52,6 +57,11 @@ export default class ScratchComponent {
         this._next = null;
         this._positions = null;
         this._resizeListeners = [];
+        this._id = 0;
+        this._preview = {};
+        this._addElements = {};
+        this._lastCoincidence = {};
+        this._handleContainerCoincidence = {};
         this._truthyResizeHandlerBinded = this._truthyResizeHandler.bind(this);
         this._falsyResizeHandlerBinded = this._falsyResizeHandler.bind(this);
         this._nextResizeHandlerBinded = this._nextResizeHandler.bind(this);
@@ -78,6 +88,31 @@ export default class ScratchComponent {
         this._nextContainer = this._DOMNode.children[childrenLength - 1];
     }
 
+    _createContainerCoincidenceHandler() {
+        this._handleContainerCoincidence = {
+            truthy: (instance) => {
+                if (instance._truthy) return;
+                this._removePreviewContainer();
+                instance.addTruthyChild(this._preview.component);
+                this._preview.removeMethod = instance.removeTruthyChild.bind(instance);
+            },
+            falsy: (instance) => {
+                if (instance._falsy) return;
+                this._removePreviewContainer();
+                instance.addFalsyChild(this._preview.component);
+                this._preview.removeMethod = instance.removeFalsyChild.bind(instance);
+            },
+            next: (instance) => {
+                if (instance._next) return;
+                this._removePreviewContainer();
+                instance.addNextComponent(this._preview.component);
+                this._preview.removeMethod = instance.removeNextComponent.bind(instance);
+            },
+            self: () => {
+            },
+        };
+    }
+
     _assignOptionsFromComponent(componentInstance, options) {
         objectUtil.deepCopy(this._opt, componentInstance._opt);
         objectUtil.merge(this._opt, options);
@@ -93,6 +128,15 @@ export default class ScratchComponent {
         if (componentInstance._next) {
             this.addNextComponent(new ScratchComponent(componentInstance._next));
         }
+    }
+
+    _allowElementsToBeAdded() {
+        this._addElements = {
+            truthy: this._truthyContainer,
+            falsy: this._falsyContainer,
+            next: this._nextContainer,
+            self: this._shapeName !== 'function' && this._shapeName !== 'event',
+        };
     }
 
     static createComponentHTML(path, dimensions, options) {
@@ -184,121 +228,8 @@ export default class ScratchComponent {
         return this._shapeName;
     }
 
-    getHitContainer() {
-        const container = ScratchComponent.getContainerPosition(this._DOMNode);
-        container.bottom = container.top + 20;
-        return container;
-    }
-
-    _getContainerPositions() {
-        const truthy = this._truthyContainer
-            ? ScratchComponent.getContainerPosition(this._truthyContainer)
-            : null;
-
-        const falsy = this._falsyContainer
-            ? ScratchComponent.getContainerPosition(this._falsyContainer)
-            : null;
-
-        return {
-            truthy,
-            falsy,
-            next: ScratchComponent.getContainerPosition(this._nextContainer),
-        };
-    }
-
-    _coincidenceHandler() {
-        const container = this.getHitContainer();
-        const options = {
-            attributes: {
-                class: 'shadow',
-                style: {
-                    top: '0px',
-                    left: '0px',
-                },
-            },
-        };
-
-        for (let i = 0; i < instanceList.length; i += 1) {
-            const coincidence = instanceList[i].getContainerCoincidences(container);
-            if (coincidence.truthy) {
-                instanceList[i].addTruthyChild(new ScratchComponent(this, options));
-                break;
-            }
-            if (coincidence.falsy) {
-                instanceList[i].addFalsyChild(new ScratchComponent(this, options));
-                break;
-            }
-            if (coincidence.next) {
-                instanceList[i].addNextComponent(new ScratchComponent(this, options));
-                break;
-            }
-        }
-    }
-
-    getContainerCoincidences(containerPosition) {
-        const { truthy, falsy, next } = this._getContainerPositions();
-
-        const coincidences = {};
-
-        coincidences.truthy = ScratchComponent.isContainerCoincident(containerPosition, truthy);
-        coincidences.falsy = ScratchComponent.isContainerCoincident(containerPosition, falsy);
-        coincidences.next = ScratchComponent.isContainerCoincident(containerPosition, next);
-
-        return coincidences;
-    }
-
-    static getContainerPosition(container) {
-        const { width, height } = window.getComputedStyle(container);
-        const { top, left } = container.getBoundingClientRect();
-
-        return {
-            top: Math.round(top),
-            right: Math.round(parseInt(width, 10) + left),
-            bottom: Math.round(parseInt(height, 10) + top),
-            left: Math.round(left),
-        };
-    }
-
-    static isContainerCoincident(container1, container2) {
-        if (!container1 || !container2) return false;
-
-        return (ScratchComponent.isHorizontalCoincident(container1, container2)
-            && ScratchComponent.isVerticalCoincident(container1, container2));
-    }
-
-    static isHorizontalCoincident(container1, container2) {
-        const bounds = {
-            start1: container1.left,
-            end1: container1.right,
-            start2: container2.left,
-            end2: container2.right,
-        };
-
-        return ScratchComponent.isLineCoincident(bounds);
-    }
-
-    static isVerticalCoincident(container1, container2) {
-        const bounds = {
-            start1: container1.top,
-            end1: container1.bottom,
-            start2: container2.top,
-            end2: container2.bottom,
-        };
-
-        return ScratchComponent.isLineCoincident(bounds);
-    }
-
-    static isLineCoincident(bounds) {
-        // eslint-disable-next-line object-curly-newline
-        const { start1, start2, end1, end2 } = bounds;
-
-        return (start1 <= start2 && end1 >= start2)
-            || (start1 <= end2 && end1 >= end2)
-            || (start2 <= start1 && end1 <= end2);
-    }
-
     addTruthyChild(child) {
-        if (!(child instanceof ScratchComponent)) return;
+        if (!(child instanceof ScratchComponent) || !this._addElements.truthy) return;
 
         this.removeTruthyChild();
         this._truthy = child;
@@ -311,6 +242,7 @@ export default class ScratchComponent {
     removeTruthyChild() {
         if (this._truthy) {
             this._truthyContainer.removeChild(this._truthyContainer.children[0]);
+            this._truthy.removeResizeListener(this._truthyResizeHandlerBinded);
             this._truthy = null;
 
             delete this._opt.dimensions.truthyHeight;
@@ -319,7 +251,7 @@ export default class ScratchComponent {
     }
 
     addFalsyChild(child) {
-        if (!(child instanceof ScratchComponent)) return;
+        if (!(child instanceof ScratchComponent) || !this._addElements.falsy) return;
 
         this.removeFalsyChild();
         this._falsy = child;
@@ -332,6 +264,7 @@ export default class ScratchComponent {
     removeFalsyChild() {
         if (this._falsy) {
             this._falsyContainer.removeChild(this._falsyContainer.children[0]);
+            this._falsy.removeResizeListener(this._falsyResizeHandlerBinded);
             this._falsy = null;
 
             delete this._opt.dimensions.falsyHeight;
@@ -340,7 +273,7 @@ export default class ScratchComponent {
     }
 
     addNextComponent(next) {
-        if (!(next instanceof ScratchComponent)) return;
+        if (!(next instanceof ScratchComponent) || !this._addElements.next) return;
 
         this.removeNextComponent();
         this._next = next;
@@ -353,6 +286,7 @@ export default class ScratchComponent {
     removeNextComponent() {
         if (this._next) {
             this._nextContainer.removeChild(this._nextContainer.children[0]);
+            this._next.removeResizeListener(this._nextResizeHandlerBinded);
             this._next = null;
 
             this._resize({ nextHeight: 0 });
@@ -446,12 +380,141 @@ export default class ScratchComponent {
         this._resizeListeners.forEach((listener) => listener(this));
     }
 
+    setAddPermissions(permissions = {}) {
+        objectUtil.merge(this._addElements, permissions);
+        if (!this._addElements.truthy) this.removeTruthyChild();
+        if (!this._addElements.falsy) this.removeFalsyChild();
+        if (!this._addElements.next) this.removeNextComponent();
+    }
+
+    getHitContainer() {
+        const container = ScratchComponent.getContainerPosition(this._DOMNode);
+        container.bottom = container.top + 20;
+        return container;
+    }
+
+    _getContainerPositions() {
+        const truthy = this._truthyContainer
+            ? ScratchComponent.getContainerPosition(this._truthyContainer)
+            : null;
+
+        const falsy = this._falsyContainer
+            ? ScratchComponent.getContainerPosition(this._falsyContainer)
+            : null;
+
+        return {
+            truthy,
+            falsy,
+            next: ScratchComponent.getContainerPosition(this._nextContainer),
+        };
+    }
+
+    _coincidenceMoveHandler() {
+        const container = this.getHitContainer();
+        const options = {
+            attributes: {
+                class: 'shadow',
+                style: {
+                    top: '0px',
+                    left: '0px',
+                },
+            },
+        };
+
+        this._lastCoincidence.found = null;
+
+        for (let i = 0; i < instanceList.length; i += 1) {
+            if (this._handleCoincidences(instanceList[i], container, options)) {
+                this._lastCoincidence.found = instanceList[i];
+                break;
+            }
+        }
+
+        if (!this._lastCoincidence.found && this._preview.component) {
+            this._removePreviewContainer();
+        }
+    }
+
+    _handleCoincidences(instance, container, options) {
+        const coincidences = instance.getContainerCoincidences(container);
+        const containerName = Object.keys(coincidences).find((k) => coincidences[k]);
+        if (containerName) {
+            this._handleContainerCoincidence[containerName](instance, options);
+            this._lastCoincidence.containerName = containerName;
+            return true;
+        }
+        return false;
+    }
+
+    getContainerCoincidences(containerPosition) {
+        const { truthy, falsy, next } = this._getContainerPositions();
+
+        const coincidences = {};
+
+        coincidences.truthy = ScratchComponent.isContainerCoincident(containerPosition, truthy);
+        coincidences.falsy = ScratchComponent.isContainerCoincident(containerPosition, falsy);
+        coincidences.next = ScratchComponent.isContainerCoincident(containerPosition, next);
+
+        return coincidences;
+    }
+
+    static getContainerPosition(container) {
+        const { width, height } = window.getComputedStyle(container);
+        const { top, left } = container.getBoundingClientRect();
+
+        return {
+            top: Math.round(top),
+            right: Math.round(parseInt(width, 10) + left),
+            bottom: Math.round(parseInt(height, 10) + top),
+            left: Math.round(left),
+        };
+    }
+
+    static isContainerCoincident(container1, container2) {
+        if (!container1 || !container2) return false;
+
+        return (ScratchComponent.isHorizontalCoincident(container1, container2)
+            && ScratchComponent.isVerticalCoincident(container1, container2));
+    }
+
+    static isHorizontalCoincident(container1, container2) {
+        const bounds = {
+            start1: container1.left,
+            end1: container1.right,
+            start2: container2.left,
+            end2: container2.right,
+        };
+
+        return ScratchComponent.isLineCoincident(bounds);
+    }
+
+    static isVerticalCoincident(container1, container2) {
+        const bounds = {
+            start1: container1.top,
+            end1: container1.bottom,
+            start2: container2.top,
+            end2: container2.bottom,
+        };
+
+        return ScratchComponent.isLineCoincident(bounds);
+    }
+
+    static isLineCoincident(bounds) {
+        // eslint-disable-next-line object-curly-newline
+        const { start1, start2, end1, end2 } = bounds;
+
+        return (start1 <= start2 && end1 >= start2)
+            || (start1 <= end2 && end1 >= end2)
+            || (start2 <= start1 && end1 <= end2);
+    }
+
     _addMoveHandler() {
         this._DOMNode.addEventListener('mousedown', ({ clientX: startX, clientY: startY }) => {
             const initialStyle = window.getComputedStyle(this._DOMNode);
             const initialX = parseInt(initialStyle.left, 10);
             const initialY = parseInt(initialStyle.top, 10);
             this._DOMNode.setAttribute('data-grabbing', true);
+            this._createPreviewComponent();
 
             const handleMovement = ({ clientX, clientY }) => {
                 const offsetX = clientX - startX;
@@ -460,17 +523,70 @@ export default class ScratchComponent {
                 this._DOMNode.style.setProperty('left', `${offsetX + initialX}px`);
                 this._DOMNode.style.setProperty('top', `${offsetY + initialY}px`);
 
-                this._coincidenceHandler();
+                this._coincidenceMoveHandler();
             };
 
             const removeEventHandlers = () => {
                 window.removeEventListener('mousemove', handleMovement);
                 window.removeEventListener('mouseup', removeEventHandlers);
                 this._DOMNode.setAttribute('data-grabbing', false);
+                this._finishPreviewComponent();
             };
 
             window.addEventListener('mousemove', handleMovement);
             window.addEventListener('mouseup', removeEventHandlers);
         });
+    }
+
+    _createPreviewComponent() {
+        this._preview.component = new ScratchComponent(this, {
+            attributes: {
+                class: 'shadow',
+                style: {
+                    top: '0px',
+                    left: '0px',
+                },
+            },
+        });
+
+        this._preview.component.setAddPermissions({
+            truthy: false,
+            falsy: false,
+            next: false,
+        });
+    }
+
+    _finishPreviewComponent() {
+        if (this._lastCoincidence.found) {
+            this._handleCoincidenteInstance();
+        }
+    }
+
+    _handleCoincidenteInstance() {
+        const options = {
+            attributes: {
+                style: {
+                    top: '0px',
+                    left: '0px',
+                },
+            },
+        };
+
+        const { containerName } = this._lastCoincidence;
+
+        if (containerName === 'truthy') {
+            this._lastCoincidence.found.addTruthyChild(new ScratchComponent(this, options));
+        } else if (containerName === 'falsy') {
+            this._lastCoincidence.found.addFalsyChild(new ScratchComponent(this, options));
+        } else if (containerName === 'next') {
+            this._lastCoincidence.found.addNextComponent(new ScratchComponent(this, options));
+        }
+    }
+
+    _removePreviewContainer() {
+        if (this._preview.removeMethod) {
+            this._preview.removeMethod(this._preview.component);
+            this._preview.removeMethod = null;
+        }
     }
 }

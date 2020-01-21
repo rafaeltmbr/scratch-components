@@ -26,7 +26,6 @@ body[data-presentation="true"]
     display: inline-grid
     grid-template-columns: auto auto auto
 
-
     .component-container
         display: flex
         flex-direction: column
@@ -63,6 +62,11 @@ body[data-presentation="true"]
             fill: #bbbbbb
             stroke: #888888
             opacity: 0.8
+
+    .component-container > *[data-grabbing="true"]
+        -webkit-filter: drop-shadow( 0px 0px 4px rgba(0, 0, 0, .7))
+        filter: drop-shadow( 0px 0px 4px rgba(0, 0, 0, .7))
+        z-index: 1000
 
 body[data-show-containers="true"]
     .scratch-description-container, .scratch-truthy-container, .scratch-falsy-container, .scratch-next-container

@@ -68,6 +68,11 @@ body[data-presentation=true] .component-container .shadow {
   stroke: #888888;
   opacity: 0.8;
 }
+body[data-presentation=true] .component-container > *[data-grabbing=true] {
+  -webkit-filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.7));
+  filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.7));
+  z-index: 1000;
+}
 
 body[data-show-containers=true] .scratch-description-container, body[data-show-containers=true] .scratch-truthy-container, body[data-show-containers=true] .scratch-falsy-container, body[data-show-containers=true] .scratch-next-container {
   text-align: center;
