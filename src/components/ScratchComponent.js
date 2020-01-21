@@ -319,16 +319,16 @@ export default class ScratchComponent {
             ScratchComponent.updateContainerDimensions(this._falsyContainer, next, falsy);
         }
 
-        this._nextContainer.style.setProperty('width', dim.width);
-        this._nextContainer.style.setProperty('height', `${next.height}px`);
+        // this._nextContainer.style.setProperty('width', dim.width);
+        // this._nextContainer.style.setProperty('height', `${next.height}px`);
         this._nextContainer.style.setProperty('top', `${dim.fittingHeight}px`);
     }
 
     static updateContainerDimensions(container, next, dim) {
-        container.style.setProperty('height', `${dim.height + next.height}px`);
-        container.style.setProperty('width', `${dim.width}px`);
+        // container.style.setProperty('height', `${dim.height + next.height}px`);
+        // container.style.setProperty('width', `${dim.width}px`);
         container.style.setProperty('top', `${dim.top}px`);
-        container.style.setProperty('left', `${dim.left}px`);
+        // container.style.setProperty('left', `${dim.left}px`);
     }
 
     _updateFittingVisibility() {
@@ -389,7 +389,7 @@ export default class ScratchComponent {
 
     getHitContainer() {
         const container = ScratchComponent.getContainerPosition(this._DOMNode);
-        container.bottom = container.top + 20;
+        container.bottom = container.top + 10;
         return container;
     }
 
