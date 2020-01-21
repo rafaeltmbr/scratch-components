@@ -82,9 +82,10 @@ export default class ScratchComponent {
     _createNodeShortcuts() {
         const childrenLength = this._DOMNode.children.length;
         this._svg = this._DOMNode.children[0];
-        this._descriptionContainer = this._DOMNode.children[1];
-        this._truthyContainer = childrenLength > 3 ? this._DOMNode.children[2] : null;
-        this._falsyContainer = childrenLength > 4 ? this._DOMNode.children[3] : null;
+        this._previousContainer = this._DOMNode.children[1];
+        this._descriptionContainer = this._DOMNode.children[2];
+        this._truthyContainer = childrenLength > 4 ? this._DOMNode.children[3] : null;
+        this._falsyContainer = childrenLength > 5 ? this._DOMNode.children[4] : null;
         this._nextContainer = this._DOMNode.children[childrenLength - 1];
     }
 
@@ -108,7 +109,11 @@ export default class ScratchComponent {
                 instance.addNextComponent(this._preview.component);
                 this._preview.removeMethod = instance.removeNextComponent.bind(instance);
             },
-            self: () => {
+            self: (instance) => {
+                if (this._next) return;
+                this._removePreviewContainer();
+                instance.addPreviousComponent(this._preview.component);
+                this._preview.removeMethod = instance.removePreviousComponent.bind(instance);
             },
         };
     }
@@ -135,7 +140,7 @@ export default class ScratchComponent {
             truthy: this._truthyContainer,
             falsy: this._falsyContainer,
             next: this._nextContainer,
-            self: this._shapeName !== 'function' && this._shapeName !== 'event',
+            previous: this._shapeName !== 'function' && this._shapeName !== 'event',
         };
     }
 
@@ -157,6 +162,12 @@ export default class ScratchComponent {
 
     // eslint-disable-next-line object-curly-newline
     static createContainers(dim) {
+        const previousHTML = (ScratchComponent
+            .createContainerHTML('scratch-previous-container', {
+                height: 1,
+                width: dim.next.width,
+            }));
+
         const descriptionHTML = (ScratchComponent
             .createContainerHTML('scratch-description-container', dim.description));
 
@@ -171,7 +182,7 @@ export default class ScratchComponent {
             + `top: ${dim.fittingHeight}px; `
             + 'left: 0px; position: absolute;">';
 
-        return descriptionHTML + truthyHTML + falsyHTML + nextHTML;
+        return previousHTML + descriptionHTML + truthyHTML + falsyHTML + nextHTML;
     }
 
     static createContainerHTML(className, dimensions) {
@@ -179,10 +190,10 @@ export default class ScratchComponent {
             dimensions
                 ? (
                     `<div class="${className || ''}" style="position: absolute; `
-                    + `width: ${dimensions.width}px; `
-                    + `height: ${dimensions.height}px; `
-                    + `top: ${dimensions.top}px; `
-                    + `left: ${dimensions.left}px"></div>`
+                    + `width: ${dimensions.width || 0}px; `
+                    + `height: ${dimensions.height || 0}px; `
+                    + `top: ${dimensions.top || 0}px; `
+                    + `left: ${dimensions.left || 0}px"></div>`
                 )
                 : ''
         );
@@ -293,6 +304,24 @@ export default class ScratchComponent {
         }
     }
 
+    addPreviousComponent(previous) {
+        if (!(previous instanceof ScratchComponent) || !this._addElements.previous) return;
+
+        this.removePreviousComponent();
+        this._previous = previous;
+        this._previousContainer.appendChild(previous._DOMNode);
+        const { fittingHeight } = this._previous.getDimensions();
+        this._previous._DOMNode.style.setProperty('top', `-${fittingHeight}px`);
+    }
+
+    removePreviousComponent() {
+        if (this._previous) {
+            this._previousContainer.removeChild(this._previous._DOMNode);
+            this._previous._DOMNode.style.setProperty('top', '0px');
+            this._previous = null;
+        }
+    }
+
     _resize(dimensions = {}) {
         objectUtil.merge(this._opt.dimensions, dimensions);
         this._updateFittingVisibility();
@@ -385,6 +414,7 @@ export default class ScratchComponent {
         if (!this._addElements.truthy) this.removeTruthyChild();
         if (!this._addElements.falsy) this.removeFalsyChild();
         if (!this._addElements.next) this.removeNextComponent();
+        if (!this._addElements.previous) this.removePreviousComponent();
     }
 
     getHitContainer() {
@@ -411,20 +441,11 @@ export default class ScratchComponent {
 
     _coincidenceMoveHandler() {
         const container = this.getHitContainer();
-        const options = {
-            attributes: {
-                class: 'shadow',
-                style: {
-                    top: '0px',
-                    left: '0px',
-                },
-            },
-        };
 
         this._lastCoincidence.found = null;
 
         for (let i = 0; i < instanceList.length; i += 1) {
-            if (this._handleCoincidences(instanceList[i], container, options)) {
+            if (this._handleCoincidences(instanceList[i], container)) {
                 this._lastCoincidence.found = instanceList[i];
                 break;
             }
@@ -435,15 +456,29 @@ export default class ScratchComponent {
         }
     }
 
-    _handleCoincidences(instance, container, options) {
+    _handleCoincidences(instance, container) {
         const coincidences = instance.getContainerCoincidences(container);
         const containerName = Object.keys(coincidences).find((k) => coincidences[k]);
         if (containerName) {
-            this._handleContainerCoincidence[containerName](instance, options);
+            this._handleContainerCoincidence[containerName](instance);
             this._lastCoincidence.containerName = containerName;
             return true;
         }
+
+        if (this._checkSelfCoincidence(instance)) {
+            this._handleContainerCoincidence.self(instance);
+            this._lastCoincidence.containerName = 'self';
+            return true;
+        }
         return false;
+    }
+
+    _checkSelfCoincidence(instance) {
+        if (this._next === instance) return false;
+
+        const instancePosition = instance.getHitContainer();
+        const { next } = this.getContainerCoincidences(instancePosition);
+        return next;
     }
 
     getContainerCoincidences(containerPosition) {
@@ -567,13 +602,22 @@ export default class ScratchComponent {
 
         if (containerName === 'truthy') {
             this._clearTopLeftPositions();
+            this._removePreviewContainer();
             this._lastCoincidence.found.addTruthyChild(this);
         } else if (containerName === 'falsy') {
             this._clearTopLeftPositions();
+            this._removePreviewContainer();
             this._lastCoincidence.found.addFalsyChild(this);
         } else if (containerName === 'next') {
             this._clearTopLeftPositions();
+            this._removePreviewContainer();
             this._lastCoincidence.found.addNextComponent(this);
+        } else if (containerName === 'self') {
+            const { top, left } = this._preview.component._DOMNode.getBoundingClientRect();
+            this._DOMNode.style.setProperty('top', `${top}px`);
+            this._DOMNode.style.setProperty('left', `${left}px`);
+            this._removePreviewContainer();
+            this.addNextComponent(this._lastCoincidence.found);
         }
     }
 
