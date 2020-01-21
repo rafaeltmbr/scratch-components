@@ -563,23 +563,17 @@ export default class ScratchComponent {
     }
 
     _handleCoincidenteInstance() {
-        const options = {
-            attributes: {
-                style: {
-                    top: '0px',
-                    left: '0px',
-                },
-            },
-        };
-
         const { containerName } = this._lastCoincidence;
 
         if (containerName === 'truthy') {
-            this._lastCoincidence.found.addTruthyChild(new ScratchComponent(this, options));
+            this._clearTopLeftPositions();
+            this._lastCoincidence.found.addTruthyChild(this);
         } else if (containerName === 'falsy') {
-            this._lastCoincidence.found.addFalsyChild(new ScratchComponent(this, options));
+            this._clearTopLeftPositions();
+            this._lastCoincidence.found.addFalsyChild(this);
         } else if (containerName === 'next') {
-            this._lastCoincidence.found.addNextComponent(new ScratchComponent(this, options));
+            this._clearTopLeftPositions();
+            this._lastCoincidence.found.addNextComponent(this);
         }
     }
 
@@ -588,5 +582,10 @@ export default class ScratchComponent {
             this._preview.removeMethod(this._preview.component);
             this._preview.removeMethod = null;
         }
+    }
+
+    _clearTopLeftPositions() {
+        this._DOMNode.style.setProperty('top', '0px');
+        this._DOMNode.style.setProperty('left', '0px');
     }
 }
