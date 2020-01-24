@@ -205,6 +205,12 @@ export default class ScratchComponent {
         }
     }
 
+    _finishPreviewComponent() {
+        if (this._lastCoincidence.found) {
+            this._handleCoincidenteInstance();
+        }
+    }
+
     _handleCoincidences(instance, container) {
         const coincidences = instance.getContainerCoincidences(container);
         const containerName = Object.keys(coincidences).find((k) => coincidences[k]);
@@ -214,12 +220,6 @@ export default class ScratchComponent {
             return true;
         }
         return false;
-    }
-
-    _finishPreviewComponent() {
-        if (this._lastCoincidence.found) {
-            this._handleCoincidenteInstance();
-        }
     }
 
     _handleCoincidenteInstance() {
@@ -243,6 +243,18 @@ export default class ScratchComponent {
     _clearTopLeftPositions() {
         this._DOMNode.style.setProperty('top', '0px');
         this._DOMNode.style.setProperty('left', '0px');
+    }
+
+    _truthyResizeHandler(target) {
+        this._resize({ truthyHeight: target.getDimensions().fittingHeight });
+    }
+
+    _falsyResizeHandler(target) {
+        this._resize({ falsyHeight: target.getDimensions().fittingHeight });
+    }
+
+    _nextResizeHandler(target) {
+        this._resize({ nextHeight: target.getDimensions().fittingHeight });
     }
 
     _resize(dimensions = {}) {
@@ -288,42 +300,6 @@ export default class ScratchComponent {
 
     _callResizeListeners() {
         this._resizeListeners.forEach((listener) => listener(this));
-    }
-
-    _truthyResizeHandler(target) {
-        this._resize({ truthyHeight: target.getDimensions().fittingHeight });
-    }
-
-    _falsyResizeHandler(target) {
-        this._resize({ falsyHeight: target.getDimensions().fittingHeight });
-    }
-
-    _nextResizeHandler(target) {
-        this._resize({ nextHeight: target.getDimensions().fittingHeight });
-    }
-
-    _getContainerPositions() {
-        const truthy = this._containers.truthy
-            ? componentUtil.getContainerPosition(this._containers.truthy)
-            : null;
-
-        const falsy = this._containers.falsy
-            ? componentUtil.getContainerPosition(this._containers.falsy)
-            : null;
-
-        return {
-            truthy,
-            falsy,
-            next: componentUtil.getContainerPosition(this._containers.next),
-        };
-    }
-
-    _checkSelfCoincidence(instance) {
-        if (this._next === instance) return false;
-
-        const instancePosition = instance.getHitContainer();
-        const { next } = this.getContainerCoincidences(instancePosition);
-        return next;
     }
 
     addTruthyChild(child) {
@@ -451,6 +427,22 @@ export default class ScratchComponent {
         coincidences.next = componentUtil.isContainerCoincident(containerPosition, next);
 
         return coincidences;
+    }
+
+    _getContainerPositions() {
+        const truthy = this._containers.truthy
+            ? componentUtil.getContainerPosition(this._containers.truthy)
+            : null;
+
+        const falsy = this._containers.falsy
+            ? componentUtil.getContainerPosition(this._containers.falsy)
+            : null;
+
+        return {
+            truthy,
+            falsy,
+            next: componentUtil.getContainerPosition(this._containers.next),
+        };
     }
 
     setAddPermissions(permissions = {}) {
