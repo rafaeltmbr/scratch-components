@@ -10,8 +10,6 @@ const instanceList = [];
 
 export default class ScratchComponent {
     constructor(shapeNameOrComponentInstance, options = {}) {
-        window.instanceList = instanceList;
-
         if (componentUtil.isValidShapeName(shapeNameOrComponentInstance)) {
             this._shapeNameConstructor(shapeNameOrComponentInstance, options);
         } else if (shapeNameOrComponentInstance instanceof ScratchComponent) {
@@ -79,7 +77,6 @@ export default class ScratchComponent {
     _createNodeShortcuts() {
         const childrenLength = this._DOMNode.children.length;
         this._svg = this._DOMNode.children[0];
-        this._previousContainer = this._DOMNode.children[1];
         this._descriptionContainer = this._DOMNode.children[2];
         this._truthyContainer = childrenLength > 4 ? this._DOMNode.children[3] : null;
         this._falsyContainer = childrenLength > 5 ? this._DOMNode.children[4] : null;
@@ -105,12 +102,6 @@ export default class ScratchComponent {
                 this._removePreviewContainer();
                 instance.addNextComponent(this._preview.component);
                 this._preview.removeMethod = instance.removeNextComponent.bind(instance);
-            },
-            self: (instance) => {
-                if (this._next) return;
-                this._removePreviewContainer();
-                instance.addPreviousComponent(this._preview.component);
-                this._preview.removeMethod = instance.removePreviousComponent.bind(instance);
             },
         };
     }
@@ -235,24 +226,6 @@ export default class ScratchComponent {
         }
     }
 
-    addPreviousComponent(previous) {
-        if (!(previous instanceof ScratchComponent) || !this._addElements.previous) return;
-
-        this.removePreviousComponent();
-        this._previous = previous;
-        this._previousContainer.appendChild(previous._DOMNode);
-        const { fittingHeight } = this._previous.getDimensions();
-        this._previous._DOMNode.style.setProperty('top', `-${fittingHeight}px`);
-    }
-
-    removePreviousComponent() {
-        if (this._previous) {
-            this._previousContainer.removeChild(this._previous._DOMNode);
-            this._previous._DOMNode.style.setProperty('top', '0px');
-            this._previous = null;
-        }
-    }
-
     _resize(dimensions = {}) {
         objectUtil.merge(this._opt.dimensions, dimensions);
         this._updateFittingVisibility();
@@ -338,7 +311,6 @@ export default class ScratchComponent {
         if (!this._addElements.truthy) this.removeTruthyChild();
         if (!this._addElements.falsy) this.removeFalsyChild();
         if (!this._addElements.next) this.removeNextComponent();
-        if (!this._addElements.previous) this.removePreviousComponent();
     }
 
     getHitContainer() {
@@ -386,12 +358,6 @@ export default class ScratchComponent {
         if (containerName) {
             this._handleContainerCoincidence[containerName](instance);
             this._lastCoincidence.containerName = containerName;
-            return true;
-        }
-
-        if (this._checkSelfCoincidence(instance)) {
-            this._handleContainerCoincidence.self(instance);
-            this._lastCoincidence.containerName = 'self';
             return true;
         }
         return false;
@@ -486,12 +452,6 @@ export default class ScratchComponent {
             this._clearTopLeftPositions();
             this._removePreviewContainer();
             this._lastCoincidence.found.addNextComponent(this);
-        } else if (containerName === 'self') {
-            const { top, left } = this._preview.component._DOMNode.getBoundingClientRect();
-            this._DOMNode.style.setProperty('top', `${top}px`);
-            this._DOMNode.style.setProperty('left', `${left}px`);
-            this._removePreviewContainer();
-            this.addNextComponent(this._lastCoincidence.found);
         }
     }
 
