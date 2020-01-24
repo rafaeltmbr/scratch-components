@@ -3,6 +3,7 @@
 import ScratchSVGPath from '../util/ScratchSVGPath';
 import DOMUtil from '../util/DOMUtil';
 import objectUtil from '../util/objectUtil';
+import componentUtil from '../util/componentUtil';
 import defaults from './ScratchComponentDefaults';
 
 const instanceList = [];
@@ -11,7 +12,7 @@ export default class ScratchComponent {
     constructor(shapeNameOrComponentInstance, options = {}) {
         window.instanceList = instanceList;
 
-        if (ScratchComponent.isValidShapeName(shapeNameOrComponentInstance)) {
+        if (componentUtil.isValidShapeName(shapeNameOrComponentInstance)) {
             this._shapeNameConstructor(shapeNameOrComponentInstance, options);
         } else if (shapeNameOrComponentInstance instanceof ScratchComponent) {
             this._componentInstanceConstructor(shapeNameOrComponentInstance, options);
@@ -21,10 +22,6 @@ export default class ScratchComponent {
 
         instanceList.push(this);
         this._id = instanceList.length;
-    }
-
-    static isValidShapeName(shapeName) {
-        return typeof shapeName === 'string' && typeof ScratchSVGPath[shapeName] === 'function';
     }
 
     _shapeNameConstructor(shapeName, options) {
@@ -74,7 +71,7 @@ export default class ScratchComponent {
 
     _createDOMNode(shapeName) {
         const { path, dimensions } = ScratchSVGPath[shapeName](this._opt);
-        const html = ScratchComponent.createComponentHTML(path, dimensions, this._opt);
+        const html = componentUtil.createComponentHTML(path, dimensions, this._opt);
         this._DOMNode = DOMUtil.createNodeElement(html);
         this._updateDimensions(dimensions);
     }
@@ -142,72 +139,6 @@ export default class ScratchComponent {
             next: this._nextContainer,
             previous: this._shapeName !== 'function' && this._shapeName !== 'event',
         };
-    }
-
-    static createComponentHTML(path, dimensions, options) {
-        const attributes = objectUtil.deepClone(options.attributes);
-        objectUtil.merge(attributes.style, dimensions);
-
-        const styleFormmated = ScratchComponent.createStringOfAttributes(attributes.style, ': ', '; ');
-        const attributesFormmated = ScratchComponent.createStringOfAttributes(attributes, '="', '" ', '"');
-        const containers = ScratchComponent.createContainers(dimensions);
-
-        return (
-            `<div ${attributesFormmated} style="${styleFormmated}">`
-            + '<svg style="width: 100%; height: 100%">'
-            + `<path d="${path}" /></svg>`
-            + `${containers}</div></div>`
-        );
-    }
-
-    // eslint-disable-next-line object-curly-newline
-    static createContainers(dim) {
-        const previousHTML = (ScratchComponent
-            .createContainerHTML('scratch-previous-container', {
-                height: 1,
-                width: dim.next.width,
-            }));
-
-        const descriptionHTML = (ScratchComponent
-            .createContainerHTML('scratch-description-container', dim.description));
-
-        const truthyHTML = (ScratchComponent
-            .createContainerHTML('scratch-truthy-container', dim.truthy));
-
-        const falsyHTML = (ScratchComponent
-            .createContainerHTML('scratch-falsy-container', dim.falsy));
-
-        const nextHTML = '<div class="scratch-next-container" '
-            + `style="width: 100%; height: ${dim.next.height}px; `
-            + `top: ${dim.fittingHeight}px; `
-            + 'left: 0px; position: absolute;">';
-
-        return previousHTML + descriptionHTML + truthyHTML + falsyHTML + nextHTML;
-    }
-
-    static createContainerHTML(className, dimensions) {
-        return (
-            dimensions
-                ? (
-                    `<div class="${className || ''}" style="position: absolute; `
-                    + `width: ${dimensions.width || 0}px; `
-                    + `height: ${dimensions.height || 0}px; `
-                    + `top: ${dimensions.top || 0}px; `
-                    + `left: ${dimensions.left || 0}px"></div>`
-                )
-                : ''
-        );
-    }
-
-    static createStringOfAttributes(attributes = {}, nameValueSeparator = '=',
-        attributeSeparator = ' ', terminator = '') {
-        return Object.keys(attributes)
-            .map((k) => (
-                typeof attributes[k] === 'string'
-                    ? `${k + nameValueSeparator + attributes[k]}`
-                    : ''))
-            .filter((e) => e !== '')
-            .join(attributeSeparator) + terminator;
     }
 
     getDOMNode() {
@@ -341,23 +272,16 @@ export default class ScratchComponent {
         const { truthy, falsy, next } = dim;
 
         if (this._truthyContainer && truthy) {
-            ScratchComponent.updateContainerDimensions(this._truthyContainer, next, truthy);
+            componentUtil.updateContainerDimensions(this._truthyContainer, next, truthy);
         }
 
         if (this._falsyContainer && falsy) {
-            ScratchComponent.updateContainerDimensions(this._falsyContainer, next, falsy);
+            componentUtil.updateContainerDimensions(this._falsyContainer, next, falsy);
         }
 
         // this._nextContainer.style.setProperty('width', dim.width);
         // this._nextContainer.style.setProperty('height', `${next.height}px`);
         this._nextContainer.style.setProperty('top', `${dim.fittingHeight}px`);
-    }
-
-    static updateContainerDimensions(container, next, dim) {
-        // container.style.setProperty('height', `${dim.height + next.height}px`);
-        // container.style.setProperty('width', `${dim.width}px`);
-        container.style.setProperty('top', `${dim.top}px`);
-        // container.style.setProperty('left', `${dim.left}px`);
     }
 
     _updateFittingVisibility() {
@@ -418,24 +342,24 @@ export default class ScratchComponent {
     }
 
     getHitContainer() {
-        const container = ScratchComponent.getContainerPosition(this._DOMNode);
+        const container = componentUtil.getContainerPosition(this._DOMNode);
         container.bottom = container.top + 10;
         return container;
     }
 
     _getContainerPositions() {
         const truthy = this._truthyContainer
-            ? ScratchComponent.getContainerPosition(this._truthyContainer)
+            ? componentUtil.getContainerPosition(this._truthyContainer)
             : null;
 
         const falsy = this._falsyContainer
-            ? ScratchComponent.getContainerPosition(this._falsyContainer)
+            ? componentUtil.getContainerPosition(this._falsyContainer)
             : null;
 
         return {
             truthy,
             falsy,
-            next: ScratchComponent.getContainerPosition(this._nextContainer),
+            next: componentUtil.getContainerPosition(this._nextContainer),
         };
     }
 
@@ -486,61 +410,11 @@ export default class ScratchComponent {
 
         const coincidences = {};
 
-        coincidences.truthy = ScratchComponent.isContainerCoincident(containerPosition, truthy);
-        coincidences.falsy = ScratchComponent.isContainerCoincident(containerPosition, falsy);
-        coincidences.next = ScratchComponent.isContainerCoincident(containerPosition, next);
+        coincidences.truthy = componentUtil.isContainerCoincident(containerPosition, truthy);
+        coincidences.falsy = componentUtil.isContainerCoincident(containerPosition, falsy);
+        coincidences.next = componentUtil.isContainerCoincident(containerPosition, next);
 
         return coincidences;
-    }
-
-    static getContainerPosition(container) {
-        const { width, height } = window.getComputedStyle(container);
-        const { top, left } = container.getBoundingClientRect();
-
-        return {
-            top: Math.round(top),
-            right: Math.round(parseInt(width, 10) + left),
-            bottom: Math.round(parseInt(height, 10) + top),
-            left: Math.round(left),
-        };
-    }
-
-    static isContainerCoincident(container1, container2) {
-        if (!container1 || !container2) return false;
-
-        return (ScratchComponent.isHorizontalCoincident(container1, container2)
-            && ScratchComponent.isVerticalCoincident(container1, container2));
-    }
-
-    static isHorizontalCoincident(container1, container2) {
-        const bounds = {
-            start1: container1.left,
-            end1: container1.right,
-            start2: container2.left,
-            end2: container2.right,
-        };
-
-        return ScratchComponent.isLineCoincident(bounds);
-    }
-
-    static isVerticalCoincident(container1, container2) {
-        const bounds = {
-            start1: container1.top,
-            end1: container1.bottom,
-            start2: container2.top,
-            end2: container2.bottom,
-        };
-
-        return ScratchComponent.isLineCoincident(bounds);
-    }
-
-    static isLineCoincident(bounds) {
-        // eslint-disable-next-line object-curly-newline
-        const { start1, start2, end1, end2 } = bounds;
-
-        return (start1 <= start2 && end1 >= start2)
-            || (start1 <= end2 && end1 >= end2)
-            || (start2 <= start1 && end1 <= end2);
     }
 
     _addMoveHandler() {
