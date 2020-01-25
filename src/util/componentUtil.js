@@ -1,5 +1,5 @@
 import objectUtil from './objectUtil';
-import ScratchSVGPath from './ScratchSVGPath';
+import ScratchShape from './scratchShape';
 
 class componentUtil {
     static getContainerPosition(container) {
@@ -53,7 +53,7 @@ class componentUtil {
     }
 
     static isValidShapeName(shapeName) {
-        return typeof shapeName === 'string' && typeof ScratchSVGPath[shapeName] === 'function';
+        return typeof shapeName === 'string' && typeof ScratchShape[shapeName] === 'function';
     }
 
     static createComponentHTML(path, dimensions, options) {

@@ -2,7 +2,7 @@
 /* eslint-disable prefer-template */
 
 module.exports = {
-    entry: __dirname + '/index-presentation.js',
+    entry: __dirname + '/index.js',
     output: {
         path: __dirname.split('\\').slice(0, -1).concat(['build']).join('\\'),
         filename: 'bundle.js',

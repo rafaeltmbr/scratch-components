@@ -1,9 +1,9 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-underscore-dangle */
-import ScratchSVGPath from '../util/ScratchSVGPath';
-import DOMUtil from '../util/DOMUtil';
-import objectUtil from '../util/objectUtil';
-import componentUtil from '../util/componentUtil';
+import ScratchShape from './util/scratchShape';
+import DOMUtil from './util/DOMUtil';
+import objectUtil from './util/objectUtil';
+import componentUtil from './util/componentUtil';
 import defaults from './ScratchComponentDefaults';
 
 const instanceList = [];
@@ -74,7 +74,7 @@ export default class ScratchComponent {
     }
 
     _createDOMNode(shapeName) {
-        const { path, dimensions } = ScratchSVGPath[shapeName](this._opt);
+        const { path, dimensions } = ScratchShape[shapeName](this._opt);
         const html = componentUtil.createComponentHTML(path, dimensions, this._opt);
         this._DOMNode = DOMUtil.createNodeElement(html);
         objectUtil.merge(this._opt.dimensions, dimensions);
@@ -260,7 +260,7 @@ export default class ScratchComponent {
     _resize(dimensions = {}) {
         objectUtil.merge(this._opt.dimensions, dimensions);
         this._updateFittingVisibility();
-        const { path, dimensions: dim } = ScratchSVGPath[this._shapeName](this._opt);
+        const { path, dimensions: dim } = ScratchShape[this._shapeName](this._opt);
 
         this._DOMNode.style.setProperty('width', dim.width);
         this._DOMNode.style.setProperty('height', dim.height);

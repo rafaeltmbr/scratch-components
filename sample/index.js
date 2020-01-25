@@ -1,96 +1,56 @@
-import ScratchComponent from '../src/components/ScratchComponent';
+import ScratchComponent from '../src/ScratchComponent';
+import DOMUtil from '../src/util/DOMUtil';
+
+function createComponentContainer(component) {
+    const container = DOMUtil.createNodeElement('<div class="component-container"></div>');
+    container.appendChild(component.getDOMNode());
+    container.appendChild(DOMUtil.createNodeElement('<div style="height: 40px"></div>')); // `<header>${component.getShapeName()}</header>`));
+    return container;
+}
 
 const statement = new ScratchComponent('statement', {
     attributes: {
         class: 'statement',
-        id: 'statement',
-        style: {
-            width: '200px',
-            'stroke-width': '2px',
-            'line-height': '40px',
-        },
     },
 });
 
-const statement2 = new ScratchComponent('statement', {
+const event = new ScratchComponent('event', {
     attributes: {
-        class: 'statement',
-        id: 'statement2',
-        style: {
-            'stroke-width': '2px',
-        },
+        class: 'event',
     },
 });
 
-const statement3 = new ScratchComponent('statement', {
+const functionBlock = new ScratchComponent('function', {
     attributes: {
-        class: 'statement',
-        id: 'statement3',
-        style: {
-            'stroke-width': '2px',
-        },
+        class: 'function',
     },
 });
 
 const truthyBlock = new ScratchComponent('truthyBlock', {
     attributes: {
         class: 'truthyBlock',
-        style: {
-            width: '180px',
-            'stroke-width': '2px',
-        },
     },
 });
 
 const truthyFalsyBlock = new ScratchComponent('truthyFalsyBlock', {
     attributes: {
         class: 'truthyFalsyBlock',
-        style: {
-            'stroke-width': '2px',
-        },
     },
 });
 
-document.body.appendChild(truthyFalsyBlock.getDOMNode());
-truthyFalsyBlock.addTruthyChild(truthyBlock);
-truthyBlock.addTruthyChild(statement);
-truthyFalsyBlock.addFalsyChild(statement2);
+document.body.setAttribute('data-presentation', true);
 
-function truthyFalsyBlockAddItself() {
-    truthyFalsyBlock.addFalsyChild(new ScratchComponent(truthyFalsyBlock, {
-        attributes: {
-            id: 'truthyFalsyCopy',
-        },
-    }));
-}
+const statementContainer = createComponentContainer(statement);
+document.body.appendChild(statementContainer);
 
-window.setTimeout(() => {
-    truthyFalsyBlockAddItself();
+const eventContainer = createComponentContainer(event);
+document.body.appendChild(eventContainer);
 
-    window.setTimeout(() => {
-        truthyFalsyBlock.getTruthyFalsyAndNext().falsy.removeTruthyChild();
-        window.setTimeout(() => {
-            truthyFalsyBlock.removeFalsyChild();
+const functionContainer = createComponentContainer(functionBlock);
+document.body.appendChild(functionContainer);
 
-            window.setTimeout(() => {
-                truthyFalsyBlock.getTruthyFalsyAndNext().truthy.addNextComponent(statement3);
+const truthyContainer = createComponentContainer(truthyBlock);
+document.body.appendChild(truthyContainer);
 
-                window.setTimeout(() => {
-                    truthyFalsyBlock.getTruthyFalsyAndNext().truthy.removeNextComponent(statement3);
-
-                    window.setTimeout(() => {
-                        truthyFalsyBlock.addFalsyChild(new ScratchComponent(truthyBlock, {
-                            fitting: {
-                                next: false,
-                            },
-                        }));
-
-                        window.setTimeout(() => {
-                            truthyFalsyBlock.removeFalsyChild();
-                        }, 1000);
-                    }, 1000);
-                }, 1000);
-            }, 1000);
-        }, 1000);
-    }, 1000);
-}, 1000);
+const truthyFalsyContainer = createComponentContainer(truthyFalsyBlock);
+document.body.appendChild(truthyFalsyContainer);
