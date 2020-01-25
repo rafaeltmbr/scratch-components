@@ -1,16 +1,16 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-underscore-dangle */
 import ScratchShape from './util/scratchShape';
-import DOMUtil from './util/DOMUtil';
-import objectUtil from './util/objectUtil';
-import componentUtil from './util/componentUtil';
+import DOM from './util/DOM';
+import object from './util/object';
+import component from './util/component';
 import defaults from './ScratchComponentDefaults';
 
 const instanceList = [];
 
 export default class ScratchComponent {
     constructor(shapeNameOrComponentInstance, options = {}) {
-        if (componentUtil.isValidShapeName(shapeNameOrComponentInstance)) {
+        if (component.isValidShapeName(shapeNameOrComponentInstance)) {
             this._shapeNameConstructor(shapeNameOrComponentInstance, options);
         } else if (shapeNameOrComponentInstance instanceof ScratchComponent) {
             this._componentInstanceConstructor(shapeNameOrComponentInstance, options);
@@ -64,20 +64,20 @@ export default class ScratchComponent {
     }
 
     _assingOptions(options) {
-        objectUtil.merge(this._opt, defaults);
-        objectUtil.merge(this._opt, options);
+        object.merge(this._opt, defaults);
+        object.merge(this._opt, options);
     }
 
     _assignOptionsFromComponent(componentInstance, options) {
-        objectUtil.deepCopy(this._opt, componentInstance._opt);
-        objectUtil.merge(this._opt, options);
+        object.deepCopy(this._opt, componentInstance._opt);
+        object.merge(this._opt, options);
     }
 
     _createDOMNode(shapeName) {
         const { path, dimensions } = ScratchShape[shapeName](this._opt);
-        const html = componentUtil.createComponentHTML(path, dimensions, this._opt);
-        this._DOMNode = DOMUtil.createNodeElement(html);
-        objectUtil.merge(this._opt.dimensions, dimensions);
+        const html = component.createComponentHTML(path, dimensions, this._opt);
+        this._DOMNode = DOM.createNodeElement(html);
+        object.merge(this._opt.dimensions, dimensions);
     }
 
     _createNodeShortcuts() {
@@ -258,7 +258,7 @@ export default class ScratchComponent {
     }
 
     _resize(dimensions = {}) {
-        objectUtil.merge(this._opt.dimensions, dimensions);
+        object.merge(this._opt.dimensions, dimensions);
         this._updateFittingVisibility();
         const { path, dimensions: dim } = ScratchShape[this._shapeName](this._opt);
 
@@ -268,7 +268,7 @@ export default class ScratchComponent {
         this._svg.children[0].setAttribute('d', path);
 
         this._updateChildAndNextContainerDimensions(dim);
-        objectUtil.merge(this._opt.dimensions, dim);
+        object.merge(this._opt.dimensions, dim);
         this._callResizeListeners();
     }
 
@@ -288,11 +288,11 @@ export default class ScratchComponent {
         const { truthy, falsy, next } = dim;
 
         if (this._containers.truthy && truthy) {
-            componentUtil.updateContainerDimensions(this._containers.truthy, next, truthy);
+            component.updateContainerDimensions(this._containers.truthy, next, truthy);
         }
 
         if (this._containers.falsy && falsy) {
-            componentUtil.updateContainerDimensions(this._containers.falsy, next, falsy);
+            component.updateContainerDimensions(this._containers.falsy, next, falsy);
         }
 
         this._containers.next.style.setProperty('top', `${dim.fittingHeight}px`);
@@ -412,7 +412,7 @@ export default class ScratchComponent {
     }
 
     getHitContainer() {
-        const container = componentUtil.getContainerPosition(this._DOMNode);
+        const container = component.getContainerPosition(this._DOMNode);
         container.bottom = container.top + 10;
         return container;
     }
@@ -422,31 +422,31 @@ export default class ScratchComponent {
 
         const coincidences = {};
 
-        coincidences.truthy = componentUtil.isContainerCoincident(containerPosition, truthy);
-        coincidences.falsy = componentUtil.isContainerCoincident(containerPosition, falsy);
-        coincidences.next = componentUtil.isContainerCoincident(containerPosition, next);
+        coincidences.truthy = component.isContainerCoincident(containerPosition, truthy);
+        coincidences.falsy = component.isContainerCoincident(containerPosition, falsy);
+        coincidences.next = component.isContainerCoincident(containerPosition, next);
 
         return coincidences;
     }
 
     _getContainerPositions() {
         const truthy = this._containers.truthy
-            ? componentUtil.getContainerPosition(this._containers.truthy)
+            ? component.getContainerPosition(this._containers.truthy)
             : null;
 
         const falsy = this._containers.falsy
-            ? componentUtil.getContainerPosition(this._containers.falsy)
+            ? component.getContainerPosition(this._containers.falsy)
             : null;
 
         return {
             truthy,
             falsy,
-            next: componentUtil.getContainerPosition(this._containers.next),
+            next: component.getContainerPosition(this._containers.next),
         };
     }
 
     setAddPermissions(permissions = {}) {
-        objectUtil.merge(this._addElements, permissions);
+        object.merge(this._addElements, permissions);
         if (!this._addElements.truthy) this.removeTruthyChild();
         if (!this._addElements.falsy) this.removeFalsyChild();
         if (!this._addElements.next) this.removeNextComponent();

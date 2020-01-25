@@ -1,4 +1,4 @@
-import objectUtil from './objectUtil';
+import objectUtil from './object';
 
 const defaults = {
     truthy: true,

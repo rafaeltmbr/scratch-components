@@ -1,4 +1,4 @@
-import objectUtil from './objectUtil';
+import objectUtil from './object';
 import ScratchShape from './scratchShape';
 
 class componentUtil {

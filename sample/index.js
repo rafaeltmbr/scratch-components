@@ -1,5 +1,5 @@
 import ScratchComponent from '../src/ScratchComponent';
-import DOMUtil from '../src/util/DOMUtil';
+import DOMUtil from '../src/util/DOM';
 
 function createComponentContainer(component) {
     const container = DOMUtil.createNodeElement('<div class="component-container"></div>');
