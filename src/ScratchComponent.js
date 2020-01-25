@@ -27,20 +27,20 @@ export default class ScratchComponent {
         this._assingOptions(options);
         this._createDOMNode(shapeName);
         this._createNodeShortcuts();
-        this._createContainerCoincidenceHandler();
-        this._allowElementsToBeAdded();
-        this._addMoveHandler();
+        this._assignCoincidenceHandlers();
+        this._allowElementToBeCoincidentWithOthers();
+        this._assignMovementHandler();
     }
 
     _componentInstanceConstructor(componentInstance, options) {
         this._initializeProperties(componentInstance._shapeName);
-        this._assignOptionsFromComponent(componentInstance, options);
+        this._copyAndAssignOptionsFromComponent(componentInstance, options);
         this._createDOMNode(this._shapeName);
         this._createNodeShortcuts();
-        this._addChildrenAndNextComponents(componentInstance);
-        this._createContainerCoincidenceHandler();
-        this._allowElementsToBeAdded();
-        this._addMoveHandler();
+        this._assignCoincidentComponents(componentInstance);
+        this._assignCoincidenceHandlers();
+        this._allowElementToBeCoincidentWithOthers();
+        this._assignMovementHandler();
     }
 
     _initializeProperties(shapeName) {
@@ -68,7 +68,7 @@ export default class ScratchComponent {
         object.merge(this._opt, options);
     }
 
-    _assignOptionsFromComponent(componentInstance, options) {
+    _copyAndAssignOptionsFromComponent(componentInstance, options) {
         object.deepCopy(this._opt, componentInstance._opt);
         object.merge(this._opt, options);
     }
@@ -89,7 +89,7 @@ export default class ScratchComponent {
         this._containers.next = this._DOMNode.children[childrenLength - 1];
     }
 
-    _createContainerCoincidenceHandler() {
+    _assignCoincidenceHandlers() {
         this._handleContainerCoincidence = {
             truthy: (instance) => {
                 if (instance._truthy) return;
@@ -112,7 +112,7 @@ export default class ScratchComponent {
         };
     }
 
-    _allowElementsToBeAdded() {
+    _allowElementToBeCoincidentWithOthers() {
         this._addElements = {
             truthy: this._containers.truthy,
             falsy: this._containers.falsy,
@@ -121,7 +121,7 @@ export default class ScratchComponent {
         };
     }
 
-    _addMoveHandler() {
+    _assignMovementHandler() {
         this._DOMNode.addEventListener('mousedown', ({ clientX: startX, clientY: startY }) => {
             const initialStyle = window.getComputedStyle(this._DOMNode);
             const initialX = parseInt(initialStyle.left, 10);
@@ -136,7 +136,7 @@ export default class ScratchComponent {
                 this._DOMNode.style.setProperty('left', `${offsetX + initialX}px`);
                 this._DOMNode.style.setProperty('top', `${offsetY + initialY}px`);
 
-                this._coincidenceMoveHandler();
+                this._checkForCoincidence();
             };
 
             const removeEventHandlers = () => {
@@ -151,7 +151,7 @@ export default class ScratchComponent {
         });
     }
 
-    _addChildrenAndNextComponents(componentInstance) {
+    _assignCoincidentComponents(componentInstance) {
         if (componentInstance._truthy) {
             this.addTruthyChild(new ScratchComponent(componentInstance._truthy));
         }
@@ -188,13 +188,13 @@ export default class ScratchComponent {
         });
     }
 
-    _coincidenceMoveHandler() {
+    _checkForCoincidence() {
         const container = this.getHitContainer();
 
         this._lastCoincidence.found = null;
 
         for (let i = 0; i < instanceList.length; i += 1) {
-            if (this._handleCoincidences(instanceList[i], container)) {
+            if (this._isComponentCoincident(instanceList[i], container)) {
                 this._lastCoincidence.found = instanceList[i];
                 break;
             }
@@ -207,11 +207,11 @@ export default class ScratchComponent {
 
     _finishPreviewComponent() {
         if (this._lastCoincidence.found) {
-            this._handleCoincidenteInstance();
+            this._handleCoincidentComponent();
         }
     }
 
-    _handleCoincidences(instance, container) {
+    _isComponentCoincident(instance, container) {
         const coincidences = instance.getContainerCoincidences(container);
         const containerName = Object.keys(coincidences).find((k) => coincidences[k]);
         if (containerName) {
@@ -222,25 +222,25 @@ export default class ScratchComponent {
         return false;
     }
 
-    _handleCoincidenteInstance() {
+    _handleCoincidentComponent() {
         const { containerName } = this._lastCoincidence;
 
         if (containerName === 'truthy') {
-            this._clearTopLeftPositions();
+            this._clearComponentAbsoluteCoordinates();
             this._removePreviewContainer();
             this._lastCoincidence.found.addTruthyChild(this);
         } else if (containerName === 'falsy') {
-            this._clearTopLeftPositions();
+            this._clearComponentAbsoluteCoordinates();
             this._removePreviewContainer();
             this._lastCoincidence.found.addFalsyChild(this);
         } else if (containerName === 'next') {
-            this._clearTopLeftPositions();
+            this._clearComponentAbsoluteCoordinates();
             this._removePreviewContainer();
             this._lastCoincidence.found.addNextComponent(this);
         }
     }
 
-    _clearTopLeftPositions() {
+    _clearComponentAbsoluteCoordinates() {
         this._DOMNode.style.setProperty('top', '0px');
         this._DOMNode.style.setProperty('left', '0px');
     }
@@ -267,7 +267,7 @@ export default class ScratchComponent {
 
         this._svg.children[0].setAttribute('d', path);
 
-        this._updateChildAndNextContainerDimensions(dim);
+        this._updateContainerDimensions(dim);
         object.merge(this._opt.dimensions, dim);
         this._callResizeListeners();
     }
@@ -284,7 +284,7 @@ export default class ScratchComponent {
                 : true);
     }
 
-    _updateChildAndNextContainerDimensions(dim) {
+    _updateContainerDimensions(dim) {
         const { truthy, falsy, next } = dim;
 
         if (this._containers.truthy && truthy) {
@@ -403,7 +403,7 @@ export default class ScratchComponent {
         return this._shapeName;
     }
 
-    getTruthyFalsyAndNext() {
+    getConcidenteComponents() {
         return {
             truthy: this._truthy,
             falsy: this._falsy,
