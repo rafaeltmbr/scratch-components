@@ -38,8 +38,6 @@ const truthyFalsyBlock = new ScratchComponent('truthyFalsyBlock', {
     },
 });
 
-document.body.setAttribute('data-presentation', true);
-
 const statementContainer = createComponentContainer(statement);
 document.body.appendChild(statementContainer);
 

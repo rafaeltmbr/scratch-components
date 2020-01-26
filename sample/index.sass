@@ -5,26 +5,30 @@
     user-select: none
     -ms-user-select: none
 
-body > *
-    top: 10px
-    left: 10px
-
-.statement
-    fill: #4C97FF
-    stroke: #710ec2
-    opacity: 0.8
-
-.truthyBlock
-    fill: #FFAB19
-    stroke: #b44505
-
-.truthyFalsyBlock
-    fill: #81d37a
-    stroke: #0aa812
-
-body[data-presentation="true"]
+body
     display: inline-grid
     grid-template-columns: auto auto auto
+    
+    .event
+        fill: #FFBF00
+        stroke: #CC9900
+
+    .function
+        fill: #FF6680
+        stroke: #FF3355
+
+    .statement
+        fill: #4C97FF
+        stroke: #710ec2
+
+    .truthyBlock, .truthyFalsyBlock
+        fill: #FFAB19
+        stroke: #b44505
+
+    .shadow
+        fill: #bbbbbb
+        stroke: rgba(130, 130, 130, 0.8)
+        z-index: 1
 
     .component-container
         display: flex
@@ -32,47 +36,9 @@ body[data-presentation="true"]
         align-items: center
         padding: 10px
         width: 200px
+        :hover
+            cursor: grab
 
-        header
-            padding: 10px
-            font-family: sans-serif
-            color: #333
-            font-size: 1.2em
-
-        .statement
-            fill: #4C97FF
-            stroke: #3373CC
-            opacity: 1.0
-
-        .event
-            fill: #FFBF00
-            stroke: #CC9900
-            opacity: 1.0
-
-        .function
-            fill: #FF6680
-            stroke: #FF3355
-            opacity: 1.0
-
-        .truthyBlock, .truthyFalsyBlock
-            fill: #FFAB19
-            stroke: #CF8B17
-
-        .shadow
-            fill: #bbbbbb
-            stroke: #888888
-            opacity: 0.8
-
-    .component-container > *[data-grabbing="true"]
-        -webkit-filter: drop-shadow( 0px 0px 4px rgba(0, 0, 0, .7))
-        filter: drop-shadow( 0px 0px 4px rgba(0, 0, 0, .7))
-        z-index: 1000
-
-body[data-show-containers="true"]
-    .scratch-description-container, .scratch-truthy-container, .scratch-falsy-container, .scratch-next-container
-        text-align: center
-        font-family: sans-serif
-        font-size: 0.8em
-
-    .scratch-next-container
-        line-height: 1em
+        :active
+            cursor: grabbing
+            z-index: 10

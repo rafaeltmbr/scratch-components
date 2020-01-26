@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import objectUtil from './object';
 import ScratchShape from './scratchShape';
 
@@ -127,6 +128,13 @@ class componentUtil {
         // container.style.setProperty('width', `${dim.width}px`);
         container.style.setProperty('top', `${dim.top}px`);
         // container.style.setProperty('left', `${dim.left}px`);
+    }
+
+    static getContainerTopLeftOffset(container) {
+        const top = parseInt(container.style.top, 10) || 0;
+        const left = parseInt(container.style.left, 10) || 0;
+
+        return { top, left };
     }
 }
 

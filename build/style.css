@@ -6,79 +6,42 @@
   -ms-user-select: none;
 }
 
-body > * {
-  top: 10px;
-  left: 10px;
-}
-
-.statement {
-  fill: #4C97FF;
-  stroke: #710ec2;
-  opacity: 0.8;
-}
-
-.truthyBlock {
-  fill: #FFAB19;
-  stroke: #b44505;
-}
-
-.truthyFalsyBlock {
-  fill: #81d37a;
-  stroke: #0aa812;
-}
-
-body[data-presentation=true] {
+body {
   display: inline-grid;
   grid-template-columns: auto auto auto;
 }
-body[data-presentation=true] .component-container {
+body .event {
+  fill: #FFBF00;
+  stroke: #CC9900;
+}
+body .function {
+  fill: #FF6680;
+  stroke: #FF3355;
+}
+body .statement {
+  fill: #4C97FF;
+  stroke: #710ec2;
+}
+body .truthyBlock, body .truthyFalsyBlock {
+  fill: #FFAB19;
+  stroke: #b44505;
+}
+body .shadow {
+  fill: #bbbbbb;
+  stroke: rgba(130, 130, 130, 0.8);
+  z-index: 1;
+}
+body .component-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 10px;
   width: 200px;
 }
-body[data-presentation=true] .component-container header {
-  padding: 10px;
-  font-family: sans-serif;
-  color: #333;
-  font-size: 1.2em;
+body .component-container :hover {
+  cursor: grab;
 }
-body[data-presentation=true] .component-container .statement {
-  fill: #4C97FF;
-  stroke: #3373CC;
-  opacity: 1;
-}
-body[data-presentation=true] .component-container .event {
-  fill: #FFBF00;
-  stroke: #CC9900;
-  opacity: 1;
-}
-body[data-presentation=true] .component-container .function {
-  fill: #FF6680;
-  stroke: #FF3355;
-  opacity: 1;
-}
-body[data-presentation=true] .component-container .truthyBlock, body[data-presentation=true] .component-container .truthyFalsyBlock {
-  fill: #FFAB19;
-  stroke: #CF8B17;
-}
-body[data-presentation=true] .component-container .shadow {
-  fill: #bbbbbb;
-  stroke: #888888;
-  opacity: 0.8;
-}
-body[data-presentation=true] .component-container > *[data-grabbing=true] {
-  -webkit-filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.7));
-  filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.7));
-  z-index: 1000;
-}
-
-body[data-show-containers=true] .scratch-description-container, body[data-show-containers=true] .scratch-truthy-container, body[data-show-containers=true] .scratch-falsy-container, body[data-show-containers=true] .scratch-next-container {
-  text-align: center;
-  font-family: sans-serif;
-  font-size: 0.8em;
-}
-body[data-show-containers=true] .scratch-next-container {
-  line-height: 1em;
+body .component-container :active {
+  cursor: grabbing;
+  z-index: 10;
 }
