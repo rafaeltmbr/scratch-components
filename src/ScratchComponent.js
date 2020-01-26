@@ -118,7 +118,7 @@ export default class ScratchComponent {
     _assignReverseCoincidenceHandlers() {
         this._handleReverseContainerCoincidence = {
             truthy: (instance) => {
-                if (this._preview.component._truthy) return;
+                if (this._preview.component._truthy === instance) return;
                 this._removeReversePreviewContainer();
                 this._positionPreviewComponent(instance, 'truthy');
                 this._preview.component.addTruthyChild(instance);
@@ -127,7 +127,7 @@ export default class ScratchComponent {
                 document.body.appendChild(this._preview.component._DOMNode);
             },
             falsy: (instance) => {
-                if (this._preview.component._falsy) return;
+                if (this._preview.component._falsy === instance) return;
                 this._removeReversePreviewContainer();
                 this._positionPreviewComponent(instance, 'falsy');
                 this._preview.component.addFalsyChild(instance);
@@ -136,7 +136,7 @@ export default class ScratchComponent {
                 document.body.appendChild(this._preview.component._DOMNode);
             },
             next: (instance) => {
-                if (this._preview.component._next) return;
+                if (this._preview.component._next === instance) return;
                 this._removeReversePreviewContainer();
                 this._positionPreviewComponent(instance, 'next');
                 this._preview.component.addNextComponent(instance);
@@ -267,6 +267,7 @@ export default class ScratchComponent {
 
         for (let i = 0; i < instanceList.length; i += 1) {
             if (this._handleComponentCoincidence(instanceList[i], container)) {
+                console.log('coincident');
                 return instanceList[i];
             }
         }
@@ -274,7 +275,7 @@ export default class ScratchComponent {
     }
 
     _handleComponentCoincidence(instance, container) {
-        if (this._hasChildComponent(instance)) return false;
+        if (this._isDescendantOrTheSameComponent(instance)) return false;
 
         const coincidences = instance.getContainerCoincidences(container);
         const containerName = Object.keys(coincidences).find((k) => coincidences[k]);
@@ -286,13 +287,22 @@ export default class ScratchComponent {
         return false;
     }
 
-    _hasChildComponent(instance) {
-        return this._truthy === instance || this._falsy === instance || this._next === instance;
+    _isDescendantOrTheSameComponent(instance) {
+        if (instance === this) return true;
+
+        if (this._truthy === instance || this._falsy === instance
+            || this._next === instance) return true;
+
+        if (this._truthy && this._truthy._isDescendantOrTheSameComponent(instance)) return true;
+
+        if (this._falsy && this._falsy._isDescendantOrTheSameComponent(instance)) return true;
+
+        if (this._next && this._next._isDescendantOrTheSameComponent(instance)) return true;
+
+        return false;
     }
 
     _checkForReverseCoincidence() {
-        if (this._lastCoincidence.found) return;
-
         this._lastReverseCoincidence.found = this._getReverseCoincidentComponent();
 
         if (!this._lastReverseCoincidence.found && this._preview.component) {
@@ -303,6 +313,7 @@ export default class ScratchComponent {
     _getReverseCoincidentComponent() {
         for (let i = 0; i < instanceList.length; i += 1) {
             if (this._handleReverseComponentCoincidence(instanceList[i])) {
+                console.log('reverse coincident');
                 return instanceList[i];
             }
         }
@@ -311,7 +322,7 @@ export default class ScratchComponent {
     }
 
     _handleReverseComponentCoincidence(instance) {
-        if (this._hasChildComponent(instance)) return false;
+        if (this._isDescendantOrTheSameComponent(instance)) return false;
 
         const coincidences = this.getContainerCoincidences(instance.getHitContainer());
         const containerName = Object.keys(coincidences).find((k) => coincidences[k]);
@@ -339,9 +350,11 @@ export default class ScratchComponent {
     }
 
     _handleReverseCoincidentComponent() {
-        const { containerName } = this._lastReverseCoincidence;
-        //ajust component (this) coordinates
+        const { top, left } = Component.getContainerPosition(this._preview.component._DOMNode);
+        this._DOMNode.style.setProperty('top', `${top}px`);
+        this._DOMNode.style.setProperty('left', `${left}px`);
 
+        const { containerName } = this._lastReverseCoincidence;
         if (containerName === 'truthy') {
             this._removeReversePreviewContainer();
             this.addTruthyChild(this._lastReverseCoincidence.found);
@@ -423,7 +436,8 @@ export default class ScratchComponent {
     }
 
     addTruthyChild(child) {
-        if (!(child instanceof ScratchComponent) || !this._addElements.truthy) return;
+        if (!(child instanceof ScratchComponent) || !this._addElements.truthy
+            || child._isDescendantOrTheSameComponent(this)) return;
 
         this.removeTruthyChild();
         this._truthy = child;
@@ -448,7 +462,8 @@ export default class ScratchComponent {
     }
 
     addFalsyChild(child) {
-        if (!(child instanceof ScratchComponent) || !this._addElements.falsy) return;
+        if (!(child instanceof ScratchComponent) || !this._addElements.falsy
+            || child._isDescendantOrTheSameComponent(this)) return;
 
         this.removeFalsyChild();
         this._falsy = child;
@@ -473,7 +488,8 @@ export default class ScratchComponent {
     }
 
     addNextComponent(next) {
-        if (!(next instanceof ScratchComponent) || !this._addElements.next) return;
+        if (!(next instanceof ScratchComponent) || !this._addElements.next
+            || next._isDescendantOrTheSameComponent(this)) return;
 
         this.removeNextComponent();
         this._next = next;
