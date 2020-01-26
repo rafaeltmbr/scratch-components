@@ -215,7 +215,6 @@ export default class ScratchComponent {
 
             this._preview.reverseRemoveMethod(this._preview.component);
             this._preview.reverseRemoveMethod = null;
-            document.body.appendChild(child._DOMNode);
             document.body.removeChild(this._preview.component._DOMNode);
         }
     }
@@ -274,6 +273,8 @@ export default class ScratchComponent {
     }
 
     _handleComponentCoincidence(instance, container) {
+        if (this._hasChildComponent(instance)) return false;
+
         const coincidences = instance.getContainerCoincidences(container);
         const containerName = Object.keys(coincidences).find((k) => coincidences[k]);
         if (containerName) {
@@ -282,6 +283,10 @@ export default class ScratchComponent {
             return true;
         }
         return false;
+    }
+
+    _hasChildComponent(instance) {
+        return this._truthy === instance || this._falsy === instance || this._next === instance;
     }
 
     _checkForReverseCoincidence() {
@@ -305,6 +310,8 @@ export default class ScratchComponent {
     }
 
     _handleReverseComponentCoincidence(instance) {
+        if (this._hasChildComponent(instance)) return false;
+
         const coincidences = this.getContainerCoincidences(instance.getHitContainer());
         const containerName = Object.keys(coincidences).find((k) => coincidences[k]);
         if (containerName) {
@@ -335,13 +342,13 @@ export default class ScratchComponent {
         //ajust component (this) coordinates
 
         if (containerName === 'truthy') {
-            this._removePreviewContainer();
+            this._removeReversePreviewContainer();
             this.addTruthyChild(this._lastReverseCoincidence.found);
         } else if (containerName === 'falsy') {
-            this._removePreviewContainer();
+            this._removeReversePreviewContainer();
             this.addFalsyChild(this._lastReverseCoincidence.found);
         } else if (containerName === 'next') {
-            this._removePreviewContainer();
+            this._removeReversePreviewContainer();
             this.addNextComponent(this._lastReverseCoincidence.found);
         }
     }
@@ -352,15 +359,21 @@ export default class ScratchComponent {
     }
 
     _truthyResizeHandler(target) {
-        this._resize({ truthyHeight: target.getDimensions().fittingHeight });
+        if (target instanceof ScratchComponent) {
+            this._resize({ truthyHeight: target.getDimensions().fittingHeight });
+        }
     }
 
     _falsyResizeHandler(target) {
-        this._resize({ falsyHeight: target.getDimensions().fittingHeight });
+        if (target instanceof ScratchComponent) {
+            this._resize({ falsyHeight: target.getDimensions().fittingHeight });
+        }
     }
 
     _nextResizeHandler(target) {
-        this._resize({ nextHeight: target.getDimensions().fittingHeight });
+        if (target instanceof ScratchComponent) {
+            this._resize({ nextHeight: target.getDimensions().fittingHeight });
+        }
     }
 
     _resize(dimensions = {}) {
