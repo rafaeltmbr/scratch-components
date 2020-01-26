@@ -215,6 +215,7 @@ export default class ScratchComponent {
 
             this._preview.reverseRemoveMethod(this._preview.component);
             this._preview.reverseRemoveMethod = null;
+            document.body.appendChild(child._DOMNode);
             document.body.removeChild(this._preview.component._DOMNode);
         }
     }
