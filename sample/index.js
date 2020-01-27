@@ -1,54 +1,61 @@
 import ScratchComponent from '../src/ScratchComponent';
-import DOMUtil from '../src/util/DOM';
-
-function createComponentContainer(component) {
-    const container = DOMUtil.createNodeElement('<div class="component-container"></div>');
-    container.appendChild(component.getDOMNode());
-    container.appendChild(DOMUtil.createNodeElement('<div style="height: 40px"></div>')); // `<header>${component.getShapeName()}</header>`));
-    return container;
-}
 
 const statement = new ScratchComponent('statement', {
     attributes: {
         class: 'statement',
+        style: {
+            left: '10px',
+            top: '10px',
+        },
     },
 });
 
 const event = new ScratchComponent('event', {
     attributes: {
         class: 'event',
+        style: {
+            left: '175px',
+            top: '10px',
+        },
     },
 });
 
 const functionBlock = new ScratchComponent('function', {
     attributes: {
         class: 'function',
+        style: {
+            left: '350px',
+            top: '10px',
+        },
     },
 });
 
 const truthyBlock = new ScratchComponent('truthyBlock', {
     attributes: {
         class: 'truthyBlock',
+        style: {
+            left: '10px',
+            top: '100px',
+        },
     },
 });
 
 const truthyFalsyBlock = new ScratchComponent('truthyFalsyBlock', {
     attributes: {
         class: 'truthyFalsyBlock',
+        style: {
+            left: '175px',
+            top: '100px',
+        },
     },
 });
 
-const statementContainer = createComponentContainer(statement);
-document.body.appendChild(statementContainer);
+document.body.appendChild(statement.getDOMNode());
 
-const eventContainer = createComponentContainer(event);
-document.body.appendChild(eventContainer);
+document.body.appendChild(event.getDOMNode());
 
-const functionContainer = createComponentContainer(functionBlock);
-document.body.appendChild(functionContainer);
+document.body.appendChild(functionBlock.getDOMNode());
 
-const truthyContainer = createComponentContainer(truthyBlock);
-document.body.appendChild(truthyContainer);
+document.body.appendChild(truthyBlock.getDOMNode());
 
-const truthyFalsyContainer = createComponentContainer(truthyFalsyBlock);
-document.body.appendChild(truthyFalsyContainer);
+document.body.appendChild(truthyFalsyBlock.getDOMNode());
