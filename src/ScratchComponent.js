@@ -170,13 +170,16 @@ export default class ScratchComponent {
     }
 
     _movementHandler({ clientX: startX, clientY: startY }) {
-        const initialStyle = window.getComputedStyle(this._DOMNode);
-        const initialX = parseInt(initialStyle.left, 10);
-        const initialY = parseInt(initialStyle.top, 10);
+        const { top: initialY, left: initialX } = Component.getContainerPosition(this._DOMNode);
         this._DOMNode.setAttribute('data-grabbing', true);
         this._createPreviewComponent();
 
         const handleMovement = ({ clientX, clientY }) => {
+            if (this._DOMNode.parentElement !== document.body) {
+                document.body.appendChild(this._DOMNode);
+                this._parent.removeChild(this);
+            }
+
             const offsetX = clientX - startX;
             const offsetY = clientY - startY;
 
@@ -538,6 +541,16 @@ export default class ScratchComponent {
         this._resize({ nextHeight: next.getDimensions().fittingHeight });
         next.addResizeListener(this._nextResizeHandlerBinded);
         return true;
+    }
+
+    removeChild(child) {
+        if (child === this._truthy) {
+            this.removeTruthyChild(child);
+        } else if (child === this._falsy) {
+            this.removeFalsyChild(child);
+        } else if (child === this._next) {
+            this.removeNextComponent(child);
+        }
     }
 
     removeNextComponent() {
