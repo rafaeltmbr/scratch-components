@@ -230,8 +230,7 @@ export default class ScratchComponent {
 
     _removeReversePreviewContainer() {
         if (this._preview.reverseRemoveMethod) {
-            const { _truthy, _falsy, _next } = this._preview.component;
-            const child = _truthy || _falsy || _next;
+            const child = this._getNestedComponentToBeRemovedFromPreview();
             const { top, left } = Component.getContainerPosition(child._DOMNode);
             child._DOMNode.style.setProperty('top', `${top}px`);
             child._DOMNode.style.setProperty('left', `${left}px`);
@@ -241,6 +240,14 @@ export default class ScratchComponent {
             document.body.appendChild(child._DOMNode);
             document.body.removeChild(this._preview.component._DOMNode);
         }
+    }
+
+    _getNestedComponentToBeRemovedFromPreview() {
+        const { _truthy, _falsy, _next } = this._preview.component;
+        if (_truthy && !_truthy._opt.isPreview) return _truthy;
+        if (_falsy && !_falsy._opt.isPreview) return _falsy;
+        if (_next && !_next._opt.isPreview) return _next;
+        return null;
     }
 
     _positionPreviewComponent(instance, containerName) {
@@ -353,7 +360,6 @@ export default class ScratchComponent {
             this._lastReverseCoincidence.containerName = containerName;
             return true;
         }
-        //if (containerName) debugger;
         return false;
     }
 
