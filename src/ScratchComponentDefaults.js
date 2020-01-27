@@ -14,4 +14,5 @@ export default {
         falsy: true, // female fitting used to connect to the falsy child next fitting
         next: true, // male fitting used to connect to the next component
     },
+    propagateClassNameToNestedElements: false,
 };

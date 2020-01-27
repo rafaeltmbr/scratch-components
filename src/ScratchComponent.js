@@ -38,10 +38,10 @@ export default class ScratchComponent {
         this._copyAndAssignOptionsFromComponent(componentInstance, options);
         this._createDOMNode(this._shapeName);
         this._createNodeShortcuts();
-        this._assignCoincidentComponents(componentInstance);
+        this._allowElementToBeCoincidentWithOthers();
+        this._createNestedComponents(componentInstance);
         this._assignCoincidenceHandlers();
         this._assignReverseCoincidenceHandlers();
-        this._allowElementToBeCoincidentWithOthers();
         this._assignMovementHandler();
     }
 
@@ -194,15 +194,22 @@ export default class ScratchComponent {
         window.addEventListener('mouseup', removeEventHandlers);
     }
 
-    _assignCoincidentComponents(componentInstance) {
+    _createNestedComponents(componentInstance) {
+        const opt = {
+            attributes: {
+                class: this._opt.propagateClassNameToNestedElements
+                    ? this._opt.attributes.class : '',
+            },
+        };
+
         if (componentInstance._truthy) {
-            this.addTruthyChild(new ScratchComponent(componentInstance._truthy));
+            this.addTruthyChild(new ScratchComponent(componentInstance._truthy, opt));
         }
         if (componentInstance._falsy) {
-            this.addFalsyChild(new ScratchComponent(componentInstance._falsy));
+            this.addFalsyChild(new ScratchComponent(componentInstance._falsy, opt));
         }
         if (componentInstance._next) {
-            this.addNextComponent(new ScratchComponent(componentInstance._next));
+            this.addNextComponent(new ScratchComponent(componentInstance._next, opt));
         }
     }
 
@@ -253,6 +260,7 @@ export default class ScratchComponent {
                     left: '0px',
                 },
             },
+            propagateClassNameToNestedElements: true,
         });
     }
 
