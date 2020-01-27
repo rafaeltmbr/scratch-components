@@ -86,6 +86,7 @@ export default class ScratchComponent {
     _createNodeShortcuts() {
         const childrenLength = this._DOMNode.children.length;
         this._svg = this._DOMNode.children[0];
+        this._path = this._svg.children[0];
         this._containers.description = this._DOMNode.children[2];
         this._containers.truthy = childrenLength > 4 ? this._DOMNode.children[3] : null;
         this._containers.falsy = childrenLength > 5 ? this._DOMNode.children[4] : null;
@@ -160,33 +161,37 @@ export default class ScratchComponent {
     }
 
     _assignMovementHandler() {
-        this._DOMNode.addEventListener('mousedown', ({ clientX: startX, clientY: startY }) => {
-            const initialStyle = window.getComputedStyle(this._DOMNode);
-            const initialX = parseInt(initialStyle.left, 10);
-            const initialY = parseInt(initialStyle.top, 10);
-            this._DOMNode.setAttribute('data-grabbing', true);
-            this._createPreviewComponent();
+        this._path.addEventListener('mousedown', this._movementHandler.bind(this));
+        this._containers.description
+            .addEventListener('mousedown', this._movementHandler.bind(this));
+    }
 
-            const handleMovement = ({ clientX, clientY }) => {
-                const offsetX = clientX - startX;
-                const offsetY = clientY - startY;
+    _movementHandler({ clientX: startX, clientY: startY }) {
+        const initialStyle = window.getComputedStyle(this._DOMNode);
+        const initialX = parseInt(initialStyle.left, 10);
+        const initialY = parseInt(initialStyle.top, 10);
+        this._DOMNode.setAttribute('data-grabbing', true);
+        this._createPreviewComponent();
 
-                this._DOMNode.style.setProperty('left', `${offsetX + initialX}px`);
-                this._DOMNode.style.setProperty('top', `${offsetY + initialY}px`);
+        const handleMovement = ({ clientX, clientY }) => {
+            const offsetX = clientX - startX;
+            const offsetY = clientY - startY;
 
-                this._checkForCoincidence();
-            };
+            this._DOMNode.style.setProperty('left', `${offsetX + initialX}px`);
+            this._DOMNode.style.setProperty('top', `${offsetY + initialY}px`);
 
-            const removeEventHandlers = () => {
-                window.removeEventListener('mousemove', handleMovement);
-                window.removeEventListener('mouseup', removeEventHandlers);
-                this._DOMNode.setAttribute('data-grabbing', false);
-                this._finishPreviewComponent();
-            };
+            this._checkForCoincidence();
+        };
 
-            window.addEventListener('mousemove', handleMovement);
-            window.addEventListener('mouseup', removeEventHandlers);
-        });
+        const removeEventHandlers = () => {
+            window.removeEventListener('mousemove', handleMovement);
+            window.removeEventListener('mouseup', removeEventHandlers);
+            this._DOMNode.setAttribute('data-grabbing', false);
+            this._finishPreviewComponent();
+        };
+
+        window.addEventListener('mousemove', handleMovement);
+        window.addEventListener('mouseup', removeEventHandlers);
     }
 
     _assignCoincidentComponents(componentInstance) {

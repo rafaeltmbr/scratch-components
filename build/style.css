@@ -14,7 +14,7 @@ body .event, body .function, body .statement, body .truthyBlock, body .truthyFal
   z-index: 2;
   cursor: grab;
 }
-body .event:active, body .event[data-grabbing=true], body .function:active, body .function[data-grabbing=true], body .statement:active, body .statement[data-grabbing=true], body .truthyBlock:active, body .truthyBlock[data-grabbing=true], body .truthyFalsyBlock:active, body .truthyFalsyBlock[data-grabbing=true] {
+body .event[data-grabbing=true], body .function[data-grabbing=true], body .statement[data-grabbing=true], body .truthyBlock[data-grabbing=true], body .truthyFalsyBlock[data-grabbing=true] {
   z-index: 10;
   cursor: grabbing;
 }
