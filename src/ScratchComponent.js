@@ -18,8 +18,10 @@ export default class ScratchComponent {
             throw new Error('Invalid shapeNameOrComponentInstance');
         }
 
-        instanceList.push(this);
-        this._id = instanceList.length;
+        if (!this._opt.isPreview) {
+            instanceList.push(this);
+            this._id = instanceList.length;
+        }
     }
 
     _shapeNameConstructor(shapeName, options) {
@@ -200,6 +202,7 @@ export default class ScratchComponent {
                 class: this._opt.propagateClassNameToNestedElements
                     ? this._opt.attributes.class : '',
             },
+            isPreview: this._opt.isPreview,
         };
 
         if (componentInstance._truthy) {
@@ -261,6 +264,7 @@ export default class ScratchComponent {
                 },
             },
             propagateClassNameToNestedElements: true,
+            isPreview: true,
         });
     }
 
@@ -295,8 +299,7 @@ export default class ScratchComponent {
     }
 
     _handleComponentCoincidence(instance, container) {
-        if (this._isDescendantOrTheSameComponent(instance)) return false;
-
+        if (this._isDescendantOrTheSameComponent(instance) || instance._opt.isPreview) return false;
         const coincidences = instance.getContainerCoincidences(container);
         const containerName = Object.keys(coincidences).find((k) => coincidences[k]);
         if (containerName) {
@@ -341,15 +344,16 @@ export default class ScratchComponent {
     }
 
     _handleReverseComponentCoincidence(instance) {
-        if (this._isDescendantOrTheSameComponent(instance)) return false;
+        if (this._isDescendantOrTheSameComponent(instance) || instance._opt.isPreview) return false;
 
         const coincidences = this.getContainerCoincidences(instance.getHitContainer());
         const containerName = Object.keys(coincidences).find((k) => coincidences[k]);
-        if (containerName) {
+        if (containerName && !this[`_${containerName}`]) {
             this._handleReverseContainerCoincidence[containerName](instance);
             this._lastReverseCoincidence.containerName = containerName;
             return true;
         }
+        //if (containerName) debugger;
         return false;
     }
 

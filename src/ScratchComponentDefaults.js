@@ -15,4 +15,5 @@ export default {
         next: true, // male fitting used to connect to the next component
     },
     propagateClassNameToNestedElements: false,
+    isPreview: false,
 };
