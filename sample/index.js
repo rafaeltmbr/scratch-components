@@ -35,7 +35,7 @@ const truthyBlock = new ScratchComponent('truthyBlock', {
         class: 'truthyBlock',
         style: {
             left: '10px',
-            top: '100px',
+            top: '150px',
         },
     },
 });
@@ -45,7 +45,7 @@ const truthyFalsyBlock = new ScratchComponent('truthyFalsyBlock', {
         class: 'truthyFalsyBlock',
         style: {
             left: '175px',
-            top: '100px',
+            top: '150px',
         },
     },
 });
