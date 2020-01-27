@@ -8,7 +8,18 @@
 body
     display: inline-grid
     grid-template-columns: auto auto auto
+
+    .event, .function, .statement, .truthyBlock, .truthyFalsyBlock
+        z-index: 2
+        cursor: grab
+        &:active, &[data-grabbing="true"]
+            z-index: 10
+            cursor: grabbing
     
+        .scratch-truthy-container, .scratch-falsy-container
+            &:hover
+                cursor: default
+
     .event
         fill: #FFBF00
         stroke: #CC9900
@@ -36,9 +47,3 @@ body
         align-items: center
         padding: 10px
         width: 200px
-        :hover
-            cursor: grab
-
-        :active
-            cursor: grabbing
-            z-index: 10

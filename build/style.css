@@ -10,6 +10,17 @@ body {
   display: inline-grid;
   grid-template-columns: auto auto auto;
 }
+body .event, body .function, body .statement, body .truthyBlock, body .truthyFalsyBlock {
+  z-index: 2;
+  cursor: grab;
+}
+body .event:active, body .event[data-grabbing=true], body .function:active, body .function[data-grabbing=true], body .statement:active, body .statement[data-grabbing=true], body .truthyBlock:active, body .truthyBlock[data-grabbing=true], body .truthyFalsyBlock:active, body .truthyFalsyBlock[data-grabbing=true] {
+  z-index: 10;
+  cursor: grabbing;
+}
+body .event .scratch-truthy-container:hover, body .event .scratch-falsy-container:hover, body .function .scratch-truthy-container:hover, body .function .scratch-falsy-container:hover, body .statement .scratch-truthy-container:hover, body .statement .scratch-falsy-container:hover, body .truthyBlock .scratch-truthy-container:hover, body .truthyBlock .scratch-falsy-container:hover, body .truthyFalsyBlock .scratch-truthy-container:hover, body .truthyFalsyBlock .scratch-falsy-container:hover {
+  cursor: default;
+}
 body .event {
   fill: #FFBF00;
   stroke: #CC9900;
@@ -37,11 +48,4 @@ body .component-container {
   align-items: center;
   padding: 10px;
   width: 200px;
-}
-body .component-container :hover {
-  cursor: grab;
-}
-body .component-container :active {
-  cursor: grabbing;
-  z-index: 10;
 }
