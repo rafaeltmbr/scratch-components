@@ -96,19 +96,19 @@ export default class ScratchComponent {
         this._handleContainerCoincidence = {
             truthy: (instance) => {
                 if (instance._truthy) return;
-                this._removePreviewContainer();
+                this._removeAnyPreviewContainer();
                 instance.addTruthyChild(this._preview.component);
                 this._preview.removeMethod = instance.removeTruthyChild.bind(instance);
             },
             falsy: (instance) => {
                 if (instance._falsy) return;
-                this._removePreviewContainer();
+                this._removeAnyPreviewContainer();
                 instance.addFalsyChild(this._preview.component);
                 this._preview.removeMethod = instance.removeFalsyChild.bind(instance);
             },
             next: (instance) => {
                 if (instance._next) return;
-                this._removePreviewContainer();
+                this._removeAnyPreviewContainer();
                 instance.addNextComponent(this._preview.component);
                 this._preview.removeMethod = instance.removeNextComponent.bind(instance);
             },
@@ -119,30 +119,33 @@ export default class ScratchComponent {
         this._handleReverseContainerCoincidence = {
             truthy: (instance) => {
                 if (this._preview.component._truthy === instance) return;
-                this._removeReversePreviewContainer();
+                this._removeAnyPreviewContainer();
                 this._positionPreviewComponent(instance, 'truthy');
-                this._preview.component.addTruthyChild(instance);
-                this._preview.reverseRemoveMethod = (
-                    this._preview.component.removeTruthyChild.bind(this._preview.component));
-                document.body.appendChild(this._preview.component._DOMNode);
+                if (this._preview.component.addTruthyChild(instance)) {
+                    this._preview.reverseRemoveMethod = (
+                        this._preview.component.removeTruthyChild.bind(this._preview.component));
+                    document.body.appendChild(this._preview.component._DOMNode);
+                }
             },
             falsy: (instance) => {
                 if (this._preview.component._falsy === instance) return;
-                this._removeReversePreviewContainer();
+                this._removeAnyPreviewContainer();
                 this._positionPreviewComponent(instance, 'falsy');
-                this._preview.component.addFalsyChild(instance);
-                this._preview.reverseRemoveMethod = (
-                    this._preview.component.removeFalsyChild.bind(this._preview.component));
-                document.body.appendChild(this._preview.component._DOMNode);
+                if (this._preview.component.addFalsyChild(instance)) {
+                    this._preview.reverseRemoveMethod = (
+                        this._preview.component.removeFalsyChild.bind(this._preview.component));
+                    document.body.appendChild(this._preview.component._DOMNode);
+                }
             },
             next: (instance) => {
                 if (this._preview.component._next === instance) return;
-                this._removeReversePreviewContainer();
+                this._removeAnyPreviewContainer();
                 this._positionPreviewComponent(instance, 'next');
-                this._preview.component.addNextComponent(instance);
-                this._preview.reverseRemoveMethod = (
-                    this._preview.component.removeNextComponent.bind(this._preview.component));
-                document.body.appendChild(this._preview.component._DOMNode);
+                if (this._preview.component.addNextComponent(instance)) {
+                    this._preview.reverseRemoveMethod = (
+                        this._preview.component.removeNextComponent.bind(this._preview.component));
+                    document.body.appendChild(this._preview.component._DOMNode);
+                }
             },
         };
     }
@@ -198,6 +201,11 @@ export default class ScratchComponent {
         }
     }
 
+    _removeAnyPreviewContainer() {
+        this._removePreviewContainer();
+        this._removeReversePreviewContainer();
+    }
+
     _removePreviewContainer() {
         if (this._preview.removeMethod) {
             this._preview.removeMethod(this._preview.component);
@@ -244,7 +252,7 @@ export default class ScratchComponent {
     }
 
     _checkForCoincidence() {
-        this._lastCoincidence.found = this._getCoincidentComponent();
+        this._lastCoincidence.found = this._getAndHandleCoincidentComponent();
 
         if (!this._lastCoincidence.found) {
             this._checkForReverseCoincidence();
@@ -262,12 +270,11 @@ export default class ScratchComponent {
         }
     }
 
-    _getCoincidentComponent() {
+    _getAndHandleCoincidentComponent() {
         const container = this.getHitContainer();
 
         for (let i = 0; i < instanceList.length; i += 1) {
             if (this._handleComponentCoincidence(instanceList[i], container)) {
-                console.log('coincident');
                 return instanceList[i];
             }
         }
@@ -303,17 +310,16 @@ export default class ScratchComponent {
     }
 
     _checkForReverseCoincidence() {
-        this._lastReverseCoincidence.found = this._getReverseCoincidentComponent();
+        this._lastReverseCoincidence.found = this._getAndHandleReverseCoincidentComponent();
 
         if (!this._lastReverseCoincidence.found && this._preview.component) {
             this._removeReversePreviewContainer();
         }
     }
 
-    _getReverseCoincidentComponent() {
+    _getAndHandleReverseCoincidentComponent() {
         for (let i = 0; i < instanceList.length; i += 1) {
             if (this._handleReverseComponentCoincidence(instanceList[i])) {
-                console.log('reverse coincident');
                 return instanceList[i];
             }
         }
@@ -437,7 +443,7 @@ export default class ScratchComponent {
 
     addTruthyChild(child) {
         if (!(child instanceof ScratchComponent) || !this._addElements.truthy
-            || child._isDescendantOrTheSameComponent(this)) return;
+            || child._isDescendantOrTheSameComponent(this)) return false;
 
         this.removeTruthyChild();
         this._truthy = child;
@@ -446,6 +452,7 @@ export default class ScratchComponent {
 
         this._resize({ truthyHeight: child.getDimensions().fittingHeight });
         child.addResizeListener(this._truthyResizeHandlerBinded);
+        return true;
     }
 
     removeTruthyChild() {
@@ -463,7 +470,7 @@ export default class ScratchComponent {
 
     addFalsyChild(child) {
         if (!(child instanceof ScratchComponent) || !this._addElements.falsy
-            || child._isDescendantOrTheSameComponent(this)) return;
+            || child._isDescendantOrTheSameComponent(this)) return false;
 
         this.removeFalsyChild();
         this._falsy = child;
@@ -472,6 +479,7 @@ export default class ScratchComponent {
 
         this._resize({ falsyHeight: child.getDimensions().fittingHeight });
         child.addResizeListener(this._falsyResizeHandlerBinded);
+        return true;
     }
 
     removeFalsyChild() {
@@ -489,7 +497,7 @@ export default class ScratchComponent {
 
     addNextComponent(next) {
         if (!(next instanceof ScratchComponent) || !this._addElements.next
-            || next._isDescendantOrTheSameComponent(this)) return;
+            || next._isDescendantOrTheSameComponent(this)) return false;
 
         this.removeNextComponent();
         this._next = next;
@@ -498,6 +506,7 @@ export default class ScratchComponent {
 
         this._resize({ nextHeight: next.getDimensions().fittingHeight });
         next.addResizeListener(this._nextResizeHandlerBinded);
+        return true;
     }
 
     removeNextComponent() {
