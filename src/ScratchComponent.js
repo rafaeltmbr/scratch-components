@@ -172,7 +172,6 @@ export default class ScratchComponent {
     _movementHandler({ clientX: startX, clientY: startY }) {
         const { top: initialY, left: initialX } = Component.getContainerPosition(this._DOMNode);
         this._DOMNode.setAttribute('data-grabbing', true);
-        this._createPreviewComponent();
 
         const handleMovement = ({ clientX, clientY }) => {
             if (this._DOMNode.parentElement !== document.body) {
@@ -301,6 +300,8 @@ export default class ScratchComponent {
         } else if (this._lastReverseCoincidence.found) {
             this._handleReverseCoincidentComponent();
         }
+        // eslint-disable-next-line no-return-assign
+        instanceList.forEach((e) => e._preview.component = null);
     }
 
     _getAndHandleCoincidentComponent() {
