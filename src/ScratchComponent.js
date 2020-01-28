@@ -375,10 +375,9 @@ export default class ScratchComponent {
             || instance === this._parent) return false;
 
         const coincidences = this.getContainerCoincidences(instance.getHitContainer());
-        const containerName = Object.keys(coincidences).find((k) => coincidences[k]);
-        if (containerName && !this[`_${containerName}`]) {
-            this._handleReverseContainerCoincidence[containerName](instance);
-            this._lastReverseCoincidence.containerName = containerName;
+        if (coincidences.next && !this._next) {
+            this._handleReverseContainerCoincidence.next(instance);
+            this._lastReverseCoincidence.containerName = 'next';
             return true;
         }
         return false;
