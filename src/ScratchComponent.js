@@ -307,7 +307,8 @@ export default class ScratchComponent {
         const container = this.getHitContainer();
 
         for (let i = 0; i < instanceList.length; i += 1) {
-            if (this._handleComponentCoincidence(instanceList[i], container)) {
+            if (this._addElements.previous
+                && this._handleComponentCoincidence(instanceList[i], container)) {
                 return instanceList[i];
             }
         }
@@ -316,8 +317,10 @@ export default class ScratchComponent {
 
     _handleComponentCoincidence(instance, container) {
         if (this._isDescendantOrTheSameComponent(instance) || instance._opt.isPreview) return false;
+
         const coincidences = instance.getContainerCoincidences(container);
         const containerName = Object.keys(coincidences).find((k) => coincidences[k]);
+
         if (containerName) {
             this._handleContainerCoincidence[containerName](instance);
             this._lastCoincidence.containerName = containerName;
@@ -357,7 +360,8 @@ export default class ScratchComponent {
 
     _getAndHandleReverseCoincidentComponent() {
         for (let i = 0; i < instanceList.length; i += 1) {
-            if (this._handleReverseComponentCoincidence(instanceList[i])) {
+            if (instanceList[i]._addElements.previous
+                && this._handleReverseComponentCoincidence(instanceList[i])) {
                 return instanceList[i];
             }
         }
