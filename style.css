@@ -1,0 +1,53 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -ms-user-select: none;
+}
+
+body {
+  display: inline-grid;
+  grid-template-columns: auto auto auto;
+}
+body .event, body .function, body .statement, body .truthyBlock, body .truthyFalsyBlock {
+  z-index: 2;
+  cursor: grab;
+}
+body .event[data-grabbing=true], body .function[data-grabbing=true], body .statement[data-grabbing=true], body .truthyBlock[data-grabbing=true], body .truthyFalsyBlock[data-grabbing=true] {
+  z-index: 10;
+  cursor: grabbing;
+  -webkit-filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.7));
+  filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.7));
+}
+body .event .scratch-truthy-container:hover, body .event .scratch-falsy-container:hover, body .function .scratch-truthy-container:hover, body .function .scratch-falsy-container:hover, body .statement .scratch-truthy-container:hover, body .statement .scratch-falsy-container:hover, body .truthyBlock .scratch-truthy-container:hover, body .truthyBlock .scratch-falsy-container:hover, body .truthyFalsyBlock .scratch-truthy-container:hover, body .truthyFalsyBlock .scratch-falsy-container:hover {
+  cursor: default;
+}
+body .event {
+  fill: #FFBF00;
+  stroke: #CC9900;
+}
+body .function {
+  fill: #FF6680;
+  stroke: #FF3355;
+}
+body .statement {
+  fill: #4C97FF;
+  stroke: #710ec2;
+}
+body .truthyBlock, body .truthyFalsyBlock {
+  fill: #FFAB19;
+  stroke: #b44505;
+}
+body .shadow {
+  fill: #bbbbbb;
+  stroke: rgba(130, 130, 130, 0.8);
+  z-index: 1;
+}
+body .component-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  width: 200px;
+}
