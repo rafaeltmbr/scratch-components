@@ -487,7 +487,7 @@ export default class ScratchComponent {
 
     addTruthyChild(child) {
         if (!(child instanceof ScratchComponent) || !this._addElements.truthy
-            || child._isDescendantOrTheSameComponent(this)) return false;
+            || child._isDescendantOrTheSameComponent(this) || this._truthy) return false;
 
         this.removeTruthyChild();
         this._truthy = child;
@@ -516,7 +516,7 @@ export default class ScratchComponent {
 
     addFalsyChild(child) {
         if (!(child instanceof ScratchComponent) || !this._addElements.falsy
-            || child._isDescendantOrTheSameComponent(this)) return false;
+            || child._isDescendantOrTheSameComponent(this) || this._falsy) return false;
 
         this.removeFalsyChild();
         this._falsy = child;
@@ -545,7 +545,7 @@ export default class ScratchComponent {
 
     addNextComponent(next) {
         if (!(next instanceof ScratchComponent) || !this._addElements.next
-            || next._isDescendantOrTheSameComponent(this)) return false;
+            || next._isDescendantOrTheSameComponent(this) || this._next) return false;
 
         this.removeNextComponent();
         this._next = next;
