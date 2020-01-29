@@ -1,5 +1,5 @@
 {
-  "name": "scratch_components",
+  "name": "scratch-components",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -25,6 +25,7 @@
     "precommit": "git add .",
     "commit": "git-cz",
     "deploy": "gh-pages -d build",
+    "push": "git push --set-upstream origin master",
     "dev:conditional_loop:pug-w": "pug ./src/components/conditional_loop/dev/index.pug -o ./src/components/conditional_loop/build/ --watch --pretty",
     "dev:conditional_loop:sass-w": "sass ./src/components/conditional_loop/conditional_loop.sass ./src/components/conditional_loop/build/style.css --watch --no-source-map",
     "dev:conditional_loop:webpack-w": "webpack --mode=development --config ./src/components/conditional_loop/dev/webpack.config.js -w",
