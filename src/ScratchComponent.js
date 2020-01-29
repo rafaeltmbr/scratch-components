@@ -545,7 +545,7 @@ export default class ScratchComponent {
 
     addNextComponent(next) {
         if (!(next instanceof ScratchComponent) || !this._addElements.next
-            || next._isDescendantOrTheSameComponent(this) || this._next) return false;
+            || next._isDescendantOrTheSameComponent(this)) return false;
 
         this.removeNextComponent();
         this._next = next;
