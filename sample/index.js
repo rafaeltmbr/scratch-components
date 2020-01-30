@@ -59,3 +59,5 @@ document.body.appendChild(functionBlock.getDOMNode());
 document.body.appendChild(truthyBlock.getDOMNode());
 
 document.body.appendChild(truthyFalsyBlock.getDOMNode());
+
+document.body.addEventListener('touchmove', (e) => e.preventDefault, { passive: false });

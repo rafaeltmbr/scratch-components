@@ -7,6 +7,7 @@ import Component from './util/Component';
 import defaults from './ScratchComponentDefaults';
 
 const instanceList = [];
+const isTouch = DOM.isTouch();
 
 export default class ScratchComponent {
     constructor(shapeNameOrComponentInstance, options = {}) {
@@ -164,16 +165,18 @@ export default class ScratchComponent {
     }
 
     _assignMovementHandler() {
-        this._path.addEventListener('mousedown', this._movementHandler.bind(this));
-        this._containers.description
-            .addEventListener('mousedown', this._movementHandler.bind(this));
+        const eventType = isTouch ? 'touchstart' : 'mousedown';
+        this._path.addEventListener(eventType, this._movementHandler.bind(this));
+        this._containers.description.addEventListener(eventType, this._movementHandler.bind(this));
     }
 
-    _movementHandler({ clientX: startX, clientY: startY }) {
+    _movementHandler(event) {
+        const { clientX: startX, clientY: startY } = event.touches ? event.touches[0] : event;
         const { top: initialY, left: initialX } = Component.getContainerPosition(this._DOMNode);
         this._DOMNode.setAttribute('data-grabbing', true);
 
-        const handleMovement = ({ clientX, clientY }) => {
+        const handleMovement = (e) => {
+            const { clientX, clientY } = e.touches ? e.touches[0] : e;
             if (this._DOMNode.parentElement !== document.body) {
                 document.body.appendChild(this._DOMNode);
                 this._parent.removeChild(this);
@@ -189,14 +192,14 @@ export default class ScratchComponent {
         };
 
         const removeEventHandlers = () => {
-            window.removeEventListener('mousemove', handleMovement);
-            window.removeEventListener('mouseup', removeEventHandlers);
+            window.removeEventListener(isTouch ? 'touchmove' : 'mousemove', handleMovement);
+            window.removeEventListener(isTouch ? 'touchend' : 'mouseup', removeEventHandlers);
             this._DOMNode.setAttribute('data-grabbing', false);
             this._finishPreviewComponent();
         };
 
-        window.addEventListener('mousemove', handleMovement);
-        window.addEventListener('mouseup', removeEventHandlers);
+        window.addEventListener(isTouch ? 'touchmove' : 'mousemove', handleMovement);
+        window.addEventListener(isTouch ? 'touchend' : 'mouseup', removeEventHandlers);
     }
 
     _createNestedComponents(componentInstance) {
