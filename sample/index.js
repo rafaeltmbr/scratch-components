@@ -60,4 +60,8 @@ document.body.appendChild(truthyBlock.getDOMNode());
 
 document.body.appendChild(truthyFalsyBlock.getDOMNode());
 
-document.body.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+function preventDefault(e) {
+    e.preventDefault();
+}
+
+document.body.addEventListener('touchmove', preventDefault, { passive: false });
