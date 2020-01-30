@@ -1,5 +1,11 @@
 import ScratchComponent from '../src/ScratchComponent';
 
+function preventDefault(e) {
+    e.preventDefault();
+}
+
+document.body.addEventListener('touchmove', preventDefault, { passive: false });
+
 const statement = new ScratchComponent('statement', {
     attributes: {
         class: 'statement',
@@ -59,9 +65,3 @@ document.body.appendChild(functionBlock.getDOMNode());
 document.body.appendChild(truthyBlock.getDOMNode());
 
 document.body.appendChild(truthyFalsyBlock.getDOMNode());
-
-function preventDefault(e) {
-    e.preventDefault();
-}
-
-document.body.addEventListener('touchmove', preventDefault, { passive: false });
