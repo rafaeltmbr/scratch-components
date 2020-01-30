@@ -4,6 +4,8 @@ function preventDefault(e) {
     e.preventDefault();
 }
 
+document.body.addEventListener('touchstart', preventDefault, { passive: false });
+document.body.addEventListener('touchend', preventDefault, { passive: false });
 document.body.addEventListener('touchmove', preventDefault, { passive: false });
 
 const statement = new ScratchComponent('statement', {

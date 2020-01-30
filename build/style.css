@@ -9,6 +9,7 @@
 body {
   display: inline-grid;
   grid-template-columns: auto auto auto;
+  overscroll-behavior-y: contain;
 }
 body .event, body .function, body .statement, body .truthyBlock, body .truthyFalsyBlock {
   z-index: 2;
