@@ -8,22 +8,12 @@ document.body.addEventListener('touchstart', preventDefault, { passive: false })
 document.body.addEventListener('touchend', preventDefault, { passive: false });
 document.body.addEventListener('touchmove', preventDefault, { passive: false });
 
-const statement = new ScratchComponent('statement', {
-    attributes: {
-        class: 'statement',
-        style: {
-            left: '10px',
-            top: '10px',
-        },
-    },
-});
-
 const event = new ScratchComponent('event', {
     attributes: {
         class: 'event',
         style: {
-            left: '175px',
-            top: '10px',
+            left: '20px',
+            top: '20px',
         },
     },
 });
@@ -32,18 +22,8 @@ const functionBlock = new ScratchComponent('function', {
     attributes: {
         class: 'function',
         style: {
-            left: '350px',
-            top: '10px',
-        },
-    },
-});
-
-const truthyBlock = new ScratchComponent('truthyBlock', {
-    attributes: {
-        class: 'truthyBlock',
-        style: {
-            left: '10px',
-            top: '150px',
+            left: '180px',
+            top: '20px',
         },
     },
 });
@@ -52,8 +32,28 @@ const truthyFalsyBlock = new ScratchComponent('truthyFalsyBlock', {
     attributes: {
         class: 'truthyFalsyBlock',
         style: {
-            left: '175px',
-            top: '150px',
+            left: '20px',
+            top: '90px',
+        },
+    },
+});
+
+const truthyBlock = new ScratchComponent('truthyBlock', {
+    attributes: {
+        class: 'truthyBlock',
+        style: {
+            left: '180px',
+            top: '90px',
+        },
+    },
+});
+
+const statement = new ScratchComponent('statement', {
+    attributes: {
+        class: 'statement',
+        style: {
+            left: '180px',
+            top: '200px',
         },
     },
 });
