@@ -167,3 +167,7 @@ describe('Component creation', () => {
         expect(style.backgroundColor).toBe('rgb(50, 100, 200)');
     });
 });
+
+describe('Add component', () => {
+    
+});

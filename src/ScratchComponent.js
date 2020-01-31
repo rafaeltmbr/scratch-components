@@ -103,20 +103,20 @@ export default class ScratchComponent {
             truthy: (instance) => {
                 if (instance._truthy) return;
                 this._removeAnyPreviewContainer();
-                instance.addTruthyChild(this._preview.component);
-                this._preview.removeMethod = instance.removeTruthyChild.bind(instance);
+                instance.addTruthy(this._preview.component);
+                this._preview.removeMethod = instance.removeTruthy.bind(instance);
             },
             falsy: (instance) => {
                 if (instance._falsy) return;
                 this._removeAnyPreviewContainer();
-                instance.addFalsyChild(this._preview.component);
-                this._preview.removeMethod = instance.removeFalsyChild.bind(instance);
+                instance.addFalsy(this._preview.component);
+                this._preview.removeMethod = instance.removeFalsy.bind(instance);
             },
             next: (instance) => {
                 if (instance._next) return;
                 this._removeAnyPreviewContainer();
-                instance.addNextComponent(this._preview.component);
-                this._preview.removeMethod = instance.removeNextComponent.bind(instance);
+                instance.addNext(this._preview.component);
+                this._preview.removeMethod = instance.removeNext.bind(instance);
             },
         };
     }
@@ -127,9 +127,9 @@ export default class ScratchComponent {
                 if (this._preview.component._truthy === instance) return;
                 this._removeAnyPreviewContainer();
                 this._positionPreviewComponent(instance, 'truthy');
-                if (this._preview.component.addTruthyChild(instance)) {
+                if (this._preview.component.addTruthy(instance)) {
                     this._preview.reverseRemoveMethod = (
-                        this._preview.component.removeTruthyChild.bind(this._preview.component));
+                        this._preview.component.removeTruthy.bind(this._preview.component));
                     document.body.appendChild(this._preview.component._DOMNode);
                 }
             },
@@ -137,9 +137,9 @@ export default class ScratchComponent {
                 if (this._preview.component._falsy === instance) return;
                 this._removeAnyPreviewContainer();
                 this._positionPreviewComponent(instance, 'falsy');
-                if (this._preview.component.addFalsyChild(instance)) {
+                if (this._preview.component.addFalsy(instance)) {
                     this._preview.reverseRemoveMethod = (
-                        this._preview.component.removeFalsyChild.bind(this._preview.component));
+                        this._preview.component.removeFalsy.bind(this._preview.component));
                     document.body.appendChild(this._preview.component._DOMNode);
                 }
             },
@@ -147,9 +147,9 @@ export default class ScratchComponent {
                 if (this._preview.component._next === instance) return;
                 this._removeAnyPreviewContainer();
                 this._positionPreviewComponent(instance, 'next');
-                if (this._preview.component.addNextComponent(instance)) {
+                if (this._preview.component.addNext(instance)) {
                     this._preview.reverseRemoveMethod = (
-                        this._preview.component.removeNextComponent.bind(this._preview.component));
+                        this._preview.component.removeNext.bind(this._preview.component));
                     document.body.appendChild(this._preview.component._DOMNode);
                 }
             },
@@ -213,13 +213,13 @@ export default class ScratchComponent {
         };
 
         if (componentInstance._truthy) {
-            this.addTruthyChild(new ScratchComponent(componentInstance._truthy, opt));
+            this.addTruthy(new ScratchComponent(componentInstance._truthy, opt));
         }
         if (componentInstance._falsy) {
-            this.addFalsyChild(new ScratchComponent(componentInstance._falsy, opt));
+            this.addFalsy(new ScratchComponent(componentInstance._falsy, opt));
         }
         if (componentInstance._next) {
-            this.addNextComponent(new ScratchComponent(componentInstance._next, opt));
+            this.addNext(new ScratchComponent(componentInstance._next, opt));
         }
     }
 
@@ -298,7 +298,7 @@ export default class ScratchComponent {
         const next = this._next;
         if (next && next._lastReverseCoincidence.found) {
             next._handleReverseCoincidentComponent();
-            this.addNextComponent(next);
+            this.addNext(next);
         } else if (this._lastCoincidence.found) {
             this._handleCoincidentComponent();
         } else if (this._lastReverseCoincidence.found) {
@@ -393,13 +393,13 @@ export default class ScratchComponent {
 
         if (containerName === 'truthy') {
             this._removePreviewContainer();
-            this._lastCoincidence.found.addTruthyChild(this);
+            this._lastCoincidence.found.addTruthy(this);
         } else if (containerName === 'falsy') {
             this._removePreviewContainer();
-            this._lastCoincidence.found.addFalsyChild(this);
+            this._lastCoincidence.found.addFalsy(this);
         } else if (containerName === 'next') {
             this._removePreviewContainer();
-            this._lastCoincidence.found.addNextComponent(this);
+            this._lastCoincidence.found.addNext(this);
         }
     }
 
@@ -411,13 +411,13 @@ export default class ScratchComponent {
         const { containerName } = this._lastReverseCoincidence;
         if (containerName === 'truthy') {
             this._removeReversePreviewContainer();
-            this.addTruthyChild(this._lastReverseCoincidence.found);
+            this.addTruthy(this._lastReverseCoincidence.found);
         } else if (containerName === 'falsy') {
             this._removeReversePreviewContainer();
-            this.addFalsyChild(this._lastReverseCoincidence.found);
+            this.addFalsy(this._lastReverseCoincidence.found);
         } else if (containerName === 'next') {
             this._removeReversePreviewContainer();
-            this.addNextComponent(this._lastReverseCoincidence.found);
+            this.addNext(this._lastReverseCoincidence.found);
         }
     }
 
@@ -490,11 +490,11 @@ export default class ScratchComponent {
         this._resizeListeners.forEach((listener) => listener(this));
     }
 
-    addTruthyChild(child) {
+    addTruthy(child) {
         if (!(child instanceof ScratchComponent) || !this._addElements.truthy
             || child._isDescendantOrTheSameComponent(this) || this._truthy) return false;
 
-        this.removeTruthyChild();
+        this.removeTruthy();
         this._truthy = child;
         this._truthy._parent = this;
         this._containers.truthy.appendChild(child._DOMNode);
@@ -505,7 +505,7 @@ export default class ScratchComponent {
         return true;
     }
 
-    removeTruthyChild() {
+    removeTruthy() {
         if (this._truthy) {
             if (this._containers.truthy.children.length) {
                 this._containers.truthy.removeChild(this._containers.truthy.children[0]);
@@ -519,11 +519,11 @@ export default class ScratchComponent {
         }
     }
 
-    addFalsyChild(child) {
+    addFalsy(child) {
         if (!(child instanceof ScratchComponent) || !this._addElements.falsy
             || child._isDescendantOrTheSameComponent(this) || this._falsy) return false;
 
-        this.removeFalsyChild();
+        this.removeFalsy();
         this._falsy = child;
         this._falsy._parent = this;
         this._containers.falsy.appendChild(child._DOMNode);
@@ -534,7 +534,7 @@ export default class ScratchComponent {
         return true;
     }
 
-    removeFalsyChild() {
+    removeFalsy() {
         if (this._falsy) {
             if (this._containers.falsy.children.length) {
                 this._containers.falsy.removeChild(this._containers.falsy.children[0]);
@@ -548,32 +548,32 @@ export default class ScratchComponent {
         }
     }
 
-    addNextComponent(next) {
-        if (!(next instanceof ScratchComponent) || !this._addElements.next
-            || next._isDescendantOrTheSameComponent(this)) return false;
+    addNext(child) {
+        if (!(child instanceof ScratchComponent) || !this._addElements.next
+            || child._isDescendantOrTheSameComponent(this)) return false;
 
-        this.removeNextComponent();
-        this._next = next;
+        this.removeNext();
+        this._next = child;
         this._next._parent = this;
-        this._containers.next.appendChild(next._DOMNode);
-        next._clearComponentAbsoluteCoordinates();
+        this._containers.next.appendChild(child._DOMNode);
+        child._clearComponentAbsoluteCoordinates();
 
-        this._resize({ nextHeight: next.getDimensions().fittingHeight });
-        next.addResizeListener(this._nextResizeHandlerBinded);
+        this._resize({ nextHeight: child.getDimensions().fittingHeight });
+        child.addResizeListener(this._nextResizeHandlerBinded);
         return true;
     }
 
     removeChild(child) {
         if (child === this._truthy) {
-            this.removeTruthyChild(child);
+            this.removeTruthy(child);
         } else if (child === this._falsy) {
-            this.removeFalsyChild(child);
+            this.removeFalsy(child);
         } else if (child === this._next) {
-            this.removeNextComponent(child);
+            this.removeNext(child);
         }
     }
 
-    removeNextComponent() {
+    removeNext() {
         if (this._next) {
             if (this._containers.next.children.length) {
                 this._containers.next.removeChild(this._containers.next.children[0]);
@@ -666,8 +666,8 @@ export default class ScratchComponent {
 
     setAddPermissions(permissions = {}) {
         object.merge(this._addElements, permissions);
-        if (!this._addElements.truthy) this.removeTruthyChild();
-        if (!this._addElements.falsy) this.removeFalsyChild();
-        if (!this._addElements.next) this.removeNextComponent();
+        if (!this._addElements.truthy) this.removeTruthy();
+        if (!this._addElements.falsy) this.removeFalsy();
+        if (!this._addElements.next) this.removeNext();
     }
 }
