@@ -211,16 +211,81 @@ describe('Add component', () => {
         expect(parentNextContainer.children[0]).toBe(undefined);
     });
 
-    it('should not add a next component when it is not allowed', () => {
-        const parent = new ScratchComponents('truthyBlock', { fitting: { next: false } });
-        const child = new ScratchComponents('statement');
-        const parentNextContainer = parent._containers.next;
+    it('should not add a next component on stament and truthyBlock', () => {
+        const statement = new ScratchComponents('statement', { fitting: { next: false } });
+        const truthyBlock = new ScratchComponents('truthyBlock', { fitting: { next: false } });
+        const truthyFalsyBlock = new ScratchComponents('truthyFalsyBlock');
 
-        expect(parent._next).toBe(null);
-        expect(parentNextContainer.children[0]).toBe(undefined);
+        expect(statement._next).toBe(null);
+        expect(truthyBlock._next).toBe(null);
+        expect(truthyFalsyBlock._parent).toBe(null);
+        expect(statement._containers.next).toBe(null);
+        expect(truthyBlock._containers.next).toBe(null);
+        expect(truthyFalsyBlock._addElements.previous).toBe(true);
 
-        parent.addNext(child);
-        expect(parent._next).toBe(null);
-        expect(parentNextContainer.children[0]).toBe(undefined);
+        statement.addNext(truthyFalsyBlock);
+        expect(statement._next).toBe(null);
+        expect(statement._containers.next).toBe(null);
+        expect(truthyFalsyBlock._parent).toBe(null);
+
+        truthyBlock.addNext(truthyFalsyBlock);
+        expect(truthyBlock._next).toBe(null);
+        expect(truthyBlock._containers.next).toBe(null);
+        expect(truthyFalsyBlock._parent).toBe(null);
+    });
+
+    it('should always add next component on truthyFlasy, function and event', () => {
+        const statement1 = new ScratchComponents('statement');
+        const statement2 = new ScratchComponents('statement');
+        const statement3 = new ScratchComponents('statement');
+        const event = new ScratchComponents('event', { fitting: { next: false } });
+        const function_ = new ScratchComponents('function', { fitting: { next: false } });
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock', { fitting: { next: false } });
+
+        expect(event._next).toBe(null);
+        event.addNext(statement1);
+        expect(event._next).toBe(statement1);
+
+        expect(function_._next).toBe(null);
+        function_.addNext(statement2);
+        expect(function_._next).toBe(statement2);
+
+        expect(truthyFalsy._next).toBe(null);
+        truthyFalsy.addNext(statement3);
+        expect(truthyFalsy._next).toBe(statement3);
+    });
+
+    it('should add copy with change the original instance', () => {
+        const statement = new ScratchComponents('statement');
+        const function_ = new ScratchComponents('function');
+        const statementCopy = new ScratchComponents(statement);
+
+        expect(function_._next).toBe(null);
+        expect(statement._parent).toBe(null);
+        expect(statementCopy._parent).toBe(null);
+
+        function_.addNext(statementCopy);
+        expect(function_._next).toBe(statementCopy);
+        expect(statement._parent).toBe(null);
+        expect(statementCopy._parent).toBe(function_);
+    });
+
+    it('should remove node from parent before adding it into another', () => {
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
+        const event = new ScratchComponents('event');
+        const function_ = new ScratchComponents('function');
+
+        expect(truthyFalsy._parent).toBe(null);
+        expect(event._next).toBe(null);
+        expect(function_._next).toBe(null);
+
+        event.addNext(truthyFalsy);
+        expect(event._next).toBe(truthyFalsy);
+        expect(truthyFalsy._parent).toBe(event);
+
+        function_.addNext(truthyFalsy);
+        expect(function_._next).toBe(truthyFalsy);
+        expect(truthyFalsy._parent).toBe(function_);
+        expect(event._next).toBe(null);
     });
 });

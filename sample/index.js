@@ -46,6 +46,7 @@ const truthyBlock = new ScratchComponent('truthyBlock', {
             top: '90px',
         },
     },
+    fitting: { next: true },
 });
 
 const statement = new ScratchComponent('statement', {

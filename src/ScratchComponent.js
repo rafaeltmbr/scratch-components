@@ -95,7 +95,9 @@ export default class ScratchComponent {
         this._containers.description = this._DOMNode.children[2];
         this._containers.truthy = childrenLength > 4 ? this._DOMNode.children[3] : null;
         this._containers.falsy = childrenLength > 5 ? this._DOMNode.children[4] : null;
-        this._containers.next = this._DOMNode.children[childrenLength - 1];
+        this._containers.next = (
+            this._DOMNode.children[childrenLength - 1].className === 'scratch-next-container'
+                ? this._DOMNode.children[childrenLength - 1] : null);
     }
 
     _assignCoincidenceHandlers() {
@@ -494,6 +496,7 @@ export default class ScratchComponent {
         if (!(child instanceof ScratchComponent) || !this._addElements.truthy
             || child._isDescendantOrTheSameComponent(this) || this._truthy) return false;
 
+        if (child._parent) child._parent.removeChild(child);
         this.removeTruthy();
         this._truthy = child;
         this._truthy._parent = this;
@@ -523,6 +526,7 @@ export default class ScratchComponent {
         if (!(child instanceof ScratchComponent) || !this._addElements.falsy
             || child._isDescendantOrTheSameComponent(this) || this._falsy) return false;
 
+        if (child._parent) child._parent.removeChild(child);
         this.removeFalsy();
         this._falsy = child;
         this._falsy._parent = this;
@@ -552,6 +556,7 @@ export default class ScratchComponent {
         if (!(child instanceof ScratchComponent) || !this._addElements.next
             || child._isDescendantOrTheSameComponent(this)) return false;
 
+        if (child._parent) child._parent.removeChild(child);
         this.removeNext();
         this._next = child;
         this._next._parent = this;
@@ -657,11 +662,11 @@ export default class ScratchComponent {
             ? Component.getContainerPosition(this._containers.falsy)
             : null;
 
-        return {
-            truthy,
-            falsy,
-            next: Component.getContainerPosition(this._containers.next),
-        };
+        const next = this._containers.next
+            ? Component.getContainerPosition(this._containers.next)
+            : null;
+
+        return { truthy, falsy, next };
     }
 
     setAddPermissions(permissions = {}) {
