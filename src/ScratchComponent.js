@@ -3,7 +3,7 @@
 import ScratchShape from './util/scratchShape';
 import DOM from './util/DOM';
 import object from './util/object';
-import Component from './util/Component';
+import Component from './util/component';
 import defaults from './ScratchComponentDefaults';
 
 const instanceList = [];
