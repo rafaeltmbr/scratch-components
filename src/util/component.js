@@ -78,7 +78,7 @@ class componentUtil {
         const previousHTML = (componentUtil
             .createContainerHTML('scratch-previous-container', {
                 height: 1,
-                width: dim.next.width,
+                width: dim.width,
             }));
 
         const descriptionHTML = (componentUtil
@@ -90,10 +90,15 @@ class componentUtil {
         const falsyHTML = (componentUtil
             .createContainerHTML('scratch-falsy-container', dim.falsy));
 
-        const nextHTML = '<div class="scratch-next-container" '
-            + `style="width: 100%; height: ${dim.next.height}px; `
-            + `top: ${dim.fittingHeight}px; `
-            + 'left: 0px; position: absolute;">';
+        const nextHTML = (
+            dim.next
+                ? (
+                    '<div class="scratch-next-container" '
+                    + `style="width: 100%; height: ${dim.next.height}px; `
+                    + `top: ${dim.fittingHeight}px; `
+                    + 'left: 0px; position: absolute;">'
+                ) : ''
+        );
 
         return previousHTML + descriptionHTML + truthyHTML + falsyHTML + nextHTML;
     }

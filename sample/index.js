@@ -16,6 +16,7 @@ const event = new ScratchComponent('event', {
             top: '20px',
         },
     },
+    fitting: { next: false },
 });
 
 const functionBlock = new ScratchComponent('function', {
@@ -26,6 +27,7 @@ const functionBlock = new ScratchComponent('function', {
             top: '20px',
         },
     },
+    fitting: { next: false },
 });
 
 const truthyFalsyBlock = new ScratchComponent('truthyFalsyBlock', {
@@ -36,6 +38,7 @@ const truthyFalsyBlock = new ScratchComponent('truthyFalsyBlock', {
             top: '90px',
         },
     },
+    fitting: { next: false },
 });
 
 const truthyBlock = new ScratchComponent('truthyBlock', {
@@ -46,6 +49,7 @@ const truthyBlock = new ScratchComponent('truthyBlock', {
             top: '90px',
         },
     },
+    fitting: { next: false },
 });
 
 const statement = new ScratchComponent('statement', {
@@ -56,6 +60,7 @@ const statement = new ScratchComponent('statement', {
             top: '200px',
         },
     },
+    fitting: { next: false },
 });
 
 document.body.appendChild(statement.getDOMNode());

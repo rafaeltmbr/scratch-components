@@ -1,5 +1,3 @@
-import objectUtil from './object';
-
 const defaults = {
     truthy: true,
     falsy: true,
@@ -75,12 +73,14 @@ class ScratchSVGPath {
                     top: opt.lineHeight + 8 + opt.strokeWidth,
                     left: 12,
                 },
-                next: {
-                    width: opt.totalWidth,
-                    height: opt.nextHeight + opt.strokeWidth,
-                    top: height - (opt.next ? 8 : 0) - opt.strokeWidth,
-                    left: 0,
-                },
+                next: (opt.next
+                    ? {
+                        width: opt.totalWidth,
+                        height: opt.nextHeight + opt.strokeWidth,
+                        top: height - (opt.next ? 8 : 0) - opt.strokeWidth,
+                        left: 0,
+                    } : undefined
+                ),
             },
         };
     }
@@ -108,7 +108,6 @@ class ScratchSVGPath {
         const femaleFitting = 'c 2,0 3,1 4,2 l 4,4 c 1,1 2,2 4,2 h12 c 2,0 3,-1 4,-2 l 4,-4 c 1,-1 2,-2 4,-2';
         const femaleFittingBypass = 'h 36';
         const maleFitting = 'c -2,0 -3,1 -4,2 l -4,4 c -1,1 -2,2 -4,2 h-12 c -2,0 -3,-1 -4,-2 l -4,-4 c -1,-1 -2,-2 -4,-2';
-        const maleFittingBypass = 'h -36';
         const closePath = 'z';
 
         const path = startPoint + topLeftCorner + shortLineToRight
@@ -127,22 +126,21 @@ class ScratchSVGPath {
             + (opt.falsy ? femaleFitting : femaleFittingBypass)
             + midLineToRight
             + topRightCorner + shortLineToBottom + bottomRightCorner
-            + longLineToLeft
-            + (opt.next ? maleFitting : maleFittingBypass)
+            + longLineToLeft + maleFitting
             + shortLineToLeft
             + bottomLeftCorner + closePath;
 
         const width = opt.totalWidth;
         const height = opt.truthyHeight
             + opt.falsyHeight + opt.lineHeight
-            + 2 * opt.strokeWidth + (opt.next ? 80 : 72);
+            + 2 * opt.strokeWidth + 80;
 
         return {
             path,
             dimensions: {
                 width: `${width}px`,
                 height: `${height}px`,
-                fittingHeight: height - (opt.next ? 8 : 0) - opt.strokeWidth,
+                fittingHeight: height - 8 - opt.strokeWidth,
                 'stroke-width': `${opt.strokeWidth}px`,
                 description: {
                     width: opt.totalWidth - 2 * opt.strokeWidth,
@@ -166,7 +164,7 @@ class ScratchSVGPath {
                 next: {
                     width: opt.totalWidth,
                     height: opt.nextHeight + opt.strokeWidth,
-                    top: height - (opt.next ? 8 : 0) - opt.strokeWidth,
+                    top: height - 8 - opt.strokeWidth,
                     left: 0,
                 },
             },
@@ -215,12 +213,13 @@ class ScratchSVGPath {
                     top: opt.strokeWidth + 8,
                     left: opt.strokeWidth,
                 },
-                next: {
-                    width: opt.totalWidth,
-                    height: opt.nextHeight + opt.strokeWidth,
-                    top: height - (opt.next ? 8 : 0) - opt.strokeWidth,
-                    left: 0,
-                },
+                next: opt.next
+                    ? {
+                        width: opt.totalWidth,
+                        height: opt.nextHeight + opt.strokeWidth,
+                        top: height - (opt.next ? 8 : 0) - opt.strokeWidth,
+                        left: 0,
+                    } : undefined,
             },
         };
     }
