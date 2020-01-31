@@ -169,5 +169,58 @@ describe('Component creation', () => {
 });
 
 describe('Add component', () => {
-    
+    it('should add next component', () => {
+        const parent = new ScratchComponents('event');
+        const child = new ScratchComponents('statement');
+
+        const parentNextContainer = parent._containers.next;
+        const childNode = child.getDOMNode();
+
+        expect(parent._next).toBe(null);
+        expect(child._parent).toBe(null);
+        expect(parentNextContainer.children[0]).toBe(undefined);
+
+        parent.addNext(child);
+        expect(parent._next).toBe(child);
+        expect(parentNextContainer.children[0]).toBe(childNode);
+    });
+
+    it('should add only instances from ScratchComponent class', () => {
+        const parent = new ScratchComponents('event');
+        const parentNextContainer = parent._containers.next;
+
+        expect(parent._next).toBe(null);
+        expect(parentNextContainer.children[0]).toBe(undefined);
+
+        parent.addNext({});
+        expect(parent._next).toBe(null);
+        expect(parentNextContainer.children[0]).toBe(undefined);
+    });
+
+    it('should not add itself', () => {
+        const parent = new ScratchComponents('event');
+        const parentNextContainer = parent._containers.next;
+
+        expect(parent._next).toBe(null);
+        expect(parent._parent).toBe(null);
+        expect(parentNextContainer.children[0]).toBe(undefined);
+
+        parent.addNext(parent);
+        expect(parent._next).toBe(null);
+        expect(parent._parent).toBe(null);
+        expect(parentNextContainer.children[0]).toBe(undefined);
+    });
+
+    it('should not add a next component when it is not allowed', () => {
+        const parent = new ScratchComponents('truthyBlock', { fitting: { next: false } });
+        const child = new ScratchComponents('statement');
+        const parentNextContainer = parent._containers.next;
+
+        expect(parent._next).toBe(null);
+        expect(parentNextContainer.children[0]).toBe(undefined);
+
+        parent.addNext(child);
+        expect(parent._next).toBe(null);
+        expect(parentNextContainer.children[0]).toBe(undefined);
+    });
 });
