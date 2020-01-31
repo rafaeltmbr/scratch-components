@@ -1,8 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-undef */
-import ScratchComponents from '../ScratchComponent';
-import defaults from '../ScratchComponentDefaults';
-import object from '../util/object';
+import ScratchComponents from '../../ScratchComponent';
+import defaults from '../../ScratchComponentDefaults';
+import object from '../../util/object';
 
 describe('Component creation', () => {
     it('should throw an error when the shape type is not specified', () => {
