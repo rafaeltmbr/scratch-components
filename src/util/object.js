@@ -45,6 +45,19 @@ class objectUtil {
     static isArray(data) {
         return Array.isArray(data) && typeof data === 'object';
     }
+
+    static hasTheSamePropertiesAndValues(obj1, obj2) {
+        if (typeof obj1 !== 'object' || typeof obj2 !== 'object') return obj1 === obj2;
+
+        const prop1 = objectUtil.toArray(obj1);
+        const prop2 = objectUtil.toArray(obj2);
+
+        if (prop1.length !== prop2.length) return false;
+
+        const comp = prop1.map((p, index) => objectUtil
+            .hasTheSamePropertiesAndValues(p, prop2[index]));
+        return comp ? comp.reduce((acc = true, v) => v && acc) : true;
+    }
 }
 
 export default objectUtil;

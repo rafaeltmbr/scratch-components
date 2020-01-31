@@ -13,8 +13,8 @@ const defaults = {
 };
 
 class ScratchSVGPath {
-    static truthyBlock(options = {}) {
-        const opt = ScratchSVGPath.getFormmatedOptions(options);
+    static truthyBlock(dim = {}, options = {}) {
+        const opt = ScratchSVGPath.getFormmatedOptions(dim, options);
         const startPoint = `M ${opt.strokeWidth / 2},${4 + opt.strokeWidth / 2}`;
         const topLeftCorner = 'a 4 4 0 0 1 4,-4';
         const innerTopLeftCorner = 'a 4 4 0 0 0 -4,4';
@@ -85,9 +85,8 @@ class ScratchSVGPath {
         };
     }
 
-    static truthyFalsyBlock(options = {}) {
-        objectUtil.merge(options, { dimensions: {}, fitting: {} });
-        const opt = ScratchSVGPath.getFormmatedOptions(options);
+    static truthyFalsyBlock(dim = {}, options = {}) {
+        const opt = ScratchSVGPath.getFormmatedOptions(dim, options);
 
         const startPoint = `M ${opt.strokeWidth / 2},${4 + opt.strokeWidth / 2}`;
         const topLeftCorner = 'a 4 4 0 0 1 4,-4';
@@ -174,9 +173,8 @@ class ScratchSVGPath {
         };
     }
 
-    static statement(options = {}) {
-        objectUtil.merge(options, { dimensions: {}, fitting: {} });
-        const opt = ScratchSVGPath.getFormmatedOptions(options);
+    static statement(dim = {}, options = {}) {
+        const opt = ScratchSVGPath.getFormmatedOptions(dim, options);
 
         const startPoint = `M ${opt.strokeWidth / 2},${4 + opt.strokeWidth / 2}`;
         const topLeftCorner = 'a 4 4 0 0 1 4,-4';
@@ -227,9 +225,8 @@ class ScratchSVGPath {
         };
     }
 
-    static event(options = {}) {
-        objectUtil.merge(options, { dimensions: {}, fitting: {} });
-        const opt = ScratchSVGPath.getFormmatedOptions(options);
+    static event(dim = {}, options = {}) {
+        const opt = ScratchSVGPath.getFormmatedOptions(dim, options);
 
         const startPoint = `M ${opt.strokeWidth / 2},${17 + opt.strokeWidth / 2}`;
         const bigArc = 'c 25,-22 71,-22 96,0';
@@ -275,9 +272,8 @@ class ScratchSVGPath {
         };
     }
 
-    static function(options = {}) {
-        objectUtil.merge(options, { dimensions: {}, fitting: {} });
-        const opt = ScratchSVGPath.getFormmatedOptions(options);
+    static function(dim = {}, options = {}) {
+        const opt = ScratchSVGPath.getFormmatedOptions(dim, options);
 
         const startPoint = `M ${opt.strokeWidth / 2},${20 + opt.strokeWidth / 2}`;
         const topLeftCorner = 'a 20 20 0 0 1 20,-20';
@@ -323,11 +319,9 @@ class ScratchSVGPath {
         };
     }
 
-    static getFormmatedOptions(options) {
-        objectUtil.merge(options, { dimensions: {}, fitting: {}, attributes: {} });
-
-        const { dimensions: dim, fitting: app, attributes: attr } = options;
-        attr.style = attr.style || {};
+    static getFormmatedOptions(dim, options) {
+        const app = options.fitting || {};
+        const attr = options.attributes || {};
 
         return {
             nextHeight: (dim.nextHeight || defaults.nextHeight),

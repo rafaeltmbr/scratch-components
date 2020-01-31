@@ -59,6 +59,7 @@ export default class ScratchComponent {
         this._id = 0;
         this._opt = {};
         this._containers = {};
+        this._dimensions = {};
         this._preview = {};
         this._addElements = {};
         this._lastCoincidence = {};
@@ -81,10 +82,10 @@ export default class ScratchComponent {
     }
 
     _createDOMNode(shapeName) {
-        const { path, dimensions } = ScratchShape[shapeName](this._opt);
+        const { path, dimensions } = ScratchShape[shapeName](this._dimensions, this._opt);
         const html = Component.createComponentHTML(path, dimensions, this._opt);
         this._DOMNode = DOM.createNodeElement(html);
-        object.merge(this._opt.dimensions, dimensions);
+        object.merge(this._dimensions, dimensions);
     }
 
     _createNodeShortcuts() {
@@ -444,9 +445,10 @@ export default class ScratchComponent {
     }
 
     _resize(dimensions = {}) {
-        object.merge(this._opt.dimensions, dimensions);
+        object.merge(this._dimensions, dimensions);
         this._updateFittingVisibility();
-        const { path, dimensions: dim } = ScratchShape[this._shapeName](this._opt);
+        const { path, dimensions: dim } = (
+            ScratchShape[this._shapeName](this._dimensions, this._opt));
 
         this._DOMNode.style.setProperty('width', dim.width);
         this._DOMNode.style.setProperty('height', dim.height);
@@ -454,7 +456,7 @@ export default class ScratchComponent {
         this._svg.children[0].setAttribute('d', path);
 
         this._updateContainerDimensions(dim);
-        object.merge(this._opt.dimensions, dim);
+        object.merge(this._dimensions, dim);
         this._callResizeListeners();
     }
 
@@ -512,7 +514,7 @@ export default class ScratchComponent {
             this._truthy._parent = null;
             this._truthy = null;
 
-            delete this._opt.dimensions.truthyHeight;
+            delete this._dimensions.truthyHeight;
             this._resize();
         }
     }
@@ -541,7 +543,7 @@ export default class ScratchComponent {
             this._falsy.removeResizeListener(this._falsyResizeHandlerBinded);
             this._falsy._parent = null;
             this._falsy = null;
-            delete this._opt.dimensions.falsyHeight;
+            delete this._dimensions.falsyHeight;
             this._resize();
         }
     }
@@ -605,10 +607,10 @@ export default class ScratchComponent {
 
     getDimensions() {
         return {
-            width: this._opt.dimensions.width,
-            height: this._opt.dimensions.height,
+            width: this._dimensions.width,
+            height: this._dimensions.height,
             fittingHeight: (
-                this._opt.dimensions.fittingHeight
+                this._dimensions.fittingHeight
                 + (this._next
                     ? this._next.getDimensions().fittingHeight
                     : 0)
