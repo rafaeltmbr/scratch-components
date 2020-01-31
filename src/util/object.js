@@ -27,7 +27,7 @@ class objectUtil {
     }
 
     static toArray(object) {
-        return Object.keys(object).map((k) => object[k]);
+        return object ? Object.keys(object).map((k) => object[k]) : object;
     }
 
     /* eslint-enable no-param-reassign */
@@ -47,7 +47,9 @@ class objectUtil {
     }
 
     static hasTheSamePropertiesAndValues(obj1, obj2) {
-        if (typeof obj1 !== 'object' || typeof obj2 !== 'object') return obj1 === obj2;
+        if (typeof obj1 !== 'object' || typeof obj2 !== 'object' || !obj1 || !obj2) {
+            return obj1 === obj2;
+        }
 
         const prop1 = objectUtil.toArray(obj1);
         const prop2 = objectUtil.toArray(obj2);
@@ -56,7 +58,7 @@ class objectUtil {
 
         const comp = prop1.map((p, index) => objectUtil
             .hasTheSamePropertiesAndValues(p, prop2[index]));
-        return comp ? comp.reduce((acc = true, v) => v && acc) : true;
+        return comp && comp.length ? comp.reduce((acc = true, v) => v && acc) : true;
     }
 }
 
