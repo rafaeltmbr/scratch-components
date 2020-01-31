@@ -133,4 +133,37 @@ describe('Component creation', () => {
         const d = new ScratchComponents('truthyBlock', { fitting: { next: false } });
         expect(d.getDOMNode().children[4]).toBe(undefined);
     });
+
+    it('should allow attribute insertion', () => {
+        const c = new ScratchComponents('statement', {
+            attributes: {
+                class: 'statement-class',
+                id: 'statement-tag',
+                'data-status': 'testing',
+            },
+        });
+
+        expect(c.getDOMNode().className).toBe('statement-class');
+        expect(c.getDOMNode().id).toBe('statement-tag');
+        expect(c.getDOMNode().getAttribute('data-status')).toBe('testing');
+    });
+
+    it('should allow style modification', () => {
+        const c = new ScratchComponents('statement', {
+            attributes: {
+                style: {
+                    width: '123px',
+                    'line-height': '37px',
+                    'stroke-width': '3px',
+                    'background-color': 'rgb(50, 100, 200)',
+                },
+            },
+        });
+
+        const style = window.getComputedStyle(c.getDOMNode());
+        expect(style.width).toBe('123px');
+        expect(style.lineHeight).toBe('37px');
+        expect(style.strokeWidth).toBe('3px');
+        expect(style.backgroundColor).toBe('rgb(50, 100, 200)');
+    });
 });
