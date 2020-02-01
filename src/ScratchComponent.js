@@ -89,15 +89,21 @@ export default class ScratchComponent {
     }
 
     _createNodeShortcuts() {
-        const childrenLength = this._DOMNode.children.length;
-        this._svg = this._DOMNode.children[0];
+        const { children } = this._DOMNode;
+        const { length: len } = children;
+        this._svg = children[0];
         this._path = this._svg.children[0];
-        this._containers.description = this._DOMNode.children[2];
-        this._containers.truthy = childrenLength > 4 ? this._DOMNode.children[3] : null;
-        this._containers.falsy = childrenLength > 5 ? this._DOMNode.children[4] : null;
-        this._containers.next = (
-            this._DOMNode.children[childrenLength - 1].className === 'scratch-next-container'
-                ? this._DOMNode.children[childrenLength - 1] : null);
+        this._containers.description = children[2];
+        if (len > 3) {
+            this._containers.truthy = (children[3].className.includes('truthy')
+                ? children[3] : null);
+        }
+        if (len > 4) {
+            this._containers.falsy = (children[4].className.includes('falsy')
+                ? children[4] : null);
+        }
+        this._containers.next = (children[len - 1].className.includes('next')
+            ? children[len - 1] : null);
     }
 
     _assignCoincidenceHandlers() {
@@ -485,7 +491,9 @@ export default class ScratchComponent {
             Component.updateContainerDimensions(this._containers.falsy, next, falsy);
         }
 
-        this._containers.next.style.setProperty('top', `${dim.fittingHeight}px`);
+        if (this._containers.next) {
+            this._containers.next.style.setProperty('top', `${dim.fittingHeight}px`);
+        }
     }
 
     _callResizeListeners() {
