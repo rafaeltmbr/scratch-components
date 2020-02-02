@@ -471,13 +471,17 @@ export default class ScratchComponent {
     _updateFittingVisibility() {
         this._opt.fitting.truthy = (
             this._truthy
-                ? this._truthy._opt.fitting.next
+                ? this._truthy._getNextFitting()
                 : true);
 
         this._opt.fitting.falsy = (
             this._falsy
-                ? this._falsy._opt.fitting.next
+                ? this._falsy._getNextFitting()
                 : true);
+    }
+
+    _getNextFitting() {
+        return this._next ? this._next._getNextFitting() : this._opt.fitting.next;
     }
 
     _updateContainerDimensions(dim) {
