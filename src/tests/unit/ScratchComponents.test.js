@@ -168,7 +168,7 @@ describe('Component creation', () => {
     });
 });
 
-describe('Add component', () => {
+describe('Component addition', () => {
     it('should add next component', () => {
         const parent = new ScratchComponents('event');
         const child = new ScratchComponents('statement');
@@ -176,24 +176,24 @@ describe('Add component', () => {
         const parentNextContainer = parent._containers.next;
         const childNode = child.getDOMNode();
 
-        expect(parent._next).toBe(null);
-        expect(child._parent).toBe(null);
+        expect(parent.getChildren().next).toBe(null);
+        expect(child.getParent()).toBe(null);
         expect(parentNextContainer.children[0]).toBe(undefined);
 
-        parent.addNext(child);
-        expect(parent._next).toBe(child);
+        expect(parent.addNext(child)).toBe(true);
+        expect(parent.getChildren().next).toBe(child);
         expect(parentNextContainer.children[0]).toBe(childNode);
     });
 
-    it('should add only instances from ScratchComponent class', () => {
+    it('should add only instances from the ScratchComponent class', () => {
         const parent = new ScratchComponents('event');
         const parentNextContainer = parent._containers.next;
 
-        expect(parent._next).toBe(null);
+        expect(parent.getChildren().next).toBe(null);
         expect(parentNextContainer.children[0]).toBe(undefined);
 
-        parent.addNext({});
-        expect(parent._next).toBe(null);
+        expect(parent.addNext({})).toBe(false);
+        expect(parent.getChildren().next).toBe(null);
         expect(parentNextContainer.children[0]).toBe(undefined);
     });
 
@@ -201,40 +201,40 @@ describe('Add component', () => {
         const parent = new ScratchComponents('event');
         const parentNextContainer = parent._containers.next;
 
-        expect(parent._next).toBe(null);
-        expect(parent._parent).toBe(null);
+        expect(parent.getChildren().next).toBe(null);
+        expect(parent.getParent()).toBe(null);
         expect(parentNextContainer.children[0]).toBe(undefined);
 
-        parent.addNext(parent);
-        expect(parent._next).toBe(null);
-        expect(parent._parent).toBe(null);
+        expect(parent.addNext(parent)).toBe(false);
+        expect(parent.getChildren().next).toBe(null);
+        expect(parent.getParent()).toBe(null);
         expect(parentNextContainer.children[0]).toBe(undefined);
     });
 
-    it('should not add a next component on stament and truthyBlock', () => {
+    it('should not add a next component when fitting.next = false', () => {
         const statement = new ScratchComponents('statement', { fitting: { next: false } });
         const truthyBlock = new ScratchComponents('truthyBlock', { fitting: { next: false } });
         const truthyFalsyBlock = new ScratchComponents('truthyFalsyBlock');
 
-        expect(statement._next).toBe(null);
-        expect(truthyBlock._next).toBe(null);
-        expect(truthyFalsyBlock._parent).toBe(null);
+        expect(statement.getChildren().next).toBe(null);
+        expect(truthyBlock.getChildren().next).toBe(null);
+        expect(truthyFalsyBlock.getParent()).toBe(null);
         expect(statement._containers.next).toBe(null);
         expect(truthyBlock._containers.next).toBe(null);
         expect(truthyFalsyBlock._addElements.previous).toBe(true);
 
-        statement.addNext(truthyFalsyBlock);
-        expect(statement._next).toBe(null);
+        expect(statement.addNext(truthyFalsyBlock)).toBe(false);
+        expect(statement.getChildren().next).toBe(null);
         expect(statement._containers.next).toBe(null);
-        expect(truthyFalsyBlock._parent).toBe(null);
+        expect(truthyFalsyBlock.getParent()).toBe(null);
 
-        truthyBlock.addNext(truthyFalsyBlock);
-        expect(truthyBlock._next).toBe(null);
+        expect(truthyBlock.addNext(truthyFalsyBlock)).toBe(false);
+        expect(truthyBlock.getChildren().next).toBe(null);
         expect(truthyBlock._containers.next).toBe(null);
-        expect(truthyFalsyBlock._parent).toBe(null);
+        expect(truthyFalsyBlock.getParent()).toBe(null);
     });
 
-    it('should always add next component on truthyFlasy, function and event', () => {
+    it('should always add a next component on truthyFlasy, function and event', () => {
         const statement1 = new ScratchComponents('statement');
         const statement2 = new ScratchComponents('statement');
         const statement3 = new ScratchComponents('statement');
@@ -242,50 +242,160 @@ describe('Add component', () => {
         const function_ = new ScratchComponents('function', { fitting: { next: false } });
         const truthyFalsy = new ScratchComponents('truthyFalsyBlock', { fitting: { next: false } });
 
-        expect(event._next).toBe(null);
-        event.addNext(statement1);
-        expect(event._next).toBe(statement1);
+        expect(event.getChildren().next).toBe(null);
+        expect(event.addNext(statement1)).toBe(true);
+        expect(event.getChildren().next).toBe(statement1);
 
-        expect(function_._next).toBe(null);
-        function_.addNext(statement2);
-        expect(function_._next).toBe(statement2);
+        expect(function_.getChildren().next).toBe(null);
+        expect(function_.addNext(statement2)).toBe(true);
+        expect(function_.getChildren().next).toBe(statement2);
 
-        expect(truthyFalsy._next).toBe(null);
-        truthyFalsy.addNext(statement3);
-        expect(truthyFalsy._next).toBe(statement3);
+        expect(truthyFalsy.getChildren().next).toBe(null);
+        expect(truthyFalsy.addNext(statement3)).toBe(true);
+        expect(truthyFalsy.getChildren().next).toBe(statement3);
     });
 
-    it('should add copy with change the original instance', () => {
+    it('should add truthy child in truthyBlock and truthyFalsyBlock', () => {
+        const truthy = new ScratchComponents('truthyBlock');
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
+        const statement = new ScratchComponents('statement');
+
+        expect(truthy.getChildren().truthy).toBe(null);
+        expect(truthyFalsy.getChildren().truthy).toBe(null);
+        expect(statement.getParent()).toBe(null);
+
+        expect(truthy.addTruthy(statement)).toBe(true);
+        expect(truthy.getChildren().truthy).toBe(statement);
+        expect(statement.getParent()).toBe(truthy);
+
+        expect(truthy.removeTruthy()).toBe(true);
+        expect(truthy.getChildren().truthy).toBe(null);
+        expect(statement.getParent()).toBe(null);
+
+        expect(truthyFalsy.addTruthy(statement)).toBe(true);
+        expect(truthyFalsy.getChildren().truthy).toBe(statement);
+        expect(statement.getParent()).toBe(truthyFalsy);
+    });
+
+    it('should add falsy child in the truthyFalsyBlock', () => {
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
+        const statement = new ScratchComponents('statement');
+
+        expect(truthyFalsy.getChildren().falsy).toBe(null);
+        expect(statement.getParent()).toBe(null);
+
+        expect(truthyFalsy.addFalsy(statement)).toBe(true);
+        expect(truthyFalsy.getChildren().falsy).toBe(statement);
+        expect(statement.getParent()).toBe(truthyFalsy);
+    });
+
+    it('should not add truthy child in components that cannot have it', () => {
+        const event = new ScratchComponents('event');
+        const function_ = new ScratchComponents('function');
+        const statement = new ScratchComponents('event');
+        const truthy = new ScratchComponents('truthyBlock');
+
+        expect(event.getChildren().truthy).toBe(null);
+        expect(function_.getChildren().truthy).toBe(null);
+        expect(statement.getChildren().truthy).toBe(null);
+        expect(truthy.getParent()).toBe(null);
+
+        expect(event.addTruthy(truthy)).toBe(false);
+        expect(event.getChildren().truthy).toBe(null);
+        expect(truthy.getParent()).toBe(null);
+
+        expect(function_.addTruthy(truthy)).toBe(false);
+        expect(function_.getChildren().truthy).toBe(null);
+        expect(truthy.getParent()).toBe(null);
+
+        expect(statement.addTruthy(truthy)).toBe(false);
+        expect(statement.getChildren().truthy).toBe(null);
+        expect(truthy.getParent()).toBe(null);
+    });
+
+    it('should not add falsy child in components that cannot have it', () => {
+        const event = new ScratchComponents('event');
+        const function_ = new ScratchComponents('function');
+        const statement = new ScratchComponents('event');
+        const truthy = new ScratchComponents('truthyBlock');
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
+
+        expect(event.getChildren().falsy).toBe(null);
+        expect(function_.getChildren().falsy).toBe(null);
+        expect(statement.getChildren().falsy).toBe(null);
+        expect(truthy.getChildren().falsy).toBe(null);
+        expect(truthyFalsy.getParent()).toBe(null);
+
+        expect(event.addFalsy(truthyFalsy)).toBe(false);
+        expect(event.getChildren().falsy).toBe(null);
+        expect(truthyFalsy.getParent()).toBe(null);
+
+        expect(function_.addFalsy(truthyFalsy)).toBe(false);
+        expect(function_.getChildren().falsy).toBe(null);
+        expect(truthyFalsy.getParent()).toBe(null);
+
+        expect(statement.addFalsy(truthyFalsy)).toBe(false);
+        expect(statement.getChildren().falsy).toBe(null);
+        expect(truthyFalsy.getParent()).toBe(null);
+
+        expect(truthy.addFalsy(truthyFalsy)).toBe(false);
+        expect(truthy.getChildren().falsy).toBe(null);
+        expect(truthyFalsy.getParent()).toBe(null);
+    });
+
+    it('should not add previous component in function and event blocks', () => {
+        const function_ = new ScratchComponents('function');
+        const event = new ScratchComponents('event');
+        const truthy = new ScratchComponents('truthyBlock');
+        const statement = new ScratchComponents('statement');
+
+        expect(statement.getChildren().next).toBe(null);
+        expect(function_.getParent()).toBe(null);
+
+        expect(statement.addNext(function_)).toBe(false);
+        expect(statement.getChildren().next).toBe(null);
+        expect(function_.getParent()).toBe(null);
+
+        expect(statement.addNext(event)).toBe(false);
+        expect(statement.getChildren().next).toBe(null);
+        expect(event.getParent()).toBe(null);
+
+        expect(statement.addNext(truthy)).toBe(true);
+        expect(statement.getChildren().next).toBe(truthy);
+        expect(truthy.getParent()).toBe(statement);
+    });
+
+    it('should add a copy without change the original instance', () => {
         const statement = new ScratchComponents('statement');
         const function_ = new ScratchComponents('function');
         const statementCopy = new ScratchComponents(statement);
 
-        expect(function_._next).toBe(null);
-        expect(statement._parent).toBe(null);
-        expect(statementCopy._parent).toBe(null);
+        expect(function_.getChildren().next).toBe(null);
+        expect(statement.getParent()).toBe(null);
+        expect(statementCopy.getParent()).toBe(null);
 
-        function_.addNext(statementCopy);
-        expect(function_._next).toBe(statementCopy);
-        expect(statement._parent).toBe(null);
-        expect(statementCopy._parent).toBe(function_);
+        expect(function_.addNext(statementCopy)).toBe(true);
+        expect(function_.getChildren().next).toBe(statementCopy);
+        expect(statement.getParent()).toBe(null);
+        expect(statementCopy.getParent()).toBe(function_);
     });
 
-    it('should remove node from parent before adding it into another', () => {
+    it('should remove a node from its parent before adding it into another', () => {
         const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
         const event = new ScratchComponents('event');
         const function_ = new ScratchComponents('function');
 
-        expect(truthyFalsy._parent).toBe(null);
-        expect(event._next).toBe(null);
-        expect(function_._next).toBe(null);
+        expect(truthyFalsy.getParent()).toBe(null);
+        expect(event.getChildren().next).toBe(null);
+        expect(function_.getChildren().next).toBe(null);
 
-        event.addNext(truthyFalsy);
-        expect(event._next).toBe(truthyFalsy);
-        expect(truthyFalsy._parent).toBe(event);
+        expect(event.addNext(truthyFalsy)).toBe(true);
+        expect(event.getChildren().next).toBe(truthyFalsy);
+        expect(truthyFalsy.getParent()).toBe(event);
 
-        function_.addNext(truthyFalsy);
-        expect(function_._next).toBe(truthyFalsy);
-        expect(truthyFalsy._parent).toBe(function_);
-        expect(event._next).toBe(null);
+        expect(function_.addNext(truthyFalsy)).toBe(true);
+        expect(function_.getChildren().next).toBe(truthyFalsy);
+        expect(truthyFalsy.getParent()).toBe(function_);
+        expect(event.getChildren().next).toBe(null);
     });
 });

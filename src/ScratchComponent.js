@@ -531,7 +531,9 @@ export default class ScratchComponent {
 
             delete this._dimensions.truthyHeight;
             this._resize();
+            return true;
         }
+        return false;
     }
 
     addFalsy(child) {
@@ -561,12 +563,15 @@ export default class ScratchComponent {
             this._falsy = null;
             delete this._dimensions.falsyHeight;
             this._resize();
+            return true;
         }
+        return false;
     }
 
     addNext(child) {
         if (!(child instanceof ScratchComponent) || !this._addElements.next
-            || child._isDescendantOrTheSameComponent(this)) return false;
+            || child._isDescendantOrTheSameComponent(this)
+            || !child._addElements.previous) return false;
 
         if (child._parent) child._parent.removeChild(child);
         this.removeNext();
@@ -580,16 +585,6 @@ export default class ScratchComponent {
         return true;
     }
 
-    removeChild(child) {
-        if (child === this._truthy) {
-            this.removeTruthy(child);
-        } else if (child === this._falsy) {
-            this.removeFalsy(child);
-        } else if (child === this._next) {
-            this.removeNext(child);
-        }
-    }
-
     removeNext() {
         if (this._next) {
             if (this._containers.next.children.length) {
@@ -600,7 +595,16 @@ export default class ScratchComponent {
             this._next._parent = null;
             this._next = null;
             this._resize({ nextHeight: 0 });
+            return true;
         }
+        return false;
+    }
+
+    removeChild(child) {
+        if (child === this._truthy) return this.removeTruthy(child);
+        if (child === this._falsy) return this.removeFalsy(child);
+        if (child === this._next) return this.removeNext(child);
+        return false;
     }
 
     addResizeListener(listener) {
@@ -639,12 +643,16 @@ export default class ScratchComponent {
         return this._shapeName;
     }
 
-    getConcidenteComponents() {
+    getChildren() {
         return {
             truthy: this._truthy,
             falsy: this._falsy,
             next: this._next,
         };
+    }
+
+    getParent() {
+        return this._parent;
     }
 
     getHitContainer() {
