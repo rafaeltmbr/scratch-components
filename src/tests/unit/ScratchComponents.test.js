@@ -502,6 +502,8 @@ describe('Component remotion', () => {
         expect(truthyFalsy.removeChild(statement3)).toBe(true);
         expect(truthyFalsy.getChildren().next).toBe(null);
         expect(statement3.getParent()).toBe(null);
+
+        expect(truthyFalsy.removeChild(statement3)).toBe(false);
     });
 });
 
