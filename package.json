@@ -26,15 +26,15 @@
   "scripts": {
     "precommit": "git add .",
     "commit": "git-cz",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d sample/build",
     "push": "git push --set-upstream origin master",
     "test": "jest .test.js --collect-coverage",
     "dev:conditional_loop:pug-w": "pug ./src/components/conditional_loop/dev/index.pug -o ./src/components/conditional_loop/build/ --watch --pretty",
     "dev:conditional_loop:sass-w": "sass ./src/components/conditional_loop/conditional_loop.sass ./src/components/conditional_loop/build/style.css --watch --no-source-map",
     "dev:conditional_loop:webpack-w": "webpack --mode=development --config ./src/components/conditional_loop/dev/webpack.config.js -w",
     "dev:conditional_loop": "concurrently \"yarn dev:conditional_loop:pug-w\" \"yarn dev:conditional_loop:sass-w\" \"yarn dev:conditional_loop:webpack-w\"",
-    "dev:sample:pug-w": "pug ./sample/index.pug -o ./build --watch --pretty",
-    "dev:sample:sass-w": "sass ./sample/index.sass ./build/style.css --watch --no-source-map",
+    "dev:sample:pug-w": "pug ./sample/index.pug -o ./sample/build --watch --pretty",
+    "dev:sample:sass-w": "sass ./sample/index.sass ./sample/build/style.css --watch --no-source-map",
     "dev:sample:webpack-w": "webpack --mode=development --config ./sample/webpack.config.js -w",
     "dev:sample": "concurrently \"yarn dev:sample:pug-w\" \"yarn dev:sample:sass-w\" \"yarn dev:sample:webpack-w\""
   },

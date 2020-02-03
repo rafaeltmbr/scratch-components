@@ -4,7 +4,7 @@
 module.exports = {
     entry: __dirname + '/index.js',
     output: {
-        path: __dirname.split('\\').slice(0, -1).concat(['build']).join('\\'),
+        path: __dirname + '/build',
         filename: 'bundle.js',
     },
     module: {
