@@ -1,8 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-undef */
-import ScratchComponents from '../../ScratchComponent';
-import defaults from '../../ScratchComponentDefaults';
-import object from '../../util/object';
+import ScratchComponents from '../../src/ScratchComponent';
+import defaults from '../../src/ScratchComponentDefaults';
 
 describe('Component creation', () => {
     it('should throw an error when the shape type is not specified', () => {
@@ -22,7 +21,7 @@ describe('Component creation', () => {
     it('should assign default properties', () => {
         const c = new ScratchComponents('truthyFalsyBlock');
         expect(typeof c._opt).toBe('object');
-        expect(object.hasTheSamePropertiesAndValues(c._opt, defaults)).toBe(true);
+        expect(c._opt).toEqual(defaults);
     });
 
     it('should overwrite default properties', () => {
@@ -37,7 +36,7 @@ describe('Component creation', () => {
             },
         });
 
-        expect(object.hasTheSamePropertiesAndValues(c._opt, defaults)).toBe(false);
+        expect(c._opt).not.toEqual(defaults);
         expect(c._opt.fitting.next).toBe(false);
         expect(c._opt.attributes.style.width).toBe('200px');
     });
@@ -53,8 +52,8 @@ describe('Component creation', () => {
 
         expect(c2._id > c1._id).toBe(true);
         expect(c2._shapeName).toBe(c1._shapeName);
-        expect(object.hasTheSamePropertiesAndValues(c1._opt, c2._opt)).toBe(true);
-        expect(object.hasTheSamePropertiesAndValues(c1._dimensions, c2._dimensions)).toBe(true);
+        expect(c1._opt).toEqual(c2._opt);
+        expect(c1._dimensions).toEqual(c2._dimensions);
         expect(c1).not.toBe(c2);
         expect(c2._opt).not.toBe(c1._opt);
         expect(c2._dimensions).not.toBe(c1._dimensions);
