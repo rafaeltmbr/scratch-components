@@ -508,7 +508,178 @@ describe('Component remotion', () => {
 });
 
 describe('Get methods', () => {
+    it('should getDOMNode()', () => {
+        const event = new ScratchComponents('event');
+        const function_ = new ScratchComponents('function');
+        const statement = new ScratchComponents('statement');
+        const truthy = new ScratchComponents('truthyBlock');
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
 
+        expect(event.getDOMNode()).toBeInstanceOf(Element);
+        expect(function_.getDOMNode()).toBeInstanceOf(Element);
+        expect(statement.getDOMNode()).toBeInstanceOf(Element);
+        expect(truthy.getDOMNode()).toBeInstanceOf(Element);
+        expect(truthyFalsy.getDOMNode()).toBeInstanceOf(Element);
+    });
+
+    it('should getDimensions()', () => {
+        const event = new ScratchComponents('event');
+        const function_ = new ScratchComponents('function');
+        const statement = new ScratchComponents('statement');
+        const truthy = new ScratchComponents('truthyBlock');
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
+
+        const eventDim = event.getDimensions();
+        expect(eventDim.height.indexOf('px')).toBeGreaterThan(0);
+        expect(eventDim.width.indexOf('px')).toBeGreaterThan(0);
+
+        const functionDim = function_.getDimensions();
+        expect(functionDim.height.indexOf('px')).toBeGreaterThan(0);
+        expect(functionDim.width.indexOf('px')).toBeGreaterThan(0);
+
+        const statementDim = statement.getDimensions();
+        expect(statementDim.height.indexOf('px')).toBeGreaterThan(0);
+        expect(statementDim.width.indexOf('px')).toBeGreaterThan(0);
+
+        const truthyDim = truthy.getDimensions();
+        expect(truthyDim.height.indexOf('px')).toBeGreaterThan(0);
+        expect(truthyDim.width.indexOf('px')).toBeGreaterThan(0);
+
+        const truthyFalsyDim = truthyFalsy.getDimensions();
+        expect(truthyFalsyDim.height.indexOf('px')).toBeGreaterThan(0);
+        expect(truthyFalsyDim.width.indexOf('px')).toBeGreaterThan(0);
+    });
+
+    it('should getShapeName()', () => {
+        const event = new ScratchComponents('event');
+        const function_ = new ScratchComponents('function');
+        const statement = new ScratchComponents('statement');
+        const truthy = new ScratchComponents('truthyBlock');
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
+
+        expect(event.getShapeName()).toBe('event');
+        expect(function_.getShapeName()).toBe('function');
+        expect(statement.getShapeName()).toBe('statement');
+        expect(truthy.getShapeName()).toBe('truthyBlock');
+        expect(truthyFalsy.getShapeName()).toBe('truthyFalsyBlock');
+    });
+
+    it('should getChildren()', () => {
+        const event = new ScratchComponents('event');
+        const function_ = new ScratchComponents('function');
+        const statement = new ScratchComponents('statement');
+        const truthy = new ScratchComponents('truthyBlock');
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
+
+        const child1 = new ScratchComponents('statement');
+        const child2 = new ScratchComponents('statement');
+        const child3 = new ScratchComponents('statement');
+
+        expect(event.addNext(child1)).toBeTruthy();
+        expect(event.getChildren().next).toBe(child1);
+        expect(event.getChildren().truthy).toBeNull();
+        expect(event.getChildren().falsy).toBeNull();
+        expect(event.removeNext()).toBeTruthy();
+
+        expect(function_.addNext(child1)).toBeTruthy();
+        expect(function_.getChildren().next).toBe(child1);
+        expect(function_.getChildren().truthy).toBeNull();
+        expect(function_.getChildren().falsy).toBeNull();
+        expect(function_.removeNext()).toBeTruthy();
+
+        expect(statement.addNext(child1)).toBeTruthy();
+        expect(statement.getChildren().next).toBe(child1);
+        expect(statement.getChildren().truthy).toBeNull();
+        expect(statement.getChildren().falsy).toBeNull();
+        expect(statement.removeNext()).toBeTruthy();
+
+        expect(truthy.addTruthy(child1)).toBeTruthy();
+        expect(truthy.getChildren().truthy).toBe(child1);
+        expect(truthy.addNext(child2)).toBeTruthy();
+        expect(truthy.getChildren().next).toBe(child2);
+        expect(truthy.getChildren().falsy).toBeNull();
+        expect(truthy.removeTruthy()).toBeTruthy();
+        expect(truthy.removeNext()).toBeTruthy();
+
+        expect(truthyFalsy.addTruthy(child1)).toBeTruthy();
+        expect(truthyFalsy.getChildren().truthy).toBe(child1);
+        expect(truthyFalsy.addFalsy(child2)).toBeTruthy();
+        expect(truthyFalsy.getChildren().falsy).toBe(child2);
+        expect(truthyFalsy.addNext(child3)).toBeTruthy();
+        expect(truthyFalsy.getChildren().next).toBe(child3);
+        expect(truthyFalsy.removeTruthy()).toBeTruthy();
+        expect(truthyFalsy.removeFalsy()).toBeTruthy();
+        expect(truthyFalsy.removeNext()).toBeTruthy();
+    });
+
+    it('should getParent()', () => {
+        const parent = new ScratchComponents('statement');
+
+        const event = new ScratchComponents('event');
+        const function_ = new ScratchComponents('function');
+        const statement = new ScratchComponents('statement');
+        const truthy = new ScratchComponents('truthyBlock');
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
+
+        expect(parent.addNext(event)).toBeFalsy();
+        expect(event.getParent()).toBeNull();
+
+        expect(parent.addNext(function_)).toBeFalsy();
+        expect(function_.getParent()).toBeNull();
+
+        expect(parent.addNext(statement)).toBeTruthy();
+        expect(statement.getParent()).toBe(parent);
+        expect(parent.removeNext(statement)).toBeTruthy();
+        expect(statement.getParent()).toBeNull();
+
+        expect(parent.addNext(truthy)).toBeTruthy();
+        expect(truthy.getParent()).toBe(parent);
+        expect(parent.removeNext(truthy)).toBeTruthy();
+        expect(truthy.getParent()).toBeNull();
+
+        expect(parent.addNext(truthyFalsy)).toBeTruthy();
+        expect(truthyFalsy.getParent()).toBe(parent);
+        expect(parent.removeNext(truthyFalsy)).toBeTruthy();
+        expect(truthyFalsy.getParent()).toBeNull();
+    });
+
+    it('should getHitContainer()', () => {
+        const event = new ScratchComponents('event');
+        const function_ = new ScratchComponents('function');
+        const statement = new ScratchComponents('statement');
+        const truthy = new ScratchComponents('truthyBlock');
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
+
+        const eventHitContainer = event.getHitContainer();
+        expect(eventHitContainer.top).toBeGreaterThanOrEqual(0);
+        expect(eventHitContainer.right).toBeGreaterThanOrEqual(0);
+        expect(eventHitContainer.bottom).toBeGreaterThanOrEqual(0);
+        expect(eventHitContainer.left).toBeGreaterThanOrEqual(0);
+
+        const functionHitContainer = function_.getHitContainer();
+        expect(functionHitContainer.top).toBeGreaterThanOrEqual(0);
+        expect(functionHitContainer.right).toBeGreaterThanOrEqual(0);
+        expect(functionHitContainer.bottom).toBeGreaterThanOrEqual(0);
+        expect(functionHitContainer.left).toBeGreaterThanOrEqual(0);
+
+        const statementHitContainer = statement.getHitContainer();
+        expect(statementHitContainer.top).toBeGreaterThanOrEqual(0);
+        expect(statementHitContainer.right).toBeGreaterThanOrEqual(0);
+        expect(statementHitContainer.bottom).toBeGreaterThanOrEqual(0);
+        expect(statementHitContainer.left).toBeGreaterThanOrEqual(0);
+
+        const truthyHitContainer = truthy.getHitContainer();
+        expect(truthyHitContainer.top).toBeGreaterThanOrEqual(0);
+        expect(truthyHitContainer.right).toBeGreaterThanOrEqual(0);
+        expect(truthyHitContainer.bottom).toBeGreaterThanOrEqual(0);
+        expect(truthyHitContainer.left).toBeGreaterThanOrEqual(0);
+
+        const truthyFalsyHitContainer = truthyFalsy.getHitContainer();
+        expect(truthyFalsyHitContainer.top).toBeGreaterThanOrEqual(0);
+        expect(truthyFalsyHitContainer.right).toBeGreaterThanOrEqual(0);
+        expect(truthyFalsyHitContainer.bottom).toBeGreaterThanOrEqual(0);
+        expect(truthyFalsyHitContainer.left).toBeGreaterThanOrEqual(0);
+    });
 });
 
 describe('Event listening', () => {

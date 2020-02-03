@@ -436,19 +436,19 @@ export default class ScratchComponent {
 
     _truthyResizeHandler(target) {
         if (target instanceof ScratchComponent) {
-            this._resize({ truthyHeight: target.getDimensions().fittingHeight });
+            this._resize({ truthyHeight: target._getFittingHeight() });
         }
     }
 
     _falsyResizeHandler(target) {
         if (target instanceof ScratchComponent) {
-            this._resize({ falsyHeight: target.getDimensions().fittingHeight });
+            this._resize({ falsyHeight: target._getFittingHeight() });
         }
     }
 
     _nextResizeHandler(target) {
         if (target instanceof ScratchComponent) {
-            this._resize({ nextHeight: target.getDimensions().fittingHeight });
+            this._resize({ nextHeight: target._getFittingHeight() });
         }
     }
 
@@ -484,6 +484,11 @@ export default class ScratchComponent {
         return this._next ? this._next._getNextFitting() : this._opt.fitting.next;
     }
 
+    _getFittingHeight() {
+        return (this._dimensions.fittingHeight + (
+            this._next ? this._next._getFittingHeight() : 0));
+    }
+
     _updateContainerDimensions(dim) {
         const { truthy, falsy, next } = dim;
 
@@ -515,7 +520,7 @@ export default class ScratchComponent {
         this._containers.truthy.appendChild(child._DOMNode);
         child._clearComponentAbsoluteCoordinates();
 
-        this._resize({ truthyHeight: child.getDimensions().fittingHeight });
+        this._resize({ truthyHeight: child._getFittingHeight() });
         child.addResizeListener(this._truthyResizeHandlerBinded);
         return true;
     }
@@ -547,7 +552,7 @@ export default class ScratchComponent {
         this._containers.falsy.appendChild(child._DOMNode);
         child._clearComponentAbsoluteCoordinates();
 
-        this._resize({ falsyHeight: child.getDimensions().fittingHeight });
+        this._resize({ falsyHeight: child._getFittingHeight() });
         child.addResizeListener(this._falsyResizeHandlerBinded);
         return true;
     }
@@ -580,7 +585,7 @@ export default class ScratchComponent {
         this._containers.next.appendChild(child._DOMNode);
         child._clearComponentAbsoluteCoordinates();
 
-        this._resize({ nextHeight: child.getDimensions().fittingHeight });
+        this._resize({ nextHeight: child._getFittingHeight() });
         child.addResizeListener(this._nextResizeHandlerBinded);
         return true;
     }
@@ -630,12 +635,6 @@ export default class ScratchComponent {
         return {
             width: this._dimensions.width,
             height: this._dimensions.height,
-            fittingHeight: (
-                this._dimensions.fittingHeight
-                + (this._next
-                    ? this._next.getDimensions().fittingHeight
-                    : 0)
-            ),
         };
     }
 
