@@ -689,7 +689,7 @@ export default class ScratchComponent {
         return { truthy, falsy, next };
     }
 
-    setAddPermissions(permissions = {}) {
+    setPermissions(permissions = {}) {
         object.merge(this._addElements, permissions);
         if (!this._addElements.truthy) this.removeTruthy();
         if (!this._addElements.falsy) this.removeFalsy();

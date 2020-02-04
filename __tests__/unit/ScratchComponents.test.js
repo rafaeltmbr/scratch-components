@@ -507,7 +507,7 @@ describe('Component remotion', () => {
     });
 });
 
-describe('Get methods', () => {
+describe('Get/Set methods', () => {
     it('should getDOMNode()', () => {
         const event = new ScratchComponents('event');
         const function_ = new ScratchComponents('function');
@@ -697,6 +697,30 @@ describe('Get methods', () => {
         expect(coincidences.truthy).toBeFalsy();
         expect(coincidences.falsy).toBeFalsy();
         expect(coincidences.next).toBeFalsy();
+    });
+
+    it('should setPermissions()', () => {
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
+        const statement = new ScratchComponents('statement');
+        const statement2 = new ScratchComponents('statement');
+        const statement3 = new ScratchComponents('statement');
+
+        expect(truthyFalsy.addTruthy(statement)).toBeTruthy();
+        expect(truthyFalsy.addFalsy(statement2)).toBeTruthy();
+        expect(truthyFalsy.getChildren().truthy).toBe(statement);
+        expect(truthyFalsy.getChildren().falsy).toBe(statement2);
+        expect(truthyFalsy.getChildren().next).toBeNull();
+
+        truthyFalsy.setPermissions({ truthy: false });
+        expect(truthyFalsy.getChildren().truthy).toBeNull();
+        expect(truthyFalsy.getChildren().falsy).toBe(statement2);
+        expect(truthyFalsy.getChildren().next).toBeNull();
+
+        expect(truthyFalsy.addTruthy(statement3)).toBeFalsy();
+        expect(truthyFalsy.addNext(statement3)).toBeTruthy();
+        expect(truthyFalsy.getChildren().truthy).toBeNull();
+        expect(truthyFalsy.getChildren().falsy).toBe(statement2);
+        expect(truthyFalsy.getChildren().next).toBe(statement3);
     });
 });
 
