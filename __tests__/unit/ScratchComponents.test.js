@@ -743,6 +743,28 @@ describe('Event listening', () => {
         expect(acc10).toBe(10);
     });
 
+    it('should not allow addResizeListeners() more than once', () => {
+        const truthy = new ScratchComponents('truthyBlock');
+        let acc1 = 0;
+        let acc10 = 0;
+
+        // eslint-disable-next-line no-return-assign
+        const listener1 = () => acc1 += 1;
+        // eslint-disable-next-line no-return-assign
+        const listener10 = () => acc10 += 10;
+
+        truthy.addResizeListener(listener1);
+        truthy.addResizeListener(listener1);
+        truthy.addResizeListener(listener10);
+
+        expect(acc1).toBe(0);
+        expect(acc10).toBe(0);
+
+        truthy.addTruthy(new ScratchComponents('statement'));
+        expect(acc1).toBe(1);
+        expect(acc10).toBe(10);
+    });
+
     it('should removeResizeListener()', () => {
         const truthy = new ScratchComponents('truthyBlock');
         let acc1 = 0;
