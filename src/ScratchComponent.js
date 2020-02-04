@@ -613,8 +613,9 @@ export default class ScratchComponent {
     }
 
     addResizeListener(listener) {
-        if (this._resizeListeners.find(listener)) return;
-
+        for (let i = 0, len = this._resizeListeners.length; i < len; i += 1) {
+            if (this._resizeListeners[i] === listener) return;
+        }
         this._resizeListeners.push(listener);
     }
 

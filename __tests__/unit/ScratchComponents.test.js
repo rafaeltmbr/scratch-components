@@ -701,5 +701,54 @@ describe('Get methods', () => {
 });
 
 describe('Event listening', () => {
+    it('should addResizeListener()', () => {
+        const truthy = new ScratchComponents('truthyBlock');
+        let acc1 = 0;
+        let acc10 = 0;
 
+        // eslint-disable-next-line no-return-assign
+        truthy.addResizeListener(() => acc1 += 1);
+        // eslint-disable-next-line no-return-assign
+        truthy.addResizeListener(() => acc10 += 10);
+
+        expect(acc1).toBe(0);
+        expect(acc10).toBe(0);
+
+        truthy.addTruthy(new ScratchComponents('statement'));
+        expect(acc1).toBe(1);
+        expect(acc10).toBe(10);
+    });
+
+    it('should removeResizeListener()', () => {
+        const truthy = new ScratchComponents('truthyBlock');
+        let acc1 = 0;
+        let acc10 = 0;
+        let acc100 = 0;
+
+        // eslint-disable-next-line no-return-assign
+        const listener1 = () => acc1 += 1;
+        // eslint-disable-next-line no-return-assign
+        const listener10 = () => acc10 += 10;
+        // eslint-disable-next-line no-return-assign
+        const listener100 = () => acc100 += 100;
+
+        truthy.addResizeListener(listener1);
+        truthy.addResizeListener(listener10);
+        truthy.addResizeListener(listener100);
+
+        expect(acc1).toBe(0);
+        expect(acc10).toBe(0);
+        expect(acc100).toBe(0);
+
+        truthy.addTruthy(new ScratchComponents('statement'));
+        expect(acc1).toBe(1);
+        expect(acc10).toBe(10);
+        expect(acc100).toBe(100);
+
+        truthy.removeResizeListener(listener10);
+        truthy.removeTruthy();
+        expect(acc1).toBe(2);
+        expect(acc10).toBe(10);
+        expect(acc100).toBe(200);
+    });
 });
