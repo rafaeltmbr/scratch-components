@@ -680,6 +680,24 @@ describe('Get methods', () => {
         expect(truthyFalsyHitContainer.bottom).toBeGreaterThanOrEqual(0);
         expect(truthyFalsyHitContainer.left).toBeGreaterThanOrEqual(0);
     });
+
+    it('should getContainerCoincidences()', () => {
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
+        const statement = new ScratchComponents('statement');
+
+        document.body.appendChild(truthyFalsy.getDOMNode());
+        truthyFalsy.getDOMNode().style.setProperty('left', '200px');
+        truthyFalsy.getDOMNode().style.setProperty('top', '200px');
+
+        document.body.appendChild(statement.getDOMNode());
+        statement.getDOMNode().style.setProperty('left', '0px');
+        statement.getDOMNode().style.setProperty('top', '0px');
+
+        const coincidences = truthyFalsy.getContainerCoincidences(statement.getHitContainer());
+        expect(coincidences.truthy).toBeFalsy();
+        expect(coincidences.falsy).toBeFalsy();
+        expect(coincidences.next).toBeFalsy();
+    });
 });
 
 describe('Event listening', () => {

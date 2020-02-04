@@ -181,7 +181,7 @@ export default class ScratchComponent {
 
     _movementHandler(event) {
         const { clientX: startX, clientY: startY } = event.touches ? event.touches[0] : event;
-        const { top: initialY, left: initialX } = Component.getContainerPosition(this._DOMNode);
+        const { top: initialY, left: initialX } = this._DOMNode.getBoundingClientRect();
         this._DOMNode.setAttribute('data-grabbing', true);
 
         const handleMovement = (e) => {
@@ -246,7 +246,7 @@ export default class ScratchComponent {
     _removeReversePreviewContainer() {
         if (this._preview.reverseRemoveMethod) {
             const child = this._getNestedComponentToBeRemovedFromPreview();
-            const { top, left } = Component.getContainerPosition(child._DOMNode);
+            const { top, left } = child._DOMNode.getBoundingClientRect();
             child._DOMNode.style.setProperty('top', `${top}px`);
             child._DOMNode.style.setProperty('left', `${left}px`);
 
@@ -271,7 +271,7 @@ export default class ScratchComponent {
 
         const offset = Component.getContainerTopLeftOffset(component._containers[containerName]);
 
-        const { top, left } = Component.getContainerPosition(instance._DOMNode);
+        const { top, left } = instance._DOMNode.getBoundingClientRect();
 
         component._DOMNode.style.setProperty('top', `${top - offset.top}px`);
         component._DOMNode.style.setProperty('left', `${left - offset.left}px`);
@@ -412,7 +412,7 @@ export default class ScratchComponent {
     }
 
     _handleReverseCoincidentComponent() {
-        const { top, left } = Component.getContainerPosition(this._preview.component._DOMNode);
+        const { top, left } = this._preview.component._DOMNode.getBoundingClientRect();
         this._DOMNode.style.setProperty('top', `${top}px`);
         this._DOMNode.style.setProperty('left', `${left}px`);
 
@@ -655,9 +655,9 @@ export default class ScratchComponent {
     }
 
     getHitContainer() {
-        const container = Component.getContainerPosition(this._DOMNode);
-        container.bottom = container.top + 10;
-        return container;
+        const { top, right, left } = this._DOMNode.getBoundingClientRect();
+        // eslint-disable-next-line object-curly-newline
+        return { top, bottom: top + 10, right, left };
     }
 
     getContainerCoincidences(containerPosition) {
@@ -674,15 +674,15 @@ export default class ScratchComponent {
 
     _getContainerPositions() {
         const truthy = this._containers.truthy
-            ? Component.getContainerPosition(this._containers.truthy)
+            ? this._containers.truthy.getBoundingClientRect()
             : null;
 
         const falsy = this._containers.falsy
-            ? Component.getContainerPosition(this._containers.falsy)
+            ? this._containers.falsy.getBoundingClientRect()
             : null;
 
         const next = this._containers.next
-            ? Component.getContainerPosition(this._containers.next)
+            ? this._containers.next.getBoundingClientRect()
             : null;
 
         return { truthy, falsy, next };

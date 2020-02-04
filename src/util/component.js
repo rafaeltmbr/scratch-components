@@ -3,18 +3,6 @@ import objectUtil from './object';
 import ScratchShape from './scratchShape';
 
 class componentUtil {
-    static getContainerPosition(container) {
-        const { width, height } = window.getComputedStyle(container);
-        const { top, left } = container.getBoundingClientRect();
-
-        return {
-            top: Math.round(top),
-            right: Math.round(parseInt(width, 10) + left),
-            bottom: Math.round(parseInt(height, 10) + top),
-            left: Math.round(left),
-        };
-    }
-
     static isContainerCoincident(container1, container2) {
         if (!container1 || !container2) return false;
 
