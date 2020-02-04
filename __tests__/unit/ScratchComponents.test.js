@@ -681,19 +681,19 @@ describe('Get methods', () => {
         expect(truthyFalsyHitContainer.left).toBeGreaterThanOrEqual(0);
     });
 
-    it('should getContainerCoincidences()', () => {
-        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
+    it('should getContainerCoincidences() always true since jsdom doesn\'t support'
+        + ' Element.getBoundingClientElement()', () => {
         const statement = new ScratchComponents('statement');
+        const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
 
-        document.body.appendChild(truthyFalsy.getDOMNode());
-        truthyFalsy.getDOMNode().style.setProperty('left', '200px');
-        truthyFalsy.getDOMNode().style.setProperty('top', '200px');
+        let coincidences = truthyFalsy.getContainerCoincidences(statement.getHitContainer());
+        expect(coincidences.truthy).toBeTruthy();
+        expect(coincidences.falsy).toBeTruthy();
+        expect(coincidences.next).toBeTruthy();
 
-        document.body.appendChild(statement.getDOMNode());
-        statement.getDOMNode().style.setProperty('left', '0px');
-        statement.getDOMNode().style.setProperty('top', '0px');
-
-        const coincidences = truthyFalsy.getContainerCoincidences(statement.getHitContainer());
+        coincidences = truthyFalsy.getContainerCoincidences({
+            top: 100, left: 150, right: 250, bottom: 130,
+        });
         expect(coincidences.truthy).toBeFalsy();
         expect(coincidences.falsy).toBeFalsy();
         expect(coincidences.next).toBeFalsy();
