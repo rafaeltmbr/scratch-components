@@ -69,7 +69,7 @@ export default class ScratchComponent {
         this._truthyResizeHandlerBinded = this._truthyResizeHandler.bind(this);
         this._falsyResizeHandlerBinded = this._falsyResizeHandler.bind(this);
         this._nextResizeHandlerBinded = this._nextResizeHandler.bind(this);
-        this._movementHandlerBindend = this._movementHandler.bind(this);
+        this._movementHandlerBinded = this._movementHandler.bind(this);
     }
 
     _assingOptions(options) {
