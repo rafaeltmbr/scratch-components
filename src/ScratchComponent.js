@@ -175,8 +175,13 @@ export default class ScratchComponent {
 
     _assignMovementHandler() {
         const eventType = isTouch ? 'touchstart' : 'mousedown';
-        this._path.addEventListener(eventType, this._movementHandler.bind(this));
-        this._containers.description.addEventListener(eventType, this._movementHandler.bind(this));
+        if (isTouch) {
+            this._DOMNode.addEventListener(eventType, this._movementHandler.bind(this));
+        } else {
+            this._path.addEventListener(eventType, this._movementHandler.bind(this));
+            this._containers.description.addEventListener(eventType,
+                this._movementHandler.bind(this));
+        }
     }
 
     _movementHandler(event) {
