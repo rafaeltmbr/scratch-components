@@ -110,22 +110,25 @@ export default class ScratchComponent {
     _assignCoincidenceHandlers() {
         this._handleContainerCoincidence = {
             truthy: (instance) => {
-                if (instance._truthy) return;
+                if (instance._truthy && !this._preview.component.addNext(instance._truthy, 'last')) return;
                 this._removeAnyPreviewContainer();
                 instance.addTruthy(this._preview.component);
                 this._preview.removeMethod = instance.removeTruthy.bind(instance);
+                this._preview.addMethodName = 'addTruthy';
             },
             falsy: (instance) => {
-                if (instance._falsy) return;
+                if (instance._falsy && !this._preview.component.addNext(instance._falsy, 'last')) return;
                 this._removeAnyPreviewContainer();
                 instance.addFalsy(this._preview.component);
                 this._preview.removeMethod = instance.removeFalsy.bind(instance);
+                this._preview.addMethodName = 'addFalsy';
             },
             next: (instance) => {
                 if (instance._next) return;
                 this._removeAnyPreviewContainer();
                 instance.addNext(this._preview.component);
                 this._preview.removeMethod = instance.removeNext.bind(instance);
+                this._preview.addMethodName = 'addNext';
             },
         };
     }
@@ -256,8 +259,10 @@ export default class ScratchComponent {
 
     _removePreviewContainer() {
         if (this._preview.removeMethod) {
+            const { _next, _parent } = this._preview.component;
             this._preview.removeMethod(this._preview.component);
             this._preview.removeMethod = null;
+            _parent[this._preview.addMethodName](_next, true);
         }
     }
 
@@ -421,13 +426,13 @@ export default class ScratchComponent {
 
         if (containerName === 'truthy') {
             this._removePreviewContainer();
-            this._lastCoincidence.found.addTruthy(this);
+            this._lastCoincidence.found.addTruthy(this, 'first');
         } else if (containerName === 'falsy') {
             this._removePreviewContainer();
-            this._lastCoincidence.found.addFalsy(this);
+            this._lastCoincidence.found.addFalsy(this, 'first');
         } else if (containerName === 'next') {
             this._removePreviewContainer();
-            this._lastCoincidence.found.addNext(this);
+            this._lastCoincidence.found.addNext(this, 'first');
         }
     }
 
@@ -529,9 +534,13 @@ export default class ScratchComponent {
         this._resizeListeners.forEach((listener) => listener(this));
     }
 
-    addTruthy(child) {
+    addTruthy(child, opt = 'no-replace') {
         if (!(child instanceof ScratchComponent) || !this._addElements.truthy
-            || child._isDescendantOrTheSameComponent(this) || this._truthy) return false;
+            || child._isDescendantOrTheSameComponent(this)) return false;
+
+        if (this._truthy && opt === 'no-replace') return false;
+        if (this._truthy && opt === 'last') return this._truthy.addNext(child, 'last');
+        if (this._truthy && opt === 'first') child.addNext(this._truthy, 'last');
 
         if (child._parent) child._parent.removeChild(child);
         this.removeTruthy();
@@ -563,9 +572,14 @@ export default class ScratchComponent {
         return false;
     }
 
-    addFalsy(child) {
+    addFalsy(child, opt = 'no-replace') {
         if (!(child instanceof ScratchComponent) || !this._addElements.falsy
-            || child._isDescendantOrTheSameComponent(this) || this._falsy) return false;
+            || child._isDescendantOrTheSameComponent(this)) return false;
+
+
+        if (this._falsy && opt === 'no-replace') return false;
+        if (this._falsy && opt === 'last') return this._falsy.addNext(child, 'last');
+        if (this._falsy && opt === 'first') child.addNext(this._falsy, 'last');
 
         if (child._parent) child._parent.removeChild(child);
         this.removeFalsy();
@@ -729,6 +743,11 @@ export default class ScratchComponent {
             index: parseInt(window.getComputedStyle(inst._DOMNode).zIndex, 10) || 0,
             instance: inst,
         }));
+    }
+
+    _getDeepestComponentInTheNextLine() {
+        if (this._next) return this._next._getDeepestComponent();
+        return this;
     }
 
     setPermissions(permissions = {}) {
