@@ -1,5 +1,6 @@
 import ScratchComponent from '../src/ScratchComponent';
 import { date } from './build/buildDate.json';
+import DOMUtil from '../src/util/DOM';
 
 function preventDefault(e) {
     e.preventDefault();
@@ -60,11 +61,16 @@ const statement = new ScratchComponent('statement', {
     },
 });
 
-document.body.innerHTML = (
-    '<div class="build-container">'
-    + '<span class="build">Build date</span>'
-    + `<span class="date">${date}</span></div>`
-);
+if (DOMUtil.isTouch()) {
+    document.body.innerHTML = (
+        '<div class="build-container">'
+        + '<span class="build">Build date</span>'
+        + `<span class="date">${date}</span></div>`
+    );
+} else {
+    // eslint-disable-next-line no-console
+    console.log('Build date', date);
+}
 
 document.body.appendChild(statement.getDOMNode());
 

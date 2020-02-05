@@ -29,7 +29,7 @@
     "push": "git push --set-upstream origin master",
     "test": "jest .test.js --collect-coverage",
     "deploy:sample:pug": "pug ./sample/index.pug -o ./sample/build",
-    "deploy:sample:sass": "sass ./sample/index.sass ./sample/build/style.css --no-source-map",
+    "deploy:sample:sass": "sass ./sample/index.sass ./sample/build/style.css --no-source-map --style compressed",
     "deploy:sample:webpack": "webpack --mode=production --config ./sample/webpack.config.js",
     "predeploy": "node ./sample/buildDate.mjs && yarn deploy:sample:pug && yarn deploy:sample:sass && yarn deploy:sample:webpack",
     "deploy": "gh-pages -d sample/build",
