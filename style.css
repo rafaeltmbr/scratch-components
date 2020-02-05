@@ -54,7 +54,7 @@ body .component-container {
 }
 body .build-container {
   font-family: sans-serif;
-  font-size: small;
+  font-size: medium;
   position: fixed;
   bottom: 5px;
   right: 5px;
