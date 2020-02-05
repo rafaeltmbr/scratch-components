@@ -59,7 +59,12 @@ const statement = new ScratchComponent('statement', {
     },
 });
 
-document.body.innerHTML = `<div id="build" title="${new Date()}">Build date</div>`;
+const date = new Date();
+document.body.innerHTML = (
+    '<div class="build-container">'
+    + '<span class="build">Build date</span>'
+    + `<span class="date">${date.toGMTString()}</span></div>`
+);
 
 document.body.appendChild(statement.getDOMNode());
 

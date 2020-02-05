@@ -51,16 +51,28 @@ body
         padding: 10px
         width: 200px
 
-    #build
-        padding: 2px 5px
-        border-radius: 3px
-        background-color: rgb(0, 146, 24)
-        color: white
+    .build-container
         font-family: sans-serif
         font-size: small
         position: absolute
-        bottom: 10px
-        right: 10px
+        bottom: 5px
+        right: 5px
+        opacity: 0.2
 
         &:hover
-            box-shadow: 0 2px 4px rgb(0,0,0, 0.4)
+            opacity: 1.0
+
+        .build, .date
+            padding: 5px 8px
+            display: inline-block
+            color: rgb(255, 255, 255)
+
+        .build
+            border-radius: 3px 0 0 3px
+            background-color: rgb(90, 90, 90)
+            padding-right: 4px
+
+        .date
+            border-radius: 0 3px 3px 0
+            background-color: rgb(13, 126, 190)
+            padding-left: 4px
