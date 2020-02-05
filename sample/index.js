@@ -1,4 +1,5 @@
 import ScratchComponent from '../src/ScratchComponent';
+import { date } from './build/buildDate.json';
 
 function preventDefault(e) {
     e.preventDefault();
@@ -59,11 +60,10 @@ const statement = new ScratchComponent('statement', {
     },
 });
 
-const date = new Date();
 document.body.innerHTML = (
     '<div class="build-container">'
     + '<span class="build">Build date</span>'
-    + `<span class="date">${date.toGMTString()}</span></div>`
+    + `<span class="date">${date}</span></div>`
 );
 
 document.body.appendChild(statement.getDOMNode());
