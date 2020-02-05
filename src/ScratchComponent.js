@@ -200,6 +200,7 @@ export default class ScratchComponent {
         const { clientX: startX, clientY: startY } = event.touches ? event.touches[0] : event;
         const { top: initialY, left: initialX } = this._DOMNode.getBoundingClientRect();
         this._DOMNode.setAttribute('data-grabbing', true);
+        this._adjustAllIndexesAndMadeThisOnTheTop();
 
         const handleMovement = (e) => {
             const { clientX, clientY } = e.touches ? e.touches[0] : e;
@@ -712,6 +713,22 @@ export default class ScratchComponent {
             : null;
 
         return { truthy, falsy, next };
+    }
+
+    _adjustAllIndexesAndMadeThisOnTheTop() {
+        const indexList = this._getAllComponentIndexesAndMakeThisOnTheTop();
+        indexList.sort((a, b) => a.index - b.index);
+        const base = 2;
+        indexList.forEach((e, index) => (
+            e.instance._DOMNode.style.setProperty('z-index', index + base)));
+    }
+
+    _getAllComponentIndexesAndMakeThisOnTheTop() {
+        this._DOMNode.style.setProperty('z-index', 1000);
+        return instanceList.map((inst) => ({
+            index: parseInt(window.getComputedStyle(inst._DOMNode).zIndex, 10) || 0,
+            instance: inst,
+        }));
     }
 
     setPermissions(permissions = {}) {
