@@ -69,6 +69,7 @@ export default class ScratchComponent {
         this._truthyResizeHandlerBinded = this._truthyResizeHandler.bind(this);
         this._falsyResizeHandlerBinded = this._falsyResizeHandler.bind(this);
         this._nextResizeHandlerBinded = this._nextResizeHandler.bind(this);
+        this._movementHandlerBindend = this._movementHandler.bind(this);
     }
 
     _assingOptions(options) {
@@ -175,12 +176,23 @@ export default class ScratchComponent {
 
     _assignMovementHandler() {
         const eventType = isTouch ? 'touchstart' : 'mousedown';
-        if (isTouch) {
-            this._DOMNode.addEventListener(eventType, this._movementHandler.bind(this));
-        } else {
-            this._path.addEventListener(eventType, this._movementHandler.bind(this));
-            this._containers.description.addEventListener(eventType,
-                this._movementHandler.bind(this));
+        this._path.addEventListener(eventType, this._movementHandlerBinded);
+        this._containers.description.addEventListener(eventType, this._movementHandlerBinded);
+        this._updateMovementEventListeners();
+    }
+
+    _updateMovementEventListeners() {
+        if (!isTouch) return;
+        const { truthy, falsy } = this._containers;
+
+        if (truthy) {
+            if (this._truthy) truthy.removeEventListener('touchstart', this._movementHandlerBinded);
+            else truthy.addEventListener('touchstart', this._movementHandlerBinded);
+        }
+
+        if (falsy) {
+            if (this._falsy) falsy.removeEventListener('touchstart', this._movementHandlerBinded);
+            else falsy.addEventListener('touchstart', this._movementHandlerBinded);
         }
     }
 
@@ -529,6 +541,7 @@ export default class ScratchComponent {
 
         this._resize({ truthyHeight: child._getFittingHeight() });
         child.addResizeListener(this._truthyResizeHandlerBinded);
+        this._updateMovementEventListeners();
         return true;
     }
 
@@ -543,6 +556,7 @@ export default class ScratchComponent {
 
             delete this._dimensions.truthyHeight;
             this._resize();
+            this._updateMovementEventListeners();
             return true;
         }
         return false;
@@ -561,6 +575,7 @@ export default class ScratchComponent {
 
         this._resize({ falsyHeight: child._getFittingHeight() });
         child.addResizeListener(this._falsyResizeHandlerBinded);
+        this._updateMovementEventListeners();
         return true;
     }
 
@@ -575,6 +590,7 @@ export default class ScratchComponent {
             this._falsy = null;
             delete this._dimensions.falsyHeight;
             this._resize();
+            this._updateMovementEventListeners();
             return true;
         }
         return false;
@@ -594,6 +610,7 @@ export default class ScratchComponent {
 
         this._resize({ nextHeight: child._getFittingHeight() });
         child.addResizeListener(this._nextResizeHandlerBinded);
+        this._updateMovementEventListeners();
         return true;
     }
 
@@ -607,6 +624,7 @@ export default class ScratchComponent {
             this._next._parent = null;
             this._next = null;
             this._resize({ nextHeight: 0 });
+            this._updateMovementEventListeners();
             return true;
         }
         return false;
