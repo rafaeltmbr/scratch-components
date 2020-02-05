@@ -292,6 +292,8 @@ export default class ScratchComponent {
     }
 
     _checkForCoincidence() {
+        if (!this._preview.component) this._createPreviewComponent();
+
         this._lastCoincidence.found = this._getAndHandleCoincidentComponent();
 
         if (!this._lastCoincidence.found) {
