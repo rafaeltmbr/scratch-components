@@ -59,6 +59,8 @@ const statement = new ScratchComponent('statement', {
     },
 });
 
+document.body.innerHTML = `<div id="build" title="${new Date()}">Build date</div>`;
+
 document.body.appendChild(statement.getDOMNode());
 
 document.body.appendChild(event.getDOMNode());

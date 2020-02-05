@@ -52,3 +52,17 @@ body .component-container {
   padding: 10px;
   width: 200px;
 }
+body #build {
+  padding: 2px 5px;
+  border-radius: 3px;
+  background-color: #009218;
+  color: white;
+  font-family: sans-serif;
+  font-size: small;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+body #build:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
