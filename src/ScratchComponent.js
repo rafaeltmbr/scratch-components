@@ -262,7 +262,7 @@ export default class ScratchComponent {
             const { _next, _parent } = this._preview.component;
             this._preview.removeMethod(this._preview.component);
             this._preview.removeMethod = null;
-            _parent[this._preview.addMethodName](_next, true);
+            if (_next && !_next._opt.isPreview) _parent[this._preview.addMethodName](_next, true);
         }
     }
 
