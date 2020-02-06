@@ -51,6 +51,16 @@ const truthyBlock = new ScratchComponent('truthyBlock', {
     fitting: { next: false },
 });
 
+const truthyBlock2 = new ScratchComponent(truthyBlock, {
+    attributes: {
+        style: {
+            left: '20px',
+            top: '260px',
+        },
+    },
+    fitting: { next: true },
+});
+
 const statement = new ScratchComponent('statement', {
     attributes: {
         class: 'statement',
@@ -86,5 +96,7 @@ document.body.appendChild(event.getDOMNode());
 document.body.appendChild(functionBlock.getDOMNode());
 
 document.body.appendChild(truthyBlock.getDOMNode());
+
+document.body.appendChild(truthyBlock2.getDOMNode());
 
 document.body.appendChild(truthyFalsyBlock.getDOMNode());
