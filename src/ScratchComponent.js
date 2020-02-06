@@ -122,8 +122,8 @@ export default class ScratchComponent {
                 preview.addMethodName = 'addFalsy';
             },
             next: (instance) => {
-                if (instance._next) return;
                 this._removeAnyPreviewContainer();
+                if (instance._next && !preview.component.addNext(instance._next, 'last')) return;
                 instance.addNext(preview.component);
                 preview.removeMethod = instance.removeNext.bind(instance);
                 preview.addMethodName = 'addNext';
@@ -136,6 +136,8 @@ export default class ScratchComponent {
         this._removeAnyPreviewContainer();
 
         const instancePreviousPosition = instance._DOMNode.getBoundingClientRect();
+
+        if (instance._parent) return;
 
         if (preview.component.addNext(instance, 'last')) {
             document.body.appendChild(preview.component._DOMNode);
@@ -258,10 +260,11 @@ export default class ScratchComponent {
     // eslint-disable-next-line class-methods-use-this
     _removePreviewContainer() {
         if (preview.removeMethod) {
-            const { _next, _parent } = preview.component;
+            const { _parent } = preview.component;
+            const { _next } = preview.component._getDeepestNextPreviewChild();
             preview.removeMethod(preview.component);
             preview.removeMethod = null;
-            if (_next && !_next._opt.isPreview) _parent[preview.addMethodName](_next, true);
+            if (_next) _parent[preview.addMethodName](_next, true);
         }
     }
 
