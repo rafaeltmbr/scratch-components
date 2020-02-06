@@ -108,15 +108,15 @@ export default class ScratchComponent {
     _assignCoincidenceHandlers() {
         this._handleContainerCoincidence = {
             truthy: (instance) => {
-                if (instance._truthy && !preview.component.addNext(instance._truthy, 'last')) return;
                 this._removeAnyPreviewContainer();
+                if (instance._truthy && !preview.component.addNext(instance._truthy, 'last')) return;
                 instance.addTruthy(preview.component);
                 preview.removeMethod = instance.removeTruthy.bind(instance);
                 preview.addMethodName = 'addTruthy';
             },
             falsy: (instance) => {
-                if (instance._falsy && !preview.component.addNext(instance._falsy, 'last')) return;
                 this._removeAnyPreviewContainer();
+                if (instance._falsy && !preview.component.addNext(instance._falsy, 'last')) return;
                 instance.addFalsy(preview.component);
                 preview.removeMethod = instance.removeFalsy.bind(instance);
                 preview.addMethodName = 'addFalsy';
