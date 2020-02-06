@@ -8,6 +8,7 @@ import defaults from './ScratchComponentDefaults';
 
 const instanceList = [];
 const isTouch = DOM.isTouch();
+const preview = {};
 
 export default class ScratchComponent {
     constructor(shapeNameOrComponentInstance, options = {}) {
@@ -31,7 +32,6 @@ export default class ScratchComponent {
         this._createDOMNode(shapeName);
         this._createNodeShortcuts();
         this._assignCoincidenceHandlers();
-        this._assignReverseCoincidenceHandlers();
         this._allowElementToBeCoincidentWithOthers();
         this._assignMovementHandler();
     }
@@ -44,7 +44,6 @@ export default class ScratchComponent {
         this._allowElementToBeCoincidentWithOthers();
         this._createNestedComponents(componentInstance);
         this._assignCoincidenceHandlers();
-        this._assignReverseCoincidenceHandlers();
         this._assignMovementHandler();
     }
 
@@ -60,7 +59,6 @@ export default class ScratchComponent {
         this._opt = {};
         this._containers = {};
         this._dimensions = {};
-        this._preview = {};
         this._addElements = {};
         this._lastCoincidence = {};
         this._lastReverseCoincidence = {};
@@ -110,62 +108,61 @@ export default class ScratchComponent {
     _assignCoincidenceHandlers() {
         this._handleContainerCoincidence = {
             truthy: (instance) => {
-                if (instance._truthy && !this._preview.component.addNext(instance._truthy, 'last')) return;
+                if (instance._truthy && !preview.component.addNext(instance._truthy, 'last')) return;
                 this._removeAnyPreviewContainer();
-                instance.addTruthy(this._preview.component);
-                this._preview.removeMethod = instance.removeTruthy.bind(instance);
-                this._preview.addMethodName = 'addTruthy';
+                instance.addTruthy(preview.component);
+                preview.removeMethod = instance.removeTruthy.bind(instance);
+                preview.addMethodName = 'addTruthy';
             },
             falsy: (instance) => {
-                if (instance._falsy && !this._preview.component.addNext(instance._falsy, 'last')) return;
+                if (instance._falsy && !preview.component.addNext(instance._falsy, 'last')) return;
                 this._removeAnyPreviewContainer();
-                instance.addFalsy(this._preview.component);
-                this._preview.removeMethod = instance.removeFalsy.bind(instance);
-                this._preview.addMethodName = 'addFalsy';
+                instance.addFalsy(preview.component);
+                preview.removeMethod = instance.removeFalsy.bind(instance);
+                preview.addMethodName = 'addFalsy';
             },
             next: (instance) => {
                 if (instance._next) return;
                 this._removeAnyPreviewContainer();
-                instance.addNext(this._preview.component);
-                this._preview.removeMethod = instance.removeNext.bind(instance);
-                this._preview.addMethodName = 'addNext';
+                instance.addNext(preview.component);
+                preview.removeMethod = instance.removeNext.bind(instance);
+                preview.addMethodName = 'addNext';
             },
         };
     }
 
-    _assignReverseCoincidenceHandlers() {
-        this._handleReverseContainerCoincidence = {
-            truthy: (instance) => {
-                if (this._preview.component._truthy === instance) return;
-                this._removeAnyPreviewContainer();
-                this._positionPreviewComponent(instance, 'truthy');
-                if (this._preview.component.addTruthy(instance)) {
-                    this._preview.reverseRemoveMethod = (
-                        this._preview.component.removeTruthy.bind(this._preview.component));
-                    document.body.appendChild(this._preview.component._DOMNode);
-                }
-            },
-            falsy: (instance) => {
-                if (this._preview.component._falsy === instance) return;
-                this._removeAnyPreviewContainer();
-                this._positionPreviewComponent(instance, 'falsy');
-                if (this._preview.component.addFalsy(instance)) {
-                    this._preview.reverseRemoveMethod = (
-                        this._preview.component.removeFalsy.bind(this._preview.component));
-                    document.body.appendChild(this._preview.component._DOMNode);
-                }
-            },
-            next: (instance) => {
-                if (this._preview.component._next === instance) return;
-                this._removeAnyPreviewContainer();
-                this._positionPreviewComponent(instance, 'next');
-                if (this._preview.component.addNext(instance)) {
-                    this._preview.reverseRemoveMethod = (
-                        this._preview.component.removeNext.bind(this._preview.component));
-                    document.body.appendChild(this._preview.component._DOMNode);
-                }
-            },
+    _handleReverseNextContainerCoincidence(instance) {
+        if (instance._isDescendantOrTheSameComponent(preview.component)) return;
+        this._removeAnyPreviewContainer();
+
+        const instancePreviousPosition = instance._DOMNode.getBoundingClientRect();
+
+        if (preview.component.addNext(instance, 'last')) {
+            document.body.appendChild(preview.component._DOMNode);
+            preview.nextChild = instance;
+
+            const instanceCurrentPosition = instance._DOMNode.getBoundingClientRect();
+            this._adjustPreviewPosition(instancePreviousPosition, instanceCurrentPosition);
+        }
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    _adjustPreviewPosition(instancePreviousPosition, instanceCurrentPosition) {
+        const instanceOffset = {
+            top: instanceCurrentPosition.top - instancePreviousPosition.top,
+            left: instanceCurrentPosition.left - instancePreviousPosition.left,
         };
+
+        const previewCurrrentPosition = (
+            Component.getContainerTopLeftOffset(preview.component._DOMNode));
+
+        const previewOffset = {
+            top: previewCurrrentPosition.top - instanceOffset.top,
+            left: previewCurrrentPosition.left - instanceOffset.left,
+        };
+
+        preview.component._DOMNode.style.setProperty('top', `${previewOffset.top}px`);
+        preview.component._DOMNode.style.setProperty('left', `${previewOffset.left}px`);
     }
 
     _allowElementToBeCoincidentWithOthers() {
@@ -204,6 +201,7 @@ export default class ScratchComponent {
         const { top: initialY, left: initialX } = this._DOMNode.getBoundingClientRect();
         this._DOMNode.setAttribute('data-grabbing', true);
         this._adjustAllIndexesAndMadeThisOnTheTop();
+        this._createPreviewComponent();
 
         const handleMovement = (e) => {
             const { clientX, clientY } = e.touches ? e.touches[0] : e;
@@ -257,51 +255,34 @@ export default class ScratchComponent {
         this._removeReversePreviewContainer();
     }
 
+    // eslint-disable-next-line class-methods-use-this
     _removePreviewContainer() {
-        if (this._preview.removeMethod) {
-            const { _next, _parent } = this._preview.component;
-            this._preview.removeMethod(this._preview.component);
-            this._preview.removeMethod = null;
-            if (_next && !_next._opt.isPreview) _parent[this._preview.addMethodName](_next, true);
+        if (preview.removeMethod) {
+            const { _next, _parent } = preview.component;
+            preview.removeMethod(preview.component);
+            preview.removeMethod = null;
+            if (_next && !_next._opt.isPreview) _parent[preview.addMethodName](_next, true);
         }
     }
 
+    // eslint-disable-next-line class-methods-use-this
     _removeReversePreviewContainer() {
-        if (this._preview.reverseRemoveMethod) {
-            const child = this._getNestedComponentToBeRemovedFromPreview();
-            const { top, left } = child._DOMNode.getBoundingClientRect();
-            child._DOMNode.style.setProperty('top', `${top}px`);
-            child._DOMNode.style.setProperty('left', `${left}px`);
+        const { nextChild: child } = preview;
+        if (!preview.nextChild) return;
 
-            this._preview.reverseRemoveMethod(this._preview.component);
-            this._preview.reverseRemoveMethod = null;
-            document.body.appendChild(child._DOMNode);
-            child._parent = null;
-            document.body.removeChild(this._preview.component._DOMNode);
-        }
-    }
+        const { top, left } = child._DOMNode.getBoundingClientRect();
+        child._DOMNode.style.setProperty('top', `${top}px`);
+        child._DOMNode.style.setProperty('left', `${left}px`);
 
-    _getNestedComponentToBeRemovedFromPreview() {
-        const { _truthy, _falsy, _next } = this._preview.component;
-        if (_truthy && !_truthy._opt.isPreview) return _truthy;
-        if (_falsy && !_falsy._opt.isPreview) return _falsy;
-        if (_next && !_next._opt.isPreview) return _next;
-        return null;
-    }
-
-    _positionPreviewComponent(instance, containerName) {
-        const { component } = this._preview;
-
-        const offset = Component.getContainerTopLeftOffset(component._containers[containerName]);
-
-        const { top, left } = instance._DOMNode.getBoundingClientRect();
-
-        component._DOMNode.style.setProperty('top', `${top - offset.top}px`);
-        component._DOMNode.style.setProperty('left', `${left - offset.left}px`);
+        child._parent.removeNext(child);
+        document.body.appendChild(child._DOMNode);
+        child._parent = null;
+        document.body.removeChild(preview.component._DOMNode);
+        preview.nextChild = null;
     }
 
     _createPreviewComponent() {
-        this._preview.component = new ScratchComponent(this, {
+        preview.component = new ScratchComponent(this, {
             attributes: {
                 class: 'shadow',
                 style: {
@@ -315,30 +296,27 @@ export default class ScratchComponent {
     }
 
     _checkForCoincidence() {
-        if (!this._preview.component) this._createPreviewComponent();
-
         this._lastCoincidence.found = this._getAndHandleCoincidentComponent();
 
         if (!this._lastCoincidence.found) {
             this._checkForReverseCoincidence();
-            if (this._preview.component) {
+            if (preview.component) {
                 this._removePreviewContainer();
             }
         }
     }
 
     _finishPreviewComponent() {
-        const next = this._next;
-        if (next && next._lastReverseCoincidence.found) {
-            next._handleReverseCoincidentComponent();
-            this.addNext(next);
-        } else if (this._lastCoincidence.found) {
+        if (this._lastCoincidence.found) {
             this._handleCoincidentComponent();
         } else if (this._lastReverseCoincidence.found) {
             this._handleReverseCoincidentComponent();
         }
-        // eslint-disable-next-line no-return-assign
-        instanceList.forEach((e) => e._preview.component = null);
+
+        preview.component = null;
+        preview.removeMethod = null;
+        preview.addMethodName = '';
+        preview.nextChild = null;
     }
 
     _getAndHandleCoincidentComponent() {
@@ -383,17 +361,16 @@ export default class ScratchComponent {
     }
 
     _checkForReverseCoincidence() {
-        if (!this._preview.component) this._createPreviewComponent();
-
         this._lastReverseCoincidence.found = this._getAndHandleReverseCoincidentComponent();
 
-        if (!this._lastReverseCoincidence.found) {
-            this._removeReversePreviewContainer();
-        }
+        if (this._lastReverseCoincidence.found) return this._lastReverseCoincidence.found;
+
+        this._removeReversePreviewContainer();
 
         if (this._next) {
             this._lastReverseCoincidence.found = this._next._checkForReverseCoincidence();
         }
+        return this._lastReverseCoincidence.found;
     }
 
     _getAndHandleReverseCoincidentComponent() {
@@ -414,7 +391,7 @@ export default class ScratchComponent {
 
         const coincidences = this.getContainerCoincidences(instance.getHitContainer());
         if (coincidences.next && !this._next) {
-            this._handleReverseContainerCoincidence.next(instance);
+            this._handleReverseNextContainerCoincidence(instance);
             this._lastReverseCoincidence.containerName = 'next';
             return true;
         }
@@ -437,21 +414,12 @@ export default class ScratchComponent {
     }
 
     _handleReverseCoincidentComponent() {
-        const { top, left } = this._preview.component._DOMNode.getBoundingClientRect();
+        const { top, left } = preview.component._DOMNode.getBoundingClientRect();
         this._DOMNode.style.setProperty('top', `${top}px`);
         this._DOMNode.style.setProperty('left', `${left}px`);
 
-        const { containerName } = this._lastReverseCoincidence;
-        if (containerName === 'truthy') {
-            this._removeReversePreviewContainer();
-            this.addTruthy(this._lastReverseCoincidence.found);
-        } else if (containerName === 'falsy') {
-            this._removeReversePreviewContainer();
-            this.addFalsy(this._lastReverseCoincidence.found);
-        } else if (containerName === 'next') {
-            this._removeReversePreviewContainer();
-            this.addNext(this._lastReverseCoincidence.found);
-        }
+        this._removeReversePreviewContainer();
+        this.addNext(this._lastReverseCoincidence.found, 'last');
     }
 
     _clearComponentAbsoluteCoordinates() {
@@ -749,8 +717,10 @@ export default class ScratchComponent {
         }));
     }
 
-    _getDeepestComponentInTheNextLine() {
-        if (this._next) return this._next._getDeepestComponent();
+    _getDeepestNextPreviewChild() {
+        if (this._next && this._next._opt.isPreview) {
+            return this._next._getDeepestNextPreviewChild();
+        }
         return this;
     }
 
