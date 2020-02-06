@@ -61,6 +61,11 @@ const statement = new ScratchComponent('statement', {
     },
 });
 
+const statement2 = new ScratchComponent(statement, {
+    attributes: { style: { top: '260px' } },
+    fitting: { next: false },
+});
+
 if (DOMUtil.isTouch()) {
     document.body.innerHTML = (
         '<div class="build-container">'
@@ -73,6 +78,8 @@ if (DOMUtil.isTouch()) {
 }
 
 document.body.appendChild(statement.getDOMNode());
+
+document.body.appendChild(statement2.getDOMNode());
 
 document.body.appendChild(event.getDOMNode());
 

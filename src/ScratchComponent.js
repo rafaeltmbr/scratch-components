@@ -540,7 +540,7 @@ export default class ScratchComponent {
 
         if (this._truthy && opt === 'no-replace') return false;
         if (this._truthy && opt === 'last') return this._truthy.addNext(child, 'last');
-        if (this._truthy && opt === 'first') child.addNext(this._truthy, 'last');
+        if (this._truthy && opt === 'first' && !child.addNext(this._truthy, 'last')) return false;
 
         if (child._parent) child._parent.removeChild(child);
         this.removeTruthy();
@@ -579,7 +579,7 @@ export default class ScratchComponent {
 
         if (this._falsy && opt === 'no-replace') return false;
         if (this._falsy && opt === 'last') return this._falsy.addNext(child, 'last');
-        if (this._falsy && opt === 'first') child.addNext(this._falsy, 'last');
+        if (this._falsy && opt === 'first' && !child.addNext(this._falsy, 'last')) return false;
 
         if (child._parent) child._parent.removeChild(child);
         this.removeFalsy();
@@ -611,10 +611,14 @@ export default class ScratchComponent {
         return false;
     }
 
-    addNext(child) {
+    addNext(child, opt = 'no-replace') {
         if (!(child instanceof ScratchComponent) || !this._addElements.next
             || child._isDescendantOrTheSameComponent(this)
             || !child._addElements.previous) return false;
+
+        if (this._next && opt === 'no-replace') return false;
+        if (this._next && opt === 'last') return this._next.addNext(child, 'last');
+        if (this._next && opt === 'first' && !child.addNext(this._next, 'last')) return false;
 
         if (child._parent) child._parent.removeChild(child);
         this.removeNext();
