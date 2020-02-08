@@ -710,6 +710,13 @@ export default class ScratchComponent {
         const base = 2;
         indexList.forEach((e, index) => (
             e.instance._DOMNode.style.setProperty('z-index', index + base)));
+        const zIndex = parseInt(this._DOMNode.style.getPropertyValue('z-index'), 10);
+        this._propagateZIndexToAncestors(zIndex);
+    }
+
+    _propagateZIndexToAncestors(zIndex) {
+        this._DOMNode.style.setProperty('z-index', zIndex);
+        if (this._parent) this._parent._propagateZIndexToAncestors(zIndex);
     }
 
     _getAllComponentIndexesAndMakeThisOnTheTop() {
