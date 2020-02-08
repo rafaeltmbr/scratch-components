@@ -206,6 +206,7 @@ export default class ScratchComponent {
         this._createPreviewComponent();
 
         const handleMovement = (e) => {
+            this._adjustAllIndexesAndMadeThisOnTheTop();
             const { clientX, clientY } = e.touches ? e.touches[0] : e;
             if (this._DOMNode.parentElement !== document.body) {
                 document.body.appendChild(this._DOMNode);
@@ -285,12 +286,15 @@ export default class ScratchComponent {
     }
 
     _createPreviewComponent() {
+        const zIndex = parseInt(this._DOMNode.style.zIndex, 10) - 1;
+
         preview.component = new ScratchComponent(this, {
             attributes: {
                 class: 'shadow',
                 style: {
                     top: '0px',
                     left: '0px',
+                    'z-index': `${zIndex}`,
                 },
             },
             propagateClassNameToNestedElements: true,
@@ -523,6 +527,8 @@ export default class ScratchComponent {
         this._resize({ truthyHeight: child._getFittingHeight() });
         child.addResizeListener(this._truthyResizeHandlerBinded);
         this._updateMovementEventListeners();
+        const zIndex = parseInt(child._DOMNode.style.getPropertyValue('z-index'), 10);
+        this._propagateZIndexToAncestorsIfGreater(zIndex);
         return true;
     }
 
@@ -562,6 +568,8 @@ export default class ScratchComponent {
         this._resize({ falsyHeight: child._getFittingHeight() });
         child.addResizeListener(this._falsyResizeHandlerBinded);
         this._updateMovementEventListeners();
+        const zIndex = parseInt(child._DOMNode.style.getPropertyValue('z-index'), 10);
+        this._propagateZIndexToAncestorsIfGreater(zIndex);
         return true;
     }
 
@@ -601,6 +609,8 @@ export default class ScratchComponent {
         this._resize({ nextHeight: child._getFittingHeight() });
         child.addResizeListener(this._nextResizeHandlerBinded);
         this._updateMovementEventListeners();
+        const zIndex = parseInt(child._DOMNode.style.getPropertyValue('z-index'), 10);
+        this._propagateZIndexToAncestorsIfGreater(zIndex);
         return true;
     }
 
@@ -710,13 +720,17 @@ export default class ScratchComponent {
         const base = 2;
         indexList.forEach((e, index) => (
             e.instance._DOMNode.style.setProperty('z-index', index + base)));
-        const zIndex = parseInt(this._DOMNode.style.getPropertyValue('z-index'), 10);
-        this._propagateZIndexToAncestors(zIndex);
+        const zIndex = parseInt(this._DOMNode.style.getPropertyValue('z-index'), 10) + 1;
+        this._DOMNode.style.setProperty('z-index', zIndex);
+        this._propagateZIndexToAncestorsIfGreater(zIndex);
     }
 
-    _propagateZIndexToAncestors(zIndex) {
+    _propagateZIndexToAncestorsIfGreater(zIndex) {
+        const thisZIndex = parseInt(this._DOMNode.style.getPropertyValue('z-index'), 10);
+        if (thisZIndex && thisZIndex > zIndex) return;
+
         this._DOMNode.style.setProperty('z-index', zIndex);
-        if (this._parent) this._parent._propagateZIndexToAncestors(zIndex);
+        if (this._parent) this._parent._propagateZIndexToAncestorsIfGreater(zIndex);
     }
 
     _getAllComponentIndexesAndMakeThisOnTheTop() {
