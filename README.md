@@ -25,28 +25,30 @@ const options = {
         class: '',
         id: '',
         style: {
-            position: 'relative', // relative or absolute
+            position: 'absolute', // relative or absolute
             width: '120px',
             'stroke-width': '1px', // border thickness
             'line-height': '24px', // height of description container
         },
     },
     fitting: {
-        truthy: true, // female fitting in the truthy container
-        falsy: true, // female fitting in the falsy container
-        next: true, // male fitting in the next container
+        truthy: true, // female fitting used to connect to the truthy child next fitting
+        falsy: true, // female fitting used to connect to the falsy child next fitting
+        next: true, // male fitting used to connect to the next component
     },
+    propagateClassNameToNestedElements: false,
+    isPreview: false,
 };
 
 ```
 
 ## Shapes
 All available shapes are shown below:
-![Shapes](../assets/screenshots/ScratchComponents-sample.jpg)
+![Shapes](./src/assets/screenshots/ScratchComponents-sample.jpg)
 
 ## Containers
 The image below shows the name and location of each container:
-![Shapes](../assets/screenshots/ScratchComponents-containers.jpg)
+![Shapes](./src/assets/screenshots/ScratchComponents-containers.jpg)
 
 ### Containers purpose
 * **description** - Holds the components name and parameters if any
