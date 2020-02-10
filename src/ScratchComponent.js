@@ -736,7 +736,7 @@ export default class ScratchComponent {
     _getAllComponentIndexesAndMakeThisOnTheTop() {
         this._DOMNode.style.setProperty('z-index', 1000);
         return instanceList.map((inst) => ({
-            index: parseInt(window.getComputedStyle(inst._DOMNode).zIndex, 10) || 0,
+            index: inst._DOMNode.style.zIndex || 0,
             instance: inst,
         }));
     }
