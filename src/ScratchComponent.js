@@ -114,6 +114,7 @@ export default class ScratchComponent {
                 instance.addTruthy(preview.component);
                 preview.removeMethod = instance.removeTruthy.bind(instance);
                 preview.addMethodName = 'addTruthy';
+                this._adjustAllIndexesAndMadeThisOnTheTop();
             },
             falsy: (instance) => {
                 if (instance._falsy === preview.component) return;
@@ -122,6 +123,7 @@ export default class ScratchComponent {
                 instance.addFalsy(preview.component);
                 preview.removeMethod = instance.removeFalsy.bind(instance);
                 preview.addMethodName = 'addFalsy';
+                this._adjustAllIndexesAndMadeThisOnTheTop();
             },
             next: (instance) => {
                 if (instance._next === preview.component) return;
@@ -130,6 +132,7 @@ export default class ScratchComponent {
                 instance.addNext(preview.component);
                 preview.removeMethod = instance.removeNext.bind(instance);
                 preview.addMethodName = 'addNext';
+                this._adjustAllIndexesAndMadeThisOnTheTop();
             },
         };
     }
@@ -148,6 +151,7 @@ export default class ScratchComponent {
 
             const instanceCurrentPosition = instance._DOMNode.getBoundingClientRect();
             this._adjustPreviewPosition(instancePreviousPosition, instanceCurrentPosition);
+            this._adjustAllIndexesAndMadeThisOnTheTop();
         }
     }
 
@@ -209,7 +213,6 @@ export default class ScratchComponent {
         this._createPreviewComponent();
 
         const handleMovement = (e) => {
-            this._adjustAllIndexesAndMadeThisOnTheTop();
             const { clientX, clientY } = e.touches ? e.touches[0] : e;
             if (this._DOMNode.parentElement !== document.body) {
                 document.body.appendChild(this._DOMNode);
