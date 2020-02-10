@@ -135,7 +135,7 @@ export default class ScratchComponent {
     }
 
     _handleReverseNextContainerCoincidence(instance) {
-        if (instance._isDescendantOrTheSameComponent(preview.component)) return;
+        if (preview.component._isDescendantOrTheSameComponent(instance)) return;
         this._removeAnyPreviewContainer();
 
         const instancePreviousPosition = instance._DOMNode.getBoundingClientRect();
