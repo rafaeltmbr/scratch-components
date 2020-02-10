@@ -108,6 +108,7 @@ export default class ScratchComponent {
     _assignCoincidenceHandlers() {
         this._handleContainerCoincidence = {
             truthy: (instance) => {
+                if (instance._truthy === preview.component) return;
                 this._removeAnyPreviewContainer();
                 if (instance._truthy && !preview.component.addNext(instance._truthy, 'last')) return;
                 instance.addTruthy(preview.component);
@@ -115,6 +116,7 @@ export default class ScratchComponent {
                 preview.addMethodName = 'addTruthy';
             },
             falsy: (instance) => {
+                if (instance._falsy === preview.component) return;
                 this._removeAnyPreviewContainer();
                 if (instance._falsy && !preview.component.addNext(instance._falsy, 'last')) return;
                 instance.addFalsy(preview.component);
@@ -122,6 +124,7 @@ export default class ScratchComponent {
                 preview.addMethodName = 'addFalsy';
             },
             next: (instance) => {
+                if (instance._next === preview.component) return;
                 this._removeAnyPreviewContainer();
                 if (instance._next && !preview.component.addNext(instance._next, 'last')) return;
                 instance.addNext(preview.component);
