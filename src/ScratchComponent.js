@@ -633,6 +633,24 @@ export default class ScratchComponent {
         this._propagateZIndexToAncestorsIfGreater(zIndex);
     }
 
+    _removeComponent(containerName) {
+        const container = this[`_${containerName}`];
+        if (container) {
+            const containerDOM = this._containers[`${containerName}`];
+            if (containerDOM.children.length) containerDOM.removeChild(containerDOM.children[0]);
+
+            container.removeResizeListener(this[`_${containerName}ResizeHandlerBinded`]);
+            container._parent = null;
+            this[`_${containerName}`] = null;
+
+            delete this._dimensions[`${containerName}Height`];
+            this._resize();
+            this._updateMovementEventListeners();
+            return true;
+        }
+        return false;
+    }
+
     addTruthy(child, opt = 'no-replace') {
         if (!(child instanceof ScratchComponent) || !this._addElements.truthy
             || child._isDescendantOrTheSameComponent(this)) return false;
@@ -641,20 +659,7 @@ export default class ScratchComponent {
     }
 
     removeTruthy() {
-        if (this._truthy) {
-            if (this._containers.truthy.children.length) {
-                this._containers.truthy.removeChild(this._containers.truthy.children[0]);
-            }
-            this._truthy.removeResizeListener(this._truthyResizeHandlerBinded);
-            this._truthy._parent = null;
-            this._truthy = null;
-
-            delete this._dimensions.truthyHeight;
-            this._resize();
-            this._updateMovementEventListeners();
-            return true;
-        }
-        return false;
+        return this._removeComponent('truthy');
     }
 
     addFalsy(child, opt = 'no-replace') {
@@ -665,20 +670,7 @@ export default class ScratchComponent {
     }
 
     removeFalsy() {
-        if (this._falsy) {
-            if (this._containers.falsy.children.length) {
-                this._containers.falsy.removeChild(this._containers.falsy.children[0]);
-            }
-
-            this._falsy.removeResizeListener(this._falsyResizeHandlerBinded);
-            this._falsy._parent = null;
-            this._falsy = null;
-            delete this._dimensions.falsyHeight;
-            this._resize();
-            this._updateMovementEventListeners();
-            return true;
-        }
-        return false;
+        return this._removeComponent('falsy');
     }
 
     addNext(child, opt = 'no-replace') {
@@ -690,19 +682,7 @@ export default class ScratchComponent {
     }
 
     removeNext() {
-        if (this._next) {
-            if (this._containers.next.children.length) {
-                this._containers.next.removeChild(this._containers.next.children[0]);
-            }
-
-            this._next.removeResizeListener(this._nextResizeHandlerBinded);
-            this._next._parent = null;
-            this._next = null;
-            this._resize({ nextHeight: 0 });
-            this._updateMovementEventListeners();
-            return true;
-        }
-        return false;
+        return this._removeComponent('next');
     }
 
     removeChild(child) {
