@@ -109,7 +109,7 @@ export default class ScratchComponent {
         this._handleContainerCoincidence = {
             truthy: (instance) => {
                 if (instance._truthy === preview.component) return;
-                this._removeAnyPreviewContainer();
+                ScratchComponent.removeAnyPreviewContainer();
                 if (instance._truthy && !preview.component.addNext(instance._truthy, 'last')) return;
                 instance.addTruthy(preview.component);
                 preview.removeMethod = instance.removeTruthy.bind(instance);
@@ -118,7 +118,7 @@ export default class ScratchComponent {
             },
             falsy: (instance) => {
                 if (instance._falsy === preview.component) return;
-                this._removeAnyPreviewContainer();
+                ScratchComponent.removeAnyPreviewContainer();
                 if (instance._falsy && !preview.component.addNext(instance._falsy, 'last')) return;
                 instance.addFalsy(preview.component);
                 preview.removeMethod = instance.removeFalsy.bind(instance);
@@ -127,7 +127,7 @@ export default class ScratchComponent {
             },
             next: (instance) => {
                 if (instance._next === preview.component) return;
-                this._removeAnyPreviewContainer();
+                ScratchComponent.removeAnyPreviewContainer();
                 if (instance._next && !preview.component.addNext(instance._next, 'last')) return;
                 instance.addNext(preview.component);
                 preview.removeMethod = instance.removeNext.bind(instance);
@@ -139,7 +139,7 @@ export default class ScratchComponent {
 
     _handleReverseNextContainerCoincidence(instance) {
         if (preview.component._isDescendantOrTheSameComponent(instance)) return;
-        this._removeAnyPreviewContainer();
+        ScratchComponent.removeAnyPreviewContainer();
 
         const instancePreviousPosition = instance._DOMNode.getBoundingClientRect();
 
@@ -150,13 +150,13 @@ export default class ScratchComponent {
             preview.nextChild = instance;
 
             const instanceCurrentPosition = instance._DOMNode.getBoundingClientRect();
-            this._adjustPreviewPosition(instancePreviousPosition, instanceCurrentPosition);
+            ScratchComponent.adjustPreviewPosition(instancePreviousPosition,
+                instanceCurrentPosition);
             this._adjustAllIndexesAndMadeThisOnTheTop();
         }
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    _adjustPreviewPosition(instancePreviousPosition, instanceCurrentPosition) {
+    static adjustPreviewPosition(instancePreviousPosition, instanceCurrentPosition) {
         const instanceOffset = {
             top: instanceCurrentPosition.top - instancePreviousPosition.top,
             left: instanceCurrentPosition.left - instancePreviousPosition.left,
@@ -259,13 +259,12 @@ export default class ScratchComponent {
         }
     }
 
-    _removeAnyPreviewContainer() {
-        this._removePreviewContainer();
-        this._removeReversePreviewContainer();
+    static removeAnyPreviewContainer() {
+        ScratchComponent.removePreviewContainer();
+        ScratchComponent.removeReversePreviewContainer();
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    _removePreviewContainer() {
+    static removePreviewContainer() {
         if (preview.removeMethod) {
             const { _parent } = preview.component;
             const { _next } = preview.component._getDeepestNextPreviewChild();
@@ -275,8 +274,7 @@ export default class ScratchComponent {
         }
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    _removeReversePreviewContainer() {
+    static removeReversePreviewContainer() {
         const { nextChild: child } = preview;
         if (!preview.nextChild) return;
 
@@ -314,7 +312,7 @@ export default class ScratchComponent {
         if (!this._lastCoincidence.found) {
             this._checkForReverseCoincidence();
             if (preview.component) {
-                this._removePreviewContainer();
+                ScratchComponent.removePreviewContainer();
             }
         }
     }
@@ -378,7 +376,7 @@ export default class ScratchComponent {
 
         if (this._lastReverseCoincidence.found) return this._lastReverseCoincidence.found;
 
-        this._removeReversePreviewContainer();
+        ScratchComponent.removeReversePreviewContainer();
 
         if (this._next) {
             this._lastReverseCoincidence.found = this._next._checkForReverseCoincidence();
@@ -415,13 +413,13 @@ export default class ScratchComponent {
         const { containerName } = this._lastCoincidence;
 
         if (containerName === 'truthy') {
-            this._removePreviewContainer();
+            ScratchComponent.removePreviewContainer();
             this._lastCoincidence.found.addTruthy(this, 'first');
         } else if (containerName === 'falsy') {
-            this._removePreviewContainer();
+            ScratchComponent.removePreviewContainer();
             this._lastCoincidence.found.addFalsy(this, 'first');
         } else if (containerName === 'next') {
-            this._removePreviewContainer();
+            ScratchComponent.removePreviewContainer();
             this._lastCoincidence.found.addNext(this, 'first');
         }
     }
@@ -431,7 +429,7 @@ export default class ScratchComponent {
         this._DOMNode.style.setProperty('top', `${top}px`);
         this._DOMNode.style.setProperty('left', `${left}px`);
 
-        this._removeReversePreviewContainer();
+        ScratchComponent.removeReversePreviewContainer();
         this.addNext(this._lastReverseCoincidence.found, 'last');
     }
 
