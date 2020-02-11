@@ -602,27 +602,42 @@ export default class ScratchComponent {
         return this._next ? this._next._getNextFitting() : this._opt.fitting.next;
     }
 
+    _addComponent(child, containerName, opt) {
+        const component = this[`_${containerName}`];
+        if (component && opt === 'no-replace') return false;
+        if (component && opt === 'last') return component.addNext(child, 'last');
+        if (component && opt === 'first' && !child.addNext(component, 'last')) return false;
+
+        this._addChild(child, containerName);
+        return true;
+    }
+
+    _addChild(child, containerName) {
+        if (child._parent) child._parent.removeChild(child);
+        this[`remove${containerName.charAt(0).toUpperCase()}${containerName.slice(1)}`]();
+        this[`_${containerName}`] = child;
+        this[`_${containerName}`]._parent = this;
+        this._containers[containerName].appendChild(child._DOMNode);
+        child._clearComponentAbsoluteCoordinates();
+        this._setupAfterAddChild(child, containerName);
+    }
+
+    _setupAfterAddChild(child, containerName) {
+        const resizeOptions = {};
+        resizeOptions[`${containerName}Height`] = child._getFittingHeight();
+        this._resize(resizeOptions);
+        child.addResizeListener(this[`_${containerName}ResizeHandlerBinded`]);
+
+        this._updateMovementEventListeners();
+        const zIndex = parseInt(child._DOMNode.style.getPropertyValue('z-index'), 10);
+        this._propagateZIndexToAncestorsIfGreater(zIndex);
+    }
+
     addTruthy(child, opt = 'no-replace') {
         if (!(child instanceof ScratchComponent) || !this._addElements.truthy
             || child._isDescendantOrTheSameComponent(this)) return false;
 
-        if (this._truthy && opt === 'no-replace') return false;
-        if (this._truthy && opt === 'last') return this._truthy.addNext(child, 'last');
-        if (this._truthy && opt === 'first' && !child.addNext(this._truthy, 'last')) return false;
-
-        if (child._parent) child._parent.removeChild(child);
-        this.removeTruthy();
-        this._truthy = child;
-        this._truthy._parent = this;
-        this._containers.truthy.appendChild(child._DOMNode);
-        child._clearComponentAbsoluteCoordinates();
-
-        this._resize({ truthyHeight: child._getFittingHeight() });
-        child.addResizeListener(this._truthyResizeHandlerBinded);
-        this._updateMovementEventListeners();
-        const zIndex = parseInt(child._DOMNode.style.getPropertyValue('z-index'), 10);
-        this._propagateZIndexToAncestorsIfGreater(zIndex);
-        return true;
+        return this._addComponent(child, 'truthy', opt);
     }
 
     removeTruthy() {
@@ -646,24 +661,7 @@ export default class ScratchComponent {
         if (!(child instanceof ScratchComponent) || !this._addElements.falsy
             || child._isDescendantOrTheSameComponent(this)) return false;
 
-
-        if (this._falsy && opt === 'no-replace') return false;
-        if (this._falsy && opt === 'last') return this._falsy.addNext(child, 'last');
-        if (this._falsy && opt === 'first' && !child.addNext(this._falsy, 'last')) return false;
-
-        if (child._parent) child._parent.removeChild(child);
-        this.removeFalsy();
-        this._falsy = child;
-        this._falsy._parent = this;
-        this._containers.falsy.appendChild(child._DOMNode);
-        child._clearComponentAbsoluteCoordinates();
-
-        this._resize({ falsyHeight: child._getFittingHeight() });
-        child.addResizeListener(this._falsyResizeHandlerBinded);
-        this._updateMovementEventListeners();
-        const zIndex = parseInt(child._DOMNode.style.getPropertyValue('z-index'), 10);
-        this._propagateZIndexToAncestorsIfGreater(zIndex);
-        return true;
+        return this._addComponent(child, 'falsy', opt);
     }
 
     removeFalsy() {
@@ -688,23 +686,7 @@ export default class ScratchComponent {
             || child._isDescendantOrTheSameComponent(this)
             || !child._addElements.previous) return false;
 
-        if (this._next && opt === 'no-replace') return false;
-        if (this._next && opt === 'last') return this._next.addNext(child, 'last');
-        if (this._next && opt === 'first' && !child.addNext(this._next, 'last')) return false;
-
-        if (child._parent) child._parent.removeChild(child);
-        this.removeNext();
-        this._next = child;
-        this._next._parent = this;
-        this._containers.next.appendChild(child._DOMNode);
-        child._clearComponentAbsoluteCoordinates();
-
-        this._resize({ nextHeight: child._getFittingHeight() });
-        child.addResizeListener(this._nextResizeHandlerBinded);
-        this._updateMovementEventListeners();
-        const zIndex = parseInt(child._DOMNode.style.getPropertyValue('z-index'), 10);
-        this._propagateZIndexToAncestorsIfGreater(zIndex);
-        return true;
+        return this._addComponent(child, 'next', opt);
     }
 
     removeNext() {
