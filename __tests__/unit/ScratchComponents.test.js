@@ -650,31 +650,31 @@ describe('Get/Set methods', () => {
         const truthy = new ScratchComponents('truthyBlock');
         const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
 
-        const eventHitContainer = event.getHitContainer();
+        const eventHitContainer = event._getHitContainer();
         expect(eventHitContainer.top).toBeGreaterThanOrEqual(0);
         expect(eventHitContainer.right).toBeGreaterThanOrEqual(0);
         expect(eventHitContainer.bottom).toBeGreaterThanOrEqual(0);
         expect(eventHitContainer.left).toBeGreaterThanOrEqual(0);
 
-        const functionHitContainer = function_.getHitContainer();
+        const functionHitContainer = function_._getHitContainer();
         expect(functionHitContainer.top).toBeGreaterThanOrEqual(0);
         expect(functionHitContainer.right).toBeGreaterThanOrEqual(0);
         expect(functionHitContainer.bottom).toBeGreaterThanOrEqual(0);
         expect(functionHitContainer.left).toBeGreaterThanOrEqual(0);
 
-        const statementHitContainer = statement.getHitContainer();
+        const statementHitContainer = statement._getHitContainer();
         expect(statementHitContainer.top).toBeGreaterThanOrEqual(0);
         expect(statementHitContainer.right).toBeGreaterThanOrEqual(0);
         expect(statementHitContainer.bottom).toBeGreaterThanOrEqual(0);
         expect(statementHitContainer.left).toBeGreaterThanOrEqual(0);
 
-        const truthyHitContainer = truthy.getHitContainer();
+        const truthyHitContainer = truthy._getHitContainer();
         expect(truthyHitContainer.top).toBeGreaterThanOrEqual(0);
         expect(truthyHitContainer.right).toBeGreaterThanOrEqual(0);
         expect(truthyHitContainer.bottom).toBeGreaterThanOrEqual(0);
         expect(truthyHitContainer.left).toBeGreaterThanOrEqual(0);
 
-        const truthyFalsyHitContainer = truthyFalsy.getHitContainer();
+        const truthyFalsyHitContainer = truthyFalsy._getHitContainer();
         expect(truthyFalsyHitContainer.top).toBeGreaterThanOrEqual(0);
         expect(truthyFalsyHitContainer.right).toBeGreaterThanOrEqual(0);
         expect(truthyFalsyHitContainer.bottom).toBeGreaterThanOrEqual(0);
@@ -686,12 +686,12 @@ describe('Get/Set methods', () => {
         const statement = new ScratchComponents('statement');
         const truthyFalsy = new ScratchComponents('truthyFalsyBlock');
 
-        let coincidences = truthyFalsy.getContainerCoincidences(statement.getHitContainer());
+        let coincidences = truthyFalsy._getContainerCoincidences(statement._getHitContainer());
         expect(coincidences.truthy).toBeTruthy();
         expect(coincidences.falsy).toBeTruthy();
         expect(coincidences.next).toBeTruthy();
 
-        coincidences = truthyFalsy.getContainerCoincidences({
+        coincidences = truthyFalsy._getContainerCoincidences({
             top: 100, left: 150, right: 250, bottom: 130,
         });
         expect(coincidences.truthy).toBeFalsy();
