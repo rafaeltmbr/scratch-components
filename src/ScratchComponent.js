@@ -639,16 +639,21 @@ export default class ScratchComponent {
             const containerDOM = this._containers[`${containerName}`];
             if (containerDOM.children.length) containerDOM.removeChild(containerDOM.children[0]);
 
-            container.removeResizeListener(this[`_${containerName}ResizeHandlerBinded`]);
-            container._parent = null;
-            this[`_${containerName}`] = null;
-
-            delete this._dimensions[`${containerName}Height`];
-            this._resize();
-            this._updateMovementEventListeners();
+            this._setupAfterRemoveChild(container, containerName);
             return true;
         }
         return false;
+    }
+
+    _setupAfterRemoveChild(container, containerName) {
+        container.removeResizeListener(this[`_${containerName}ResizeHandlerBinded`]);
+        // eslint-disable-next-line no-param-reassign
+        container._parent = null;
+        this[`_${containerName}`] = null;
+
+        delete this._dimensions[`${containerName}Height`];
+        this._resize();
+        this._updateMovementEventListeners();
     }
 
     addTruthy(child, opt = 'no-replace') {
