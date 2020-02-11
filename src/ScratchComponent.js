@@ -64,10 +64,13 @@ export default class ScratchComponent {
         this._lastReverseCoincidence = {};
         this._resizeListeners = [];
         this._handleContainerCoincidence = {};
+        this._movementCoordinates = {};
         this._truthyResizeHandlerBinded = this._truthyResizeHandler.bind(this);
         this._falsyResizeHandlerBinded = this._falsyResizeHandler.bind(this);
         this._nextResizeHandlerBinded = this._nextResizeHandler.bind(this);
         this._movementHandlerBinded = this._movementHandler.bind(this);
+        this._handleMovementBinded = this._handleMovement.bind(this);
+        this._removeMovementHandlerBinded = this._removeMovementHandler.bind(this);
     }
 
     _assingOptions(options) {
@@ -106,33 +109,9 @@ export default class ScratchComponent {
 
     _assignCoincidenceHandlers() {
         this._handleContainerCoincidence = {
-            truthy: (instance) => {
-                if (instance._truthy === preview.component) return;
-                ScratchComponent.removeAnyPreviewContainer();
-                if (instance._truthy && !preview.component.addNext(instance._truthy, 'last')) return;
-                instance.addTruthy(preview.component);
-                preview.removeMethod = instance.removeTruthy.bind(instance);
-                preview.addMethodName = 'addTruthy';
-                this._adjustAllIndexesAndMadeThisOnTheTop();
-            },
-            falsy: (instance) => {
-                if (instance._falsy === preview.component) return;
-                ScratchComponent.removeAnyPreviewContainer();
-                if (instance._falsy && !preview.component.addNext(instance._falsy, 'last')) return;
-                instance.addFalsy(preview.component);
-                preview.removeMethod = instance.removeFalsy.bind(instance);
-                preview.addMethodName = 'addFalsy';
-                this._adjustAllIndexesAndMadeThisOnTheTop();
-            },
-            next: (instance) => {
-                if (instance._next === preview.component) return;
-                ScratchComponent.removeAnyPreviewContainer();
-                if (instance._next && !preview.component.addNext(instance._next, 'last')) return;
-                instance.addNext(preview.component);
-                preview.removeMethod = instance.removeNext.bind(instance);
-                preview.addMethodName = 'addNext';
-                this._adjustAllIndexesAndMadeThisOnTheTop();
-            },
+            truthy: this._truthyCoincidenceHandler.bind(this),
+            falsy: this._falsyCoincidenceHandler.bind(this),
+            next: this._nextCoincidenceHandler.bind(this),
         };
     }
 
@@ -189,6 +168,36 @@ export default class ScratchComponent {
         if (componentInstance._next) {
             this.addNext(new ScratchComponent(componentInstance._next, opt));
         }
+    }
+
+    _truthyCoincidenceHandler(instance) {
+        if (instance._truthy === preview.component) return;
+        ScratchComponent.removeAnyPreviewContainer();
+        if (instance._truthy && !preview.component.addNext(instance._truthy, 'last')) return;
+        instance.addTruthy(preview.component);
+        preview.removeMethod = instance.removeTruthy.bind(instance);
+        preview.addMethodName = 'addTruthy';
+        this._adjustAllIndexesAndMadeThisOnTheTop();
+    }
+
+    _falsyCoincidenceHandler(instance) {
+        if (instance._falsy === preview.component) return;
+        ScratchComponent.removeAnyPreviewContainer();
+        if (instance._falsy && !preview.component.addNext(instance._falsy, 'last')) return;
+        instance.addFalsy(preview.component);
+        preview.removeMethod = instance.removeFalsy.bind(instance);
+        preview.addMethodName = 'addFalsy';
+        this._adjustAllIndexesAndMadeThisOnTheTop();
+    }
+
+    _nextCoincidenceHandler(instance) {
+        if (instance._next === preview.component) return;
+        ScratchComponent.removeAnyPreviewContainer();
+        if (instance._next && !preview.component.addNext(instance._next, 'last')) return;
+        instance.addNext(preview.component);
+        preview.removeMethod = instance.removeNext.bind(instance);
+        preview.addMethodName = 'addNext';
+        this._adjustAllIndexesAndMadeThisOnTheTop();
     }
 
     static removeAnyPreviewContainer() {
@@ -304,37 +313,23 @@ export default class ScratchComponent {
     }
 
     _movementHandler(event) {
-        const { clientX: startX, clientY: startY } = event.touches ? event.touches[0] : event;
-        const { top: initialY, left: initialX } = this._DOMNode.getBoundingClientRect();
+        this._updateMovementCoordinates(event);
         this._DOMNode.setAttribute('data-grabbing', true);
         this._adjustAllIndexesAndMadeThisOnTheTop();
         this._createPreviewComponent();
 
-        const handleMovement = (e) => {
-            const { clientX, clientY } = e.touches ? e.touches[0] : e;
-            if (this._DOMNode.parentElement !== document.body) {
-                document.body.appendChild(this._DOMNode);
-                this._parent.removeChild(this);
-            }
+        window.addEventListener(isTouch ? 'touchmove' : 'mousemove', this._handleMovementBinded);
+        window.addEventListener(isTouch ? 'touchend' : 'mouseup', this._removeMovementHandlerBinded);
+    }
 
-            const offsetX = clientX - startX;
-            const offsetY = clientY - startY;
+    _updateMovementCoordinates(event) {
+        const { clientX: startX, clientY: startY } = event.touches ? event.touches[0] : event;
+        this._movementCoordinates.startX = startX;
+        this._movementCoordinates.startY = startY;
 
-            this._DOMNode.style.setProperty('left', `${offsetX + initialX}px`);
-            this._DOMNode.style.setProperty('top', `${offsetY + initialY}px`);
-
-            this._checkForCoincidence();
-        };
-
-        const removeEventHandlers = () => {
-            window.removeEventListener(isTouch ? 'touchmove' : 'mousemove', handleMovement);
-            window.removeEventListener(isTouch ? 'touchend' : 'mouseup', removeEventHandlers);
-            this._DOMNode.setAttribute('data-grabbing', false);
-            this._finishPreviewComponent();
-        };
-
-        window.addEventListener(isTouch ? 'touchmove' : 'mousemove', handleMovement);
-        window.addEventListener(isTouch ? 'touchend' : 'mouseup', removeEventHandlers);
+        const { top: initialY, left: initialX } = this._DOMNode.getBoundingClientRect();
+        this._movementCoordinates.initialX = initialX;
+        this._movementCoordinates.initialY = initialY;
     }
 
     _createPreviewComponent() {
@@ -352,6 +347,33 @@ export default class ScratchComponent {
             propagateClassNameToNestedElements: true,
             isPreview: true,
         });
+    }
+
+
+    _handleMovement(e) {
+        const { clientX, clientY } = e.touches ? e.touches[0] : e;
+        if (this._DOMNode.parentElement !== document.body) {
+            document.body.appendChild(this._DOMNode);
+            this._parent.removeChild(this);
+        }
+
+        const offsetX = clientX - this._movementCoordinates.startX;
+        const offsetY = clientY - this._movementCoordinates.startY;
+
+        this._DOMNode.style.setProperty('left', `${offsetX + this._movementCoordinates.initialX}px`);
+        this._DOMNode.style.setProperty('top', `${offsetY + this._movementCoordinates.initialY}px`);
+
+        this._checkForCoincidence();
+    }
+
+    _removeMovementHandler() {
+        window.removeEventListener(isTouch ? 'touchmove' : 'mousemove',
+            this._handleMovementBinded);
+        window.removeEventListener(isTouch ? 'touchend' : 'mouseup',
+            this._removeMovementHandlerBinded);
+
+        this._DOMNode.setAttribute('data-grabbing', false);
+        this._finishPreviewComponent();
     }
 
     _checkForCoincidence() {
