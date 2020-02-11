@@ -50,7 +50,7 @@ export default class ScratchComponent {
     _initializeProperties(shapeName) {
         this._shapeName = shapeName;
         this._DOMNode = null;
-        this._svg = null;
+        this._path = null;
         this._truthy = null;
         this._falsy = null;
         this._next = null;
@@ -90,8 +90,7 @@ export default class ScratchComponent {
     _createNodeShortcuts() {
         const { children } = this._DOMNode;
         const { length: len } = children;
-        this._svg = children[0];
-        this._path = this._svg.children[0];
+        this._path = children[0].children[0];
         this._containers.description = children[2];
         if (len > 3) {
             this._containers.truthy = (children[3].className.includes('truthy')
@@ -465,7 +464,7 @@ export default class ScratchComponent {
         this._DOMNode.style.setProperty('width', dim.width);
         this._DOMNode.style.setProperty('height', dim.height);
 
-        this._svg.children[0].setAttribute('d', path);
+        this._path.setAttribute('d', path);
 
         this._updateContainerDimensions(dim);
         object.merge(this._dimensions, dim);
