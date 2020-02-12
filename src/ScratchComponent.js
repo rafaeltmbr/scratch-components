@@ -65,12 +65,12 @@ export default class ScratchComponent {
         this._resizeListeners = [];
         this._handleContainerCoincidence = {};
         this._movementCoordinates = {};
-        this._truthyResizeHandlerBinded = this._truthyResizeHandler.bind(this);
-        this._falsyResizeHandlerBinded = this._falsyResizeHandler.bind(this);
-        this._nextResizeHandlerBinded = this._nextResizeHandler.bind(this);
-        this._movementHandlerBinded = this._movementHandler.bind(this);
-        this._handleMovementBinded = this._handleMovement.bind(this);
-        this._removeMovementHandlerBinded = this._removeMovementHandler.bind(this);
+        this._truthyResizeHandler = this._truthyResizeHandler.bind(this);
+        this._falsyResizeHandler = this._falsyResizeHandler.bind(this);
+        this._nextResizeHandler = this._nextResizeHandler.bind(this);
+        this._movementHandler = this._movementHandler.bind(this);
+        this._handleMovement = this._handleMovement.bind(this);
+        this._removeMovementHandler = this._removeMovementHandler.bind(this);
     }
 
     _assingOptions(options) {
@@ -126,8 +126,8 @@ export default class ScratchComponent {
 
     _assignMovementHandler() {
         const eventType = isTouch ? 'touchstart' : 'mousedown';
-        this._path.addEventListener(eventType, this._movementHandlerBinded);
-        this._containers.description.addEventListener(eventType, this._movementHandlerBinded);
+        this._path.addEventListener(eventType, this._movementHandler);
+        this._containers.description.addEventListener(eventType, this._movementHandler);
         this._updateMovementEventListeners();
     }
 
@@ -262,13 +262,13 @@ export default class ScratchComponent {
         const { truthy, falsy } = this._containers;
 
         if (truthy) {
-            if (this._truthy) truthy.removeEventListener('touchstart', this._movementHandlerBinded);
-            else truthy.addEventListener('touchstart', this._movementHandlerBinded);
+            if (this._truthy) truthy.removeEventListener('touchstart', this._movementHandler);
+            else truthy.addEventListener('touchstart', this._movementHandler);
         }
 
         if (falsy) {
-            if (this._falsy) falsy.removeEventListener('touchstart', this._movementHandlerBinded);
-            else falsy.addEventListener('touchstart', this._movementHandlerBinded);
+            if (this._falsy) falsy.removeEventListener('touchstart', this._movementHandler);
+            else falsy.addEventListener('touchstart', this._movementHandler);
         }
     }
 
@@ -318,8 +318,8 @@ export default class ScratchComponent {
         this._adjustAllIndexesAndMadeThisOnTheTop();
         this._createPreviewComponent();
 
-        window.addEventListener(isTouch ? 'touchmove' : 'mousemove', this._handleMovementBinded);
-        window.addEventListener(isTouch ? 'touchend' : 'mouseup', this._removeMovementHandlerBinded);
+        window.addEventListener(isTouch ? 'touchmove' : 'mousemove', this._handleMovement);
+        window.addEventListener(isTouch ? 'touchend' : 'mouseup', this._removeMovementHandler);
     }
 
     _updateMovementCoordinates(event) {
@@ -368,9 +368,9 @@ export default class ScratchComponent {
 
     _removeMovementHandler() {
         window.removeEventListener(isTouch ? 'touchmove' : 'mousemove',
-            this._handleMovementBinded);
+            this._handleMovement);
         window.removeEventListener(isTouch ? 'touchend' : 'mouseup',
-            this._removeMovementHandlerBinded);
+            this._removeMovementHandler);
 
         this._DOMNode.setAttribute('data-grabbing', false);
         this._finishPreviewComponent();
@@ -626,7 +626,7 @@ export default class ScratchComponent {
         const resizeOptions = {};
         resizeOptions[`${containerName}Height`] = child._getFittingHeight();
         this._resize(resizeOptions);
-        child.addResizeListener(this[`_${containerName}ResizeHandlerBinded`]);
+        child.addResizeListener(this[`_${containerName}ResizeHandler`]);
 
         this._updateMovementEventListeners();
         const zIndex = parseInt(child._DOMNode.style.getPropertyValue('z-index'), 10);
@@ -646,7 +646,7 @@ export default class ScratchComponent {
     }
 
     _setupAfterRemoveChild(container, containerName) {
-        container.removeResizeListener(this[`_${containerName}ResizeHandlerBinded`]);
+        container.removeResizeListener(this[`_${containerName}ResizeHandler`]);
         // eslint-disable-next-line no-param-reassign
         container._parent = null;
         this[`_${containerName}`] = null;
