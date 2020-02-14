@@ -51,9 +51,7 @@ export default class ScratchComponent {
         this._shapeName = shapeName;
         this._DOMNode = null;
         this._path = null;
-        this._truthy = null;
-        this._falsy = null;
-        this._next = null;
+        this._children = {};
         this._parent = null;
         this._id = 0;
         this._opt = {};
@@ -159,21 +157,21 @@ export default class ScratchComponent {
             isPreview: this._opt.isPreview,
         };
 
-        if (componentInstance._truthy) {
-            this.addTruthy(new ScratchComponent(componentInstance._truthy, opt));
+        if (componentInstance._children.truthy) {
+            this.addTruthy(new ScratchComponent(componentInstance._children.truthy, opt));
         }
-        if (componentInstance._falsy) {
-            this.addFalsy(new ScratchComponent(componentInstance._falsy, opt));
+        if (componentInstance._children.falsy) {
+            this.addFalsy(new ScratchComponent(componentInstance._children.falsy, opt));
         }
-        if (componentInstance._next) {
-            this.addNext(new ScratchComponent(componentInstance._next, opt));
+        if (componentInstance._children.next) {
+            this.addNext(new ScratchComponent(componentInstance._children.next, opt));
         }
     }
 
     _truthyCoincidenceHandler(instance) {
-        if (instance._truthy === preview.component) return;
+        if (instance._children.truthy === preview.component) return;
         ScratchComponent.removeAnyPreviewContainer();
-        if (instance._truthy && !preview.component.addNext(instance._truthy, 'last')) return;
+        if (instance._children.truthy && !preview.component.addNext(instance._children.truthy, 'last')) return;
         instance.addTruthy(preview.component);
         preview.removeMethod = instance.removeTruthy.bind(instance);
         preview.addMethodName = 'addTruthy';
@@ -181,9 +179,9 @@ export default class ScratchComponent {
     }
 
     _falsyCoincidenceHandler(instance) {
-        if (instance._falsy === preview.component) return;
+        if (instance._children.falsy === preview.component) return;
         ScratchComponent.removeAnyPreviewContainer();
-        if (instance._falsy && !preview.component.addNext(instance._falsy, 'last')) return;
+        if (instance._children.falsy && !preview.component.addNext(instance._children.falsy, 'last')) return;
         instance.addFalsy(preview.component);
         preview.removeMethod = instance.removeFalsy.bind(instance);
         preview.addMethodName = 'addFalsy';
@@ -191,9 +189,9 @@ export default class ScratchComponent {
     }
 
     _nextCoincidenceHandler(instance) {
-        if (instance._next === preview.component) return;
+        if (instance._children.next === preview.component) return;
         ScratchComponent.removeAnyPreviewContainer();
-        if (instance._next && !preview.component.addNext(instance._next, 'last')) return;
+        if (instance._children.next && !preview.component.addNext(instance._children.next, 'last')) return;
         instance.addNext(preview.component);
         preview.removeMethod = instance.removeNext.bind(instance);
         preview.addMethodName = 'addNext';
@@ -208,10 +206,10 @@ export default class ScratchComponent {
     static removePreviewContainer() {
         if (preview.removeMethod) {
             const { _parent } = preview.component;
-            const { _next } = preview.component._getDeepestNextPreviewChild();
+            const { _children: c } = preview.component._getDeepestNextPreviewChild();
             preview.removeMethod(preview.component);
             preview.removeMethod = null;
-            if (_next) _parent[preview.addMethodName](_next, true);
+            if (c && c.next) _parent[preview.addMethodName](c.next, true);
         }
     }
 
@@ -262,12 +260,12 @@ export default class ScratchComponent {
         const { truthy, falsy } = this._containers;
 
         if (truthy) {
-            if (this._truthy) truthy.removeEventListener('touchstart', this._movementHandler);
+            if (this._children.truthy) truthy.removeEventListener('touchstart', this._movementHandler);
             else truthy.addEventListener('touchstart', this._movementHandler);
         }
 
         if (falsy) {
-            if (this._falsy) falsy.removeEventListener('touchstart', this._movementHandler);
+            if (this._children.falsy) falsy.removeEventListener('touchstart', this._movementHandler);
             else falsy.addEventListener('touchstart', this._movementHandler);
         }
     }
@@ -275,14 +273,17 @@ export default class ScratchComponent {
     _isDescendantOrTheSameComponent(instance) {
         if (instance === this) return true;
 
-        if (this._truthy === instance || this._falsy === instance
-            || this._next === instance) return true;
+        if (this._children.truthy === instance || this._children.falsy === instance
+            || this._children.next === instance) return true;
 
-        if (this._truthy && this._truthy._isDescendantOrTheSameComponent(instance)) return true;
+        if (this._children.truthy
+                && this._children.truthy._isDescendantOrTheSameComponent(instance)) return true;
 
-        if (this._falsy && this._falsy._isDescendantOrTheSameComponent(instance)) return true;
+        if (this._children.falsy
+                && this._children.falsy._isDescendantOrTheSameComponent(instance)) return true;
 
-        if (this._next && this._next._isDescendantOrTheSameComponent(instance)) return true;
+        if (this._children.next
+                && this._children.next._isDescendantOrTheSameComponent(instance)) return true;
 
         return false;
     }
@@ -306,8 +307,8 @@ export default class ScratchComponent {
     }
 
     _getDeepestNextPreviewChild() {
-        if (this._next && this._next._opt.isPreview) {
-            return this._next._getDeepestNextPreviewChild();
+        if (this._children.next && this._children.next._opt.isPreview) {
+            return this._children.next._getDeepestNextPreviewChild();
         }
         return this;
     }
@@ -419,8 +420,8 @@ export default class ScratchComponent {
 
         ScratchComponent.removeReversePreviewContainer();
 
-        if (this._next) {
-            this._lastReverseCoincidence.found = this._next._checkForReverseCoincidence();
+        if (this._children.next) {
+            this._lastReverseCoincidence.found = this._children.next._checkForReverseCoincidence();
         }
         return this._lastReverseCoincidence.found;
     }
@@ -498,7 +499,7 @@ export default class ScratchComponent {
             || instance === this._parent) return false;
 
         const coincidences = this._getContainerCoincidences(instance._getHitContainer());
-        if (coincidences.next && !this._next) {
+        if (coincidences.next && !this._children.next) {
             this._handleReverseNextContainerCoincidence(instance);
             this._lastReverseCoincidence.containerName = 'next';
             return true;
@@ -547,7 +548,7 @@ export default class ScratchComponent {
 
     _getFittingHeight() {
         return (this._dimensions.fittingHeight + (
-            this._next ? this._next._getFittingHeight() : 0));
+            this._children.next ? this._children.next._getFittingHeight() : 0));
     }
 
     _resize(dimensions = {}) {
@@ -568,13 +569,13 @@ export default class ScratchComponent {
 
     _updateFittingVisibility() {
         this._opt.fitting.truthy = (
-            this._truthy
-                ? this._truthy._getNextFitting()
+            this._children.truthy
+                ? this._children.truthy._getNextFitting()
                 : true);
 
         this._opt.fitting.falsy = (
-            this._falsy
-                ? this._falsy._getNextFitting()
+            this._children.falsy
+                ? this._children.falsy._getNextFitting()
                 : true);
     }
 
@@ -599,11 +600,11 @@ export default class ScratchComponent {
     }
 
     _getNextFitting() {
-        return this._next ? this._next._getNextFitting() : this._opt.fitting.next;
+        return this._children.next ? this._children.next._getNextFitting() : this._opt.fitting.next;
     }
 
     _addComponent(child, containerName, opt) {
-        const component = this[`_${containerName}`];
+        const component = this._children[containerName];
         if (component && opt === 'no-replace') return false;
         if (component && opt === 'last') return component.addNext(child, 'last');
         if (component && opt === 'first' && !child.addNext(component, 'last')) return false;
@@ -615,8 +616,8 @@ export default class ScratchComponent {
     _addChild(child, containerName) {
         if (child._parent) child._parent.removeChild(child);
         this[`remove${containerName.charAt(0).toUpperCase()}${containerName.slice(1)}`]();
-        this[`_${containerName}`] = child;
-        this[`_${containerName}`]._parent = this;
+        this._children[containerName] = child;
+        this._children[containerName]._parent = this;
         this._containers[containerName].appendChild(child._DOMNode);
         child._clearComponentAbsoluteCoordinates();
         this._setupAfterAddChild(child, containerName);
@@ -634,9 +635,9 @@ export default class ScratchComponent {
     }
 
     _removeComponent(containerName) {
-        const container = this[`_${containerName}`];
+        const container = this._children[containerName];
         if (container) {
-            const containerDOM = this._containers[`${containerName}`];
+            const containerDOM = this._containers[containerName];
             if (containerDOM.children.length) containerDOM.removeChild(containerDOM.children[0]);
 
             this._setupAfterRemoveChild(container, containerName);
@@ -649,7 +650,7 @@ export default class ScratchComponent {
         container.removeResizeListener(this[`_${containerName}ResizeHandler`]);
         // eslint-disable-next-line no-param-reassign
         container._parent = null;
-        this[`_${containerName}`] = null;
+        this._children[containerName] = null;
 
         delete this._dimensions[`${containerName}Height`];
         this._resize();
@@ -691,9 +692,9 @@ export default class ScratchComponent {
     }
 
     removeChild(child) {
-        if (child === this._truthy) return this.removeTruthy(child);
-        if (child === this._falsy) return this.removeFalsy(child);
-        if (child === this._next) return this.removeNext(child);
+        if (child === this._children.truthy) return this.removeTruthy(child);
+        if (child === this._children.falsy) return this.removeFalsy(child);
+        if (child === this._children.next) return this.removeNext(child);
         return false;
     }
 
@@ -730,9 +731,9 @@ export default class ScratchComponent {
 
     getChildren() {
         return {
-            truthy: this._truthy,
-            falsy: this._falsy,
-            next: this._next,
+            truthy: this._children.truthy || null,
+            falsy: this._children.falsy || null,
+            next: this._children.next || null,
         };
     }
 
